@@ -1,5 +1,74 @@
-# FE
-2025 상명대학교 캡스톤 디자인 프론트엔드 레포지토리 입니다.
+
+# 2025 상명대학교 캡스톤 디자인 프론트엔드 레포지토리
+
+이 문서는 협업을 위한 **코딩 규칙**, **커밋 규칙**, **브랜치 전략**을 명확히 정의합니다.
+
+---
+
+## 📌 코딩 규칙 (Coding Convention)
+
+### 1. 일반 원칙
+
+- 변수명은 *camelCase*, 컴포넌트명은 *PascalCase*
+
+- 모든 컴포넌트는 **하나의 파일에 하나의 컴포넌트만 작성**합니다.
+- 컴포넌트 파일명과 컴포넌트 이름은 반드시 동일해야 하며, PascalCase로 작성합니다.
+  - 예: `Button.js`, `LoginForm.js`
+- 컴포넌트 내부 로직은 최대한 간결하게 유지하고, 복잡한 로직은 커스텀 훅(`hooks`)으로 분리합니다.
+- 스타일링은 반드시 **Styled Components**를 사용하며, 스타일 코드는 별도의 `.styled.js`파일로 분리합니다.
+  - 예: `Button.styled.js`
+- 반복되는 상태 관리 및 로직은 커스텀 훅(`hooks`)으로 모듈화하여 재사용성을 높입니다.
+
+### ⚠️ React 및 Hooks 사용 시 필수 규칙
+- Hooks는 항상 최상위 레벨에서만 호출합니다. (조건문, 반복문, 중첩된 함수 내에서 호출 금지)
+- Hooks는 React 컴포넌트 또는 커스텀 훅 내에서만 호출합니다. 일반 JavaScript 함수에서는 호출하지 않습니다.
+- 컴포넌트는 항상 입력(props, state, context)에 따라 동일한 결과를 반환해야 합니다. (idempotent)
+- JSX에 전달된 값(props 등)은 불변성을 유지합니다. JSX에 전달된 값은 이후 변경하지 않습니다.
+
+---
+
+## 📌 Git 브랜치 전략 (Branching Strategy)
+
+본 프로젝트는 **GitHub Flow** 전략을 기반으로 간단하고 명확한 브랜치 전략을 사용합니다.
+
+### GitHub Flow란?
+
+- `main` 브랜치는 항상 배포 가능한 최신 안정 버전을 유지합니다.
+- 새로운 기능 개발 또는 버그 수정 시 별도의 브랜치를 생성하여 작업합니다.
+- 작업 완료 후 PR(Pull Request)을 통해 코드 리뷰를 받고 병합합니다.
+
+### 브랜치 네이밍 규칙
+
+브랜치 이름은 다음 규칙을 따릅니다:
+
+| 브랜치 유형 | 설명 | 예시 |
+| --- | --- | --- |
+| main | 배포 가능한 안정적인 코드가 존재하는 메인 브랜치 | `main` |
+| develop | 개발자들이 작업한 기능(feature branch)을 병합하여 통합하는 개발 브랜치 | `develop` |
+| feature | 새로운 기능 개발 시 생성하는 브랜치 | `feat/login-page`, `feat/webrtc-video-call` |
+| fix | 버그 수정 시 생성하는 브랜치 | `fix/login-error` |
+| hotfix | 긴급하게 수정해야 하는 버그 발생 시 main에서 분기하여 작업 후 main과 develop에 병합 | `hotfix/login-error` |
+
+### 기본적인 작업 흐름 예시
+```bash
+# 최신 코드 받아오기
+git checkout develop
+git pull origin develop
+
+# 새 기능(feature) 개발 시작
+git checkout -b feat/webrtc-video-call
+
+# 작업 후 커밋
+git add .
+git commit -m "feat(webrtc): implement video call UI and logic"
+
+# 원격 저장소에 푸시 및 PR 생성
+git push origin feat/webrtc-video-call
+
+# GitHub에서 Pull Request(PR) 생성 → 팀 리뷰 후 develop 브랜치에 병합
+```
+
+---
 
 ## 깃허브 커밋 규칙 (필독)
 
@@ -135,6 +204,7 @@ test(user): 회원가입 단위 테스트 추가
 2. 린트 검사 통과
 3. 테스트 코드 실행
 4. 불필요한 콘솔/주석 제거
+
 
 ---
 
