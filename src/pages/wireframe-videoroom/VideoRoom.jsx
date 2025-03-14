@@ -1,7 +1,7 @@
 import React from "react";
 
-const videoRoom = () => {
+const VideoRoom = () => {
   return <div>videoRoom</div>;
 };
 
-export default videoRoom;
+export default VideoRoom;
