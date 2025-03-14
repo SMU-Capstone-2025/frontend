@@ -1,12 +1,10 @@
-import React from 'react';
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Router from "./routes/Router";
 
-
+const router = createBrowserRouter(Router);
 function App() {
-  return (
-    <div className="App">
-      asdf
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
