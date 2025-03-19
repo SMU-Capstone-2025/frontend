@@ -1,7 +1,8 @@
 import React from "react";
+import Navbar from "../../components/FeatureWireframeMain/Navbar/Navbar";
 
 const Main = () => {
-  return <div>Main</div>;
+  return <Navbar />;
 };
 
 export default Main;
