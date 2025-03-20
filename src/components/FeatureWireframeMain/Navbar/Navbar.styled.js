@@ -28,6 +28,7 @@ const IconButton = styled.button`
   gap: 16px;
   background: none;
   border: none;
+  cursor: pointer;
 `;
 const ProfileWrapper = styled.div`
   display: flex;
