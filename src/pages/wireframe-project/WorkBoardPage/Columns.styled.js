@@ -4,6 +4,7 @@ export const TaskContainer = styled.div`
   display: flex;
   flex: 1;
   width: 100%;
+  min-width: 120px;
   padding: 16px;
   justify-content: center;
   align-items: center;
@@ -58,7 +59,6 @@ export const AddTaskContainer = styled.div`
 `;
 
 export const TaskInput = styled.input`
-  max-width: 200px;
   width: 100%;
   height: 14px;
   padding: 15px 10px;
@@ -82,6 +82,7 @@ export const AddButton = styled.button`
   border: none;
   background: transparent;
   font-size: 18px;
+  cursor: pointer;
   font-weight: 700;
   color: #7a7a7a;
   &:hover {
