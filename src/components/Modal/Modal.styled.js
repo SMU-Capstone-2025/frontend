@@ -26,7 +26,7 @@ export const ModalContainer = styled.div`
   text-align: center;
   transition:
     transform 0.3s ease,
-    opacity 0.3 ease;
+    opacity 0.3s ease;
   transform: ${({ $isOpen }) => ($isOpen ? "scale(1)" : "scale(0.95)")};
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
 `;
