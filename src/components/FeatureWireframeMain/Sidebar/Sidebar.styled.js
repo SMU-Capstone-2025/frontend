@@ -1,14 +1,16 @@
 import styled from "styled-components";
 
 const Container = styled.div`
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   justify-content: space-between;
-  margin: 0 25px 0 26px;
+  padding: 0 25px 0 26px;
   width: 277px;
   height: 952px;
   flex-shrink: 0;
   border-right: 1px solid #f0f0f0;
+  background: #fff;
+  box-sizing: border-box;
 `;
 
 const HeaderWrapper = styled.div`

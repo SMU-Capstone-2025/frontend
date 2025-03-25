@@ -1,9 +1,9 @@
 import React from "react";
 import * as S from "./Sidebar.styled";
 
-const Sidebar = () => {
+const Sidebar = ({ setSidebarOpen }) => {
   return (
-    <S.Container>
+    <S.Container style={{ display: setSidebarOpen ? "flex" : "none" }}>
       <S.UpsideBox>
         <S.HeaderWrapper>
           <S.HeaderText>project</S.HeaderText>

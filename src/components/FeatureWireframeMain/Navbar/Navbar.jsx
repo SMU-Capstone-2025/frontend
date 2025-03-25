@@ -1,25 +1,44 @@
 import React from "react";
 import * as S from "./Navbar.styled";
-const Navbar = () => {
+const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+    console.log(sidebarOpen);
+  };
+
   return (
     <S.Container>
       <S.IconWrapper>
-        <S.IconButton>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <path
-              d="M14.3993 4.22182L6.62109 12L14.3993 19.7782"
-              stroke="black"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+        <S.IconButton onClick={toggleSidebar}>
+          {sidebarOpen ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <path
+                d="M14.3993 4.22182L6.62109 12L14.3993 19.7782"
+                stroke="black"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="14"
+              viewBox="0 0 20 14"
+              fill="none"
+            >
+              <rect y="0.375" width="20" height="2" rx="1" fill="#21272A" />
+              <rect y="6" width="20" height="2" rx="1" fill="#21272A" />
+              <rect y="11.625" width="20" height="2" rx="1" fill="#21272A" />
+            </svg>
+          )}
         </S.IconButton>
         <S.IconButton>
           <svg
