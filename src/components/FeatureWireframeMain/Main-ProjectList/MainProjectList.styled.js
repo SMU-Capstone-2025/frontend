@@ -20,9 +20,8 @@ const ContainerText = styled.div`
 const ProjectPreviewCardList = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   gap: 38px;
-  align-self: stretch;
+  /* align-self: stretch; */
 `;
 
 export { Container, ContainerText, ProjectPreviewCardList };
