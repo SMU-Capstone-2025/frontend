@@ -1,6 +1,6 @@
 import React from "react";
 import * as S from "./MainProjectList.styled";
-import MainProjectListCard from "./MainProjectListCard";
+import MainProjectListCard from "./MainprojectListCard/MainProjectListCard";
 
 const MainProjectList = () => {
   const projectMockData = [
