@@ -3,7 +3,7 @@ import * as S from "./Sidebar.styled";
 
 const Sidebar = ({ setSidebarOpen }) => {
   return (
-    <S.Container style={{ display: setSidebarOpen ? "flex" : "none" }}>
+    <S.Container>
       <S.UpsideBox>
         <S.HeaderWrapper>
           <S.HeaderText>project</S.HeaderText>
