@@ -28,7 +28,7 @@ const Navbar = () => {
           <S.ProfileImage></S.ProfileImage>
           <S.ProfileName>독톡 님</S.ProfileName>
         </S.ProfileWrapper>
-        <Button width={"79px"} height={"24px"} text={"화상 회의 시작"} />
+        <Button width={"fit-content"} height={"40px"} text={"화상 회의 시작"} />
       </S.RightsideWarpper>
     </S.Container>
   );

@@ -32,6 +32,7 @@ const ProfileWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+  cursor: pointer;
 `;
 const ProfileImage = styled.div`
   display: flex;
@@ -59,6 +60,7 @@ const LogoWarapper = styled.div`
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 export {
