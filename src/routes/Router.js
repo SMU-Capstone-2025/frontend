@@ -6,8 +6,8 @@ import RootLayout from "../layout/root-layout";
 import DoctalkMain from "../pages/doctalkMain/DoctalkMain";
 
 // import Settings from "../pages/wireframe-project/SettingsPage/Settings";
-// import WorkBoard from "../pages/wireframe-project/WorkBoardPage/WorkBoard";
-// import Document from "../pages/wireframe-project/DocumentPage/Document";
+import WorkBoard from "../pages/wireframe-project/workboard-page/WorkBoard";
+import Document from "../pages/wireframe-project/document-page/Document";
 
 const Router = [
   {
@@ -20,8 +20,8 @@ const Router = [
         element: <Project />,
         children: [
           { index: true, element: <Navigate to="workboard" /> },
-          // { path: "workboard", element: <WorkBoard /> },
-          // { path: "document", element: <Document /> },
+          { path: "workboard", element: <WorkBoard /> },
+          { path: "document", element: <Document /> },
           // { path: "settings", element: <Settings /> },
         ],
       },
