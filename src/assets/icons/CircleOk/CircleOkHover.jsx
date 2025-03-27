@@ -1,0 +1,30 @@
+import React from "react";
+
+const CircleOkHover = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <rect width="24" height="24" rx="2" fill="#F3F4F6" />
+      <path
+        d="M7 13L10 16L17 9"
+        stroke="#1F2937"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+        stroke="#1F2937"
+        stroke-width="2"
+      />
+    </svg>
+  );
+};
+
+export default CircleOkHover;
