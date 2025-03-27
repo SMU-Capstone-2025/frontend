@@ -11,6 +11,5 @@ export const DocumentContainer = styled.div`
   gap: 10px;
   border-radius: 20px;
   border: 1px solid #000;
-  background: #fff;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 `;
