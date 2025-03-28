@@ -12,26 +12,26 @@ const AlignCenterOff = () => {
       <path
         d="M8 10H16"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M6 6H18"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M6 14H18"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M8 18H16"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

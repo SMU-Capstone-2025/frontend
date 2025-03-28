@@ -15,8 +15,8 @@ const GridOff = () => {
         width="7"
         height="7"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <rect
         x="14"
@@ -24,8 +24,8 @@ const GridOff = () => {
         width="7"
         height="7"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <rect
         x="3"
@@ -33,8 +33,8 @@ const GridOff = () => {
         width="7"
         height="7"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <rect
         x="14"
@@ -42,8 +42,8 @@ const GridOff = () => {
         width="7"
         height="7"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
     </svg>
   );

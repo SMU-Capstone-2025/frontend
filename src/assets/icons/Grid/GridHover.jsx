@@ -16,8 +16,8 @@ const GridHover = () => {
         width="7"
         height="7"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <rect
         x="14"
@@ -25,8 +25,8 @@ const GridHover = () => {
         width="7"
         height="7"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <rect
         x="3"
@@ -34,8 +34,8 @@ const GridHover = () => {
         width="7"
         height="7"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <rect
         x="14"
@@ -43,8 +43,8 @@ const GridHover = () => {
         width="7"
         height="7"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
     </svg>
   );

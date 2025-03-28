@@ -12,8 +12,8 @@ const CheckOff = () => {
       <path
         d="M4 13L9 18L20 7"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

@@ -13,14 +13,14 @@ const CloseHover = () => {
       <path
         d="M17.6569 17.6568L6.34319 6.34309"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M17.6568 6.34309L6.34311 17.6568"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );
