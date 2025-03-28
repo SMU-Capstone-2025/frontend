@@ -1,6 +1,6 @@
 import React from "react";
-import { useTaskColumn } from "../../../hooks/useTaskColumn";
-import { Modal } from "../../../components/index";
+import { useTaskColumn } from "../../hooks/useTaskColumn";
+import { Modal } from "../index";
 import {
   ColumnContainer,
   ColumnHeader,
@@ -15,10 +15,9 @@ import TaskCard from "./TaskCard";
 
 const dummyTasks = [
   { id: 1, title: "더미 데이터1입니다.", date: "2024-03-21" },
-  { id: 2, title: "더미 데이터2입니다.", date: "2024-03-22" },
 ];
 
-const CompletedColumn = () => {
+const InProgressColumn = () => {
   const {
     tasks,
     newTask,
@@ -29,10 +28,10 @@ const CompletedColumn = () => {
   } = useTaskColumn(dummyTasks);
 
   return (
-    <TaskContainer $bgColor="#EAFBDB">
+    <TaskContainer $bgColor="#FBEADB">
       <ColumnContainer>
         <ColumnHeader>
-          <TaskStatus>완료</TaskStatus>
+          <TaskStatus>진행 중</TaskStatus>
           {tasks.length}
           <AddSecondButton onClick={() => setIsModalOpen(true)}>
             +
@@ -53,7 +52,7 @@ const CompletedColumn = () => {
         onClose={() => setIsModalOpen(false)}
         onAdd={handleAddTask}
       >
-        <h2>완료 작업 추가</h2>
+        <h2>진행 중 작업 추가</h2>
         <TaskInput
           type="text"
           placeholder="작업 제목 입력"
@@ -66,4 +65,4 @@ const CompletedColumn = () => {
   );
 };
 
-export default CompletedColumn;
+export default InProgressColumn;
