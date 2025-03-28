@@ -5,6 +5,7 @@ import SidebarOn from "../../assets/icons/Sidebar/SidebarOn";
 import HomeOn from "../../assets/icons/Home/HomeOn";
 import BellOn from "../../assets/icons/Bell/BellOn";
 import Button from "../Button/Button";
+import PersonOn from "../../assets/icons/Person/PersonOn";
 
 const Navbar = () => {
   return (
@@ -25,7 +26,9 @@ const Navbar = () => {
           <BellOn />
         </S.IconButton>
         <S.ProfileWrapper>
-          <S.ProfileImage></S.ProfileImage>
+          <S.ProfileImage>
+            <PersonOn color={"#5BA7F7"} />
+          </S.ProfileImage>
           <S.ProfileName>독톡 님</S.ProfileName>
         </S.ProfileWrapper>
         <Button width={"fit-content"} height={"40px"} text={"화상 회의 시작"} />

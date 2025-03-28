@@ -41,6 +41,9 @@ const ProfileImage = styled.div`
   padding: 6.667px;
   align-items: center;
   gap: 16.667px;
+  border-radius: 833.333px;
+  border: 1.667px solid var(--0, #fff);
+  background: var(--blue-100, #d5e8fc);
 `;
 const ProfileName = styled.p`
   display: flex;
