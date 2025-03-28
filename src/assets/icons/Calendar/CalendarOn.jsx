@@ -12,26 +12,26 @@ const CalendarOn = () => {
       <path
         d="M3 5H21V21H3V5Z"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <path
         d="M21 9H3"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M7 5V3"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M17 5V3"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

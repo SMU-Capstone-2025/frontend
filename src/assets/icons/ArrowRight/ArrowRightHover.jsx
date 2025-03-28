@@ -13,8 +13,8 @@ const ArrowRightHover = () => {
       <path
         d="M10 18L16 12L10 6"
         stroke="#1F2937"
-        stroke-width="1.5"
-        stroke-linecap="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
     </svg>
   );

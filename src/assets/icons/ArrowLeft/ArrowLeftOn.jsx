@@ -12,8 +12,8 @@ const ArrowLeftOn = () => {
       <path
         d="M14 6L8 12L14 18"
         stroke="#1F2937"
-        stroke-width="1.5"
-        stroke-linecap="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
       />
     </svg>
   );

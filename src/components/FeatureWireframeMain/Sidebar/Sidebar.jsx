@@ -17,9 +17,9 @@ const Sidebar = ({ setSidebarOpen }) => {
             <path
               d="M12 4L12 20M4 12L20 12"
               stroke="#A2A2A2"
-              stroke-width="3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         </S.HeaderWrapper>
@@ -82,7 +82,7 @@ const Sidebar = ({ setSidebarOpen }) => {
                 rx="17"
                 fill="#DDDDDD"
                 stroke="#555555"
-                stroke-width="2"
+                strokeWidth="2"
               />
               <circle cx="42" cy="18" r="14" fill="#555555" />
             </svg>

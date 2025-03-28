@@ -12,14 +12,14 @@ const PlusOff = () => {
       <path
         d="M20 12H4"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M12 4V20"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );
