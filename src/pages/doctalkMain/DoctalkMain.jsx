@@ -2,6 +2,7 @@ import React from "react";
 import * as S from "./DoctalkMain.styled";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/FeatureWireframeMain/Sidebar/Sidebar";
+import ScheduleListPreview from "../../components/ScheduleListPreview/ScheduleListPreview";
 
 const DoctalkMain = () => {
   return (
@@ -18,7 +19,10 @@ const DoctalkMain = () => {
         <S.BodyContainer>
           <S.ScheduleContainer>
             <S.PreviewTitleText>예정된 이벤트</S.PreviewTitleText>
-            <S.ScheduleBoard>{/* 스케줄리스트 컴포넌트 */}</S.ScheduleBoard>
+            <S.ScheduleBoard>
+              <ScheduleListPreview />
+              <ScheduleListPreview />
+            </S.ScheduleBoard>
           </S.ScheduleContainer>
           <S.ProjectContainer>
             <S.PreviewTitleText>나의 프로젝트</S.PreviewTitleText>
