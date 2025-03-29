@@ -1,7 +1,7 @@
 import React from "react";
 import * as S from "./ProjectInfo.styled";
 import ProjectCoverUploader from "./ProjectCover";
-import ProjectMetaForm from "./ProjecMetaForm";
+import ProjectMetaForm from "./ProjectMetaForm";
 
 const ProjectInfo = ({
   projectName,
