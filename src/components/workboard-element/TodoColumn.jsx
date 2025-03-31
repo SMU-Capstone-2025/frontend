@@ -7,14 +7,16 @@ import PlusOn from "../../assets/icons/Plus/PlusOn";
 const dummyTasks = [
   {
     id: 1,
-    title: "더미 데이터1입니다.",
-    description: "이건 첫 번째 작업에 대한 설명입니다.",
+    title: "어떻게 이별까지 사랑하겠어, 널 사랑하는 거지 - 악동뮤지션",
+    description:
+      "어떻게 이별까지 사랑하겠어 널 사랑하는 거지 사랑이라는 이유로 서로를 포기하고 찢어질 것같이 아파할 수 없어 난 어떻게 내가 어떻게 너를 이후에 우리 바다처럼 깊은 사랑이 다 마를 때까지 기다리는 게 이별일 텐데 어떻게 내가 어떻게 너를 이후에 우리 바다처럼 깊은 사랑이 다 마를 때까지 기다리는 게 이별일 텐데",
     date: "2024-03-21",
   },
   {
     id: 2,
     title: "더미 데이터2입니다.",
-    description: "두 번째 작업은 마감일이 임박했어요!",
+    description:
+      "두 번째 작업은 마감일이 임박했어요! 두 번째 작업은 곧 마감됩니다. ",
     date: "2024-03-22",
   },
   {
@@ -24,6 +26,7 @@ const dummyTasks = [
     date: "2024-03-23",
   },
 ];
+
 const TodoColumn = () => {
   const {
     tasks,
@@ -35,10 +38,10 @@ const TodoColumn = () => {
   } = useTaskColumn(dummyTasks);
 
   return (
-    <div className="flex w-[410px] p-4 justify-center items-center gap-[12px] rounded-[12px] border border-[var(--gray-200,#E5E7EB)] bg-[var(--yellow-50,#FEFCE8)]">
-      <div className="flex w-[380px] flex-col items-start gap-4 shrink-0">
-        <div className="flex h-[30px] justify-between items-center self-stretch">
-          <div className="flex w-[90px] items-center gap-2.5">
+    <div className="flex flex-col w-full max-w-[410px] sm:flex-1 sm:min-w-[280px] p-4 justify-center items-center gap-3 rounded-[12px] border border-[var(--gray-200,#E5E7EB)] bg-[var(--yellow-50,#FEFCE8)]">
+      <div className="flex w-full flex-col items-start gap-4 shrink-0">
+        <div className="flex h-[30px] justify-between items-center w-full">
+          <div className="flex items-center gap-2.5">
             <div className="flex h-[31.72px] px-3 py-2 justify-center items-center gap-2.5 rounded-md bg-[var(--yellow-200,#fef08a)] text-[var(--yellow-900,#713F12)] text-sm font-semibold leading-[140%] tracking-[-0.14px]">
               진행 전
             </div>
@@ -48,13 +51,13 @@ const TodoColumn = () => {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="w-[24px] h-[24px] flex items-center justify-center cursor-pointer hover:bg-white"
+            className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-white"
           >
             <PlusOn />
           </button>
         </div>
 
-        <div className="flex w-[380px] flex-col items-start gap-2">
+        <div className="flex w-full flex-col items-start gap-2">
           {tasks.map(({ id, title, description, date }) => (
             <TaskCard
               key={id}
@@ -65,7 +68,7 @@ const TodoColumn = () => {
           ))}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex w-[380px] p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard cursor-pointer hover:bg-white"
+            className="flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard cursor-pointer hover:bg-white"
           >
             + 작업 만들기
           </button>
@@ -84,7 +87,7 @@ const TodoColumn = () => {
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
-          className="w-full h-[14px] p-[15px_10px] border border-gray-300 rounded text-sm outline-none focus:border-green-500"
+          className="w-full h-[14px] p-[15px_10px] mb-3 border border-gray-300 rounded text-sm outline-none focus:border-green-500"
         />
       </Modal>
     </div>
