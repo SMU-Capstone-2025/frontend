@@ -11,21 +11,21 @@ const tabs = [
 
 const Project = () => {
   return (
-    <div className="w-screen h-screen flex flex-col items-center">
+    <div className="w-full min-h-screen flex flex-col items-center">
       <Navbar />
-      <div className="inline-flex flex-col justify-end items-start gap-[30px] pt-[30px] border-none ">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col justify-end items-start gap-6 pt-6 w-full max-w-screen-xl border-none ">
+        <div className="flex flex-wrap md:flex-nowrap items-start md:items-center gap-3 md:gap-6">
           {tabs.map(({ to, label, icon }) => (
             <NavLink
               key={label} // 배열 렌더링시 고유 ID 필요
               to={to} // 링크 클릭 시 이동할 URL 경로 지정
               className={({ isActive }) =>
-                `flex items-center gap-[6px] py-[10px] text-[20px] font-semibold cursor-pointer text-black no-underline
-                ${isActive ? "opacity-100 border-b-4 border-black" : "opacity-30"}`
+                `flex items-center gap-1.5 py-2 text-sm sm:text-base md:text-[20px] font-semibold cursor-pointer text-black no-underline 
+                ${isActive ? "opacity-100 border-b-2 md:border-b-4 border-black" : "opacity-30"}`
               }
             >
               {icon}
-              {label}
+              <span className="hidden sm:inline">{label}</span>
             </NavLink>
           ))}
         </div>
