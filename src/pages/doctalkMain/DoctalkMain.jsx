@@ -3,6 +3,7 @@ import * as S from "./DoctalkMain.styled";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/FeatureWireframeMain/Sidebar/Sidebar";
 import ScheduleListPreview from "../../components/ScheduleListPreview/ScheduleListPreview";
+import ProjectListPreview from "../../components/ProjectListPreview/ProjectListPreview";
 
 const DoctalkMain = () => {
   return (
@@ -26,7 +27,9 @@ const DoctalkMain = () => {
           </S.ScheduleContainer>
           <S.ProjectContainer>
             <S.PreviewTitleText>나의 프로젝트</S.PreviewTitleText>
-            <S.ProjectBoard>{/* 프로젝트카드 컴포넌트 */}</S.ProjectBoard>
+            <S.ProjectBoard>
+              <ProjectListPreview />
+            </S.ProjectBoard>
           </S.ProjectContainer>
         </S.BodyContainer>
       </S.MainContentContainer>
