@@ -25,10 +25,10 @@ const InProgressColumn = () => {
   } = useTaskColumn(dummyTasks);
 
   return (
-    <div className="flex w-[410px] p-4 justify-center items-center gap-[12px] rounded-[12px] border border-[var(--gray-200,#E5E7EB)] bg-[var(--red-50,#FEF2F2)]">
-      <div className="flex w-full max-w-full flex-col items-start gap-4">
+    <div className="flex flex-col w-full max-w-[410px] sm:flex-1 sm:min-w-[280px] p-4 justify-center items-center gap-3 rounded-[12px] border border-[var(--gray-200,#E5E7EB)] bg-[var(--red-50,#FEF2F2)]">
+      <div className="flex w-full flex-col items-start gap-4">
         <div className="flex h-[30px] justify-between items-center w-full">
-          <div className="flex w-[90px] items-center gap-2.5">
+          <div className="flex items-center gap-2.5">
             <div className="flex h-[31.72px] px-3 py-2 justify-center items-center gap-2.5 rounded-md bg-[var(--red-200,#FECACA)] text-[var(--red-800,#991B1B)] text-sm font-semibold leading-[140%] tracking-[-0.14px]">
               진행 중
             </div>
@@ -38,7 +38,7 @@ const InProgressColumn = () => {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="w-[24px] h-[24px] flex items-center justify-center cursor-pointer hover:bg-white"
+            className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-white"
           >
             <PlusOn />
           </button>
@@ -55,7 +55,7 @@ const InProgressColumn = () => {
           ))}
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex w-[380px] p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard hover:bg-white"
+            className="flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard hover:bg-white"
           >
             + 작업 만들기
           </button>
