@@ -1,0 +1,46 @@
+import React from "react";
+import ProfileBlue from "../../assets/icons/Profile/ProfileBlue";
+import ProfileYellow from "../../assets/icons/Profile/ProfileYellow";
+import ProfilePlus from "../../assets/icons/Profile/ProfilePlus";
+
+function TaskCard({ title, description, date }) {
+  return (
+    <div className="flex p-4 flex-col items-start gap-[10px] w-full rounded-[10px] border border-[var(--gray-200,#E5E7EB)] bg-white">
+      <div className="flex flex-col items-start gap-[10px] w-full">
+        {/* 제목 - 한 줄 이상 생략 */}
+        <p
+          title={title}
+          className="text-[var(--gray-800,#1F2937)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard break-words line-clamp-1"
+        >
+          {title}
+        </p>
+
+        {/* 설명 - 3줄 줄바꿈 허용 */}
+        <p
+          title={description}
+          className="text-[var(--gray-500,#6D7280)] text-xs font-normal leading-[140%] font-pretendard break-words line-clamp-3"
+        >
+          {description}
+        </p>
+
+        <div className="flex justify-between items-center w-full">
+          {/* 날짜 - 길면 자동으로 생략 */}
+          <p
+            title={date}
+            className="text-[#787878] text-xs font-normal leading-[140%] font-pretendard truncate max-w-[200px]"
+          >
+            {date}
+          </p>
+
+          <div className="flex items-center -space-x-[10px]">
+            <ProfileBlue />
+            <ProfileYellow />
+            <ProfilePlus />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default TaskCard;

@@ -12,16 +12,16 @@ const FilmOn = () => {
       <path
         d="M16 10.0866L21 8.50848L21 16.5052L16.0018 14.9276"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M16 8C16 7.44771 15.5523 7 15 7H4C3.44772 7 3 7.44772 3 8L3 17C3 17.5523 3.44772 18 4 18H15C15.5523 18 16 17.5523 16 17L16 8Z"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

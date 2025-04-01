@@ -22,9 +22,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
               <path
                 d="M14.3993 4.22182L6.62109 12L14.3993 19.7782"
                 stroke="black"
-                stroke-width="3"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           ) : (
@@ -52,9 +52,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             <path
               d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15"
               stroke="#21272A"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         </S.IconButton>
@@ -67,14 +67,14 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             fill="none"
           >
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M13.7929 13.7929C14.1834 13.4024 14.8166 13.4024 15.2071 13.7929L20.7071 19.2929C21.0976 19.6834 21.0976 20.3166 20.7071 20.7071C20.3166 21.0976 19.6834 21.0976 19.2929 20.7071L13.7929 15.2071C13.4024 14.8166 13.4024 14.1834 13.7929 13.7929Z"
               fill="#12131A"
             />
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M10 5C7.23858 5 5 7.23858 5 10C5 12.7614 7.23858 15 10 15C12.7614 15 15 12.7614 15 10C15 7.23858 12.7614 5 10 5ZM3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10Z"
               fill="#12131A"
             />
@@ -107,8 +107,8 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
               fill="none"
             >
               <path
-                fill-rule="evenodd"
-                clip-rule="evenodd"
+                fillRule="evenodd"
+                clipRule="evenodd"
                 d="M10.5177 27.1853C10.262 27.1853 10.0547 26.978 10.0547 26.7223V21.6298C10.0547 19.3286 11.9202 17.4631 14.2213 17.4631L19.7769 17.4631C22.0781 17.4631 23.9436 19.3286 23.9436 21.6298V26.7223C23.9436 26.978 23.7363 27.1853 23.4806 27.1853C23.2249 27.1853 23.0177 26.978 23.0177 26.7223V21.6298C23.0177 19.84 21.5667 18.389 19.7769 18.389L14.2213 18.3891C12.4315 18.3891 10.9806 19.84 10.9806 21.6298V26.7223C10.9806 26.978 10.7733 27.1853 10.5177 27.1853ZM21.6288 11.4446C21.6288 14.0014 19.556 16.0742 16.9991 16.0742C14.4423 16.0742 12.3695 14.0014 12.3695 11.4446C12.3695 8.8877 14.4423 6.81494 16.9991 6.81494C19.556 6.81494 21.6288 8.8877 21.6288 11.4446ZM16.9991 15.1483C19.0446 15.1483 20.7028 13.4901 20.7028 11.4446C20.7028 9.39907 19.0446 7.74087 16.9991 7.74087C14.9536 7.74087 13.2954 9.39907 13.2954 11.4446C13.2954 13.4901 14.9536 15.1483 16.9991 15.1483Z"
                 fill="#555555"
               />
@@ -127,9 +127,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             <path
               d="M7.99935 13.3334L7.99935 2.66671M13.3327 8.00004L2.66602 8.00004"
               stroke="white"
-              stroke-width="2.125"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="2.125"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
           <S.VideoCallText>화상 회의 시작</S.VideoCallText>

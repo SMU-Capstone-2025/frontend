@@ -13,16 +13,16 @@ const TextHover = () => {
       <path
         d="M2 18L4.08333 13M12 18L9.91667 13M4.08333 13L7 6L9.91667 13M4.08333 13H9.91667"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <circle
         cx="18"
         cy="14"
         r="4"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <line
         x1="22"
@@ -30,8 +30,8 @@ const TextHover = () => {
         x2="22"
         y2="18"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

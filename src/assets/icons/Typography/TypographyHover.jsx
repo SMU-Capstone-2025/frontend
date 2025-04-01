@@ -13,8 +13,8 @@ const TypographyHover = () => {
       <path
         d="M4 8L5 4H12M20 8L19 4H12M12 4V20M12 20H8M12 20H16"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
     </svg>
   );

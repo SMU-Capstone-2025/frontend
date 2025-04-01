@@ -12,13 +12,13 @@ const TimeOff = () => {
       <path
         d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
         stroke="#D2D5DA"
-        stroke-width="2"
+        strokeWidth="2"
       />
       <path
         d="M12 5V12L16 16"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );
