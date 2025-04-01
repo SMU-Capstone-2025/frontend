@@ -1,18 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import * as S from "./DoctalkMain.styled";
 import Navbar from "../../components/Navbar/Navbar";
-import Sidebar from "../../components/FeatureWireframeMain/Sidebar/Sidebar";
 import ScheduleListPreview from "../../components/ScheduleListPreview/ScheduleListPreview";
 import ProjectListPreview from "../../components/ProjectListPreview/ProjectListPreview";
+import Sidebar from "../../components/Sidebar/Sidebar";
 
 const DoctalkMain = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const handleSidebarOpen = () => {
+    setSidebarOpen(!sidebarOpen);
+    console.log(sidebarOpen);
+  };
+
   return (
     <S.Container>
-      <Navbar />
-      {/* <S.SidebarOverlay>
-        <Sidebar />
-        와이어프레임 사이드바라서 지워야함
-      </S.SidebarOverlay> */}
+      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      {sidebarOpen && (
+        <S.SidebarOverlay>
+          <Sidebar />
+          <S.OutSidebar onClick={handleSidebarOpen} />
+        </S.SidebarOverlay>
+      )}
       <S.MainContentContainer>
         <S.WelcomeCommentText>
           독톡님, 오늘도 힘차게 시작해볼까요!

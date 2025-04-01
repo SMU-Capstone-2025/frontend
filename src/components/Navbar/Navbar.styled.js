@@ -9,6 +9,7 @@ const Container = styled.div`
   border-bottom: 1px solid var(--gray-200, #e5e7eb);
   background: var(--0, #fff);
   padding: 0px 20px;
+  z-index: 100;
 `;
 
 const LeftsideWarpper = styled.div`

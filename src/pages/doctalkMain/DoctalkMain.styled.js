@@ -3,8 +3,9 @@ import styled from "styled-components";
 const Container = styled.div`
   display: flex;
   width: 1920px;
+  height: 1080px;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
   background: var(--gray-50, #f9fafb);
 `;
@@ -13,9 +14,14 @@ const SidebarOverlay = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
+`;
+const OutSidebar = styled.div`
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.5);
-  position: absolute;
-  z-index: 10;
+  position: relative;
+  z-index: 40;
+  cursor: pointer;
 `;
 
 const MainContentContainer = styled.div`
@@ -25,6 +31,10 @@ const MainContentContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 50px;
+  position: absolute;
+  top: 64px;
+  left: 320px;
+  z-index: 20;
 `;
 const WelcomeComment = styled.div`
   display: flex;
@@ -105,6 +115,7 @@ const PreviewTitleText = styled.p`
 
 export {
   Container,
+  OutSidebar,
   MainContentContainer,
   WelcomeComment,
   WelcomeCommentText,
