@@ -9,6 +9,7 @@ const Container = styled.div`
   border-bottom: 1px solid var(--gray-200, #e5e7eb);
   background: var(--0, #fff);
   padding: 0px 20px;
+  z-index: 100;
 `;
 
 const LeftsideWarpper = styled.div`
@@ -32,6 +33,7 @@ const ProfileWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+  cursor: pointer;
 `;
 const ProfileImage = styled.div`
   display: flex;
@@ -40,6 +42,9 @@ const ProfileImage = styled.div`
   padding: 6.667px;
   align-items: center;
   gap: 16.667px;
+  border-radius: 833.333px;
+  border: 1.667px solid var(--0, #fff);
+  background: var(--blue-100, #d5e8fc);
 `;
 const ProfileName = styled.p`
   display: flex;
@@ -59,6 +64,10 @@ const LogoWarapper = styled.div`
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  cursor: pointer;
+  position: fixed;
+  left: 898px;
+  top: 0;
 `;
 
 export {
