@@ -1,4 +1,3 @@
-// src/pages/VideoCallPage.jsx
 import React from "react";
 import useWebRTC from "../../hooks/useWebRTC";
 import VideoGrid from "../../components/videoroom-element/VideoGrid";

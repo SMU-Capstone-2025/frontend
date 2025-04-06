@@ -1,6 +1,6 @@
 import React from "react";
 import * as S from "./DoctalkMain.styled";
-//import { NavBar } from "../wireframe-project/Project.styled";
+import { NavBar } from "../wireframe-project/Project.styled";
 import Navbar from "../../components/Navbar/Navbar";
 
 const DoctalkMain = () => {

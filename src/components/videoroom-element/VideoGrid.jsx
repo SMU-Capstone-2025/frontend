@@ -1,5 +1,3 @@
-// src/components/VideoGrid.jsx
-
 import React, { useRef, useEffect } from "react";
 
 // 개별 비디오 타일 컴포넌트

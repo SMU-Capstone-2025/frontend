@@ -1,5 +1,3 @@
-// src/components/ControlBar.jsx
-
 import React from "react";
 
 const ControlBar = ({
