@@ -1,4 +1,3 @@
-// 📁 components/document-element/add-document/AddDocumentButton.jsx
 import { useNavigate } from "react-router-dom";
 import PlusOn from "../../../assets/icons/Plus/PlusOn";
 

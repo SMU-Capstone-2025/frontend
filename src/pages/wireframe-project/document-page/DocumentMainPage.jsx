@@ -1,4 +1,3 @@
-// 📁 DocumentMainPage.jsx
 import { useState, useEffect, useRef } from "react";
 import DocumentControl from "../../../components/document-element/common/DocumentControl";
 import DocumentList from "../../../components/document-element/common/DocumentList";

@@ -1,4 +1,3 @@
-// 📁 pages/wireframe-project/document-page/DocumentCreatePage.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDocumentEditor from "../../../hooks/useDocumentEditor";
