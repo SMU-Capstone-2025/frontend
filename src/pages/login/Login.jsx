@@ -1,10 +1,37 @@
-import React from "react";
-import Sidebar from "../../components/Sidebar/Sidebar";
+import React, { useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import CloseOn from "../../assets/icons/Close/CloseOn";
 import Button from "../../components/Button/Button";
 
+import { axiosInstance } from "../../apis/axiosInstance";
+
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const acessToken = async (email, password) => {
+    try {
+      const res = await axiosInstance.post("/login", {
+        email: email,
+        password: password,
+      });
+      console.log("로그인 성공~!\n", res);
+      return res.headers.access;
+    } catch (error) {
+      console.log("로그인 실패~!\n", error);
+      return error;
+    }
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const token = await acessToken(email, password);
+      console.log("보낸 바디:", email, password);
+      console.log("받은 토큰", token);
+    } catch (error) {
+      console.log("에러 발생", error);
+    }
+  };
   return (
     <div className="flex flex-col items-center w-[1920px] h-[1080px] pb-[156px]">
       <Navbar />
@@ -28,6 +55,7 @@ const Login = () => {
                 </div>
                 <form
                   action=""
+                  onSubmit={handleSubmit}
                   className="w-full h-full flex flex-col justify-start items-start gap-9"
                 >
                   <div className="flex flex-col justify-start items-start gap-3">
@@ -41,6 +69,8 @@ const Login = () => {
                         <input
                           className="w-full h-12 py-3 px-4 rounded-lg outline outline-1 outline-gray-300 overflow-hidden"
                           type="text"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                           placeholder="이름 혹은 이메일"
                           required
                         />
@@ -52,6 +82,8 @@ const Login = () => {
                         <input
                           className="w-[520px] h-12 py-3 px-4 rounded-lg outline outline-1 outline-gray-300 overflow-hidden"
                           type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                           placeholder="8자리 이상"
                           required
                         />
