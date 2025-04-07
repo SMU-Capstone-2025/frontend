@@ -65,9 +65,9 @@ const LogoWarapper = styled.div`
   gap: 10px;
   flex-shrink: 0;
   cursor: pointer;
-  position: fixed;
+  /* position: fixed;
   left: 898px;
-  top: 0;
+  top: 0; */
 `;
 
 export {

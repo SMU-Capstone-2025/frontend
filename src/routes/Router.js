@@ -8,6 +8,7 @@ import DoctalkMain from "../pages/doctalkMain/DoctalkMain";
 import Settings from "../pages/wireframe-project/settings-page/Settings";
 import WorkBoard from "../pages/wireframe-project/workboard-page/WorkBoard";
 import Document from "../pages/wireframe-project/document-page/Document";
+import Login from "../pages/login/Login";
 
 const Router = [
   {
@@ -15,6 +16,7 @@ const Router = [
     element: <RootLayout />,
     children: [
       { index: true, element: <DoctalkMain /> },
+      { path: "login", element: <Login /> },
       {
         path: "project",
         element: <Project />,
