@@ -2,12 +2,13 @@ import React from "react";
 import * as S from "./ProjectCard.styled";
 import PersonOn from "../../assets/icons/Person/PersonOn";
 
-const ProjectCard = () => {
+const ProjectCard = ({ id }) => {
+  const cardThemeColor = id % 2 === 0 ? "blue" : "yellow";
   return (
     <S.Container>
-      <S.CardCover />
+      <S.CardCover color={cardThemeColor} />
       <S.CardContentWrapper>
-        <S.CardHeaderIcon>P</S.CardHeaderIcon>
+        <S.CardHeaderIcon color={cardThemeColor}>P</S.CardHeaderIcon>
         <S.CardTextWrapper>
           <S.CardTitle>Project: A</S.CardTitle>
           <S.CardDescription>
