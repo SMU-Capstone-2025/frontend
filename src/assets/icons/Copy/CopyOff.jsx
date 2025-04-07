@@ -15,14 +15,14 @@ const CopyOff = () => {
         width="12"
         height="14"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <path
         d="M4 17C4 17 4 4 4 3H16"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

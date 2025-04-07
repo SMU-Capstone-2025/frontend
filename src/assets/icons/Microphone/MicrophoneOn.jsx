@@ -12,14 +12,14 @@ const MicrophoneOn = () => {
       <path
         d="M7 12C7 14.7614 9.23858 17 12 17C14.7614 17 17 14.7614 17 12"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M12 17V21"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <rect
         x="10"
@@ -28,7 +28,7 @@ const MicrophoneOn = () => {
         height="10"
         rx="2"
         stroke="#1F2937"
-        stroke-width="2"
+        strokeWidth="2"
       />
     </svg>
   );

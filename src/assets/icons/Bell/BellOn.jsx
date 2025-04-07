@@ -10,19 +10,19 @@ const BellOn = () => {
       fill="none"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M12 3C15.3137 3 18 5.68624 18 8.99995C18 10.9131 18 12.8341 18 14C18 17 20 18 20 18L4 18C4 18 6 17 6 14C6 12.8341 6 10.9131 6 8.99995C6 5.68624 8.68629 3 12 3V3Z"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 18C10 19.1046 10.8954 20 12 20C13.1046 20 14 19.1046 14 18"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

@@ -12,14 +12,14 @@ const NextAltOff = () => {
       <path
         d="M16 4L20 8L16 12"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M20 8H9.5C6.46243 8 4 10.4624 4 13.5V13.5C4 16.5376 6.46243 19 9.5 19H19"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

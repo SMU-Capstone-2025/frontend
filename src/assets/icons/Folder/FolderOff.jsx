@@ -12,8 +12,8 @@ const FolderOff = () => {
       <path
         d="M3 5H9L10 7H21V19H3V5Z"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

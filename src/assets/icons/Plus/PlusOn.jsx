@@ -9,18 +9,8 @@ const PlusOn = () => {
       viewBox="0 0 24 24"
       fill="none"
     >
-      <path
-        d="M20 12H4"
-        stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
-      />
-      <path
-        d="M12 4V20"
-        stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
-      />
+      <path d="M20 12H4" stroke="white" strokeWidth="2" strokeLinecap="round" />
+      <path d="M12 4V20" stroke="white" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 };

@@ -12,15 +12,15 @@ const FileOff = () => {
       <path
         d="M13 3V9H19"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinejoin="round"
       />
       <path
         d="M19 8L14 3L5 3.00002L5 21L19 21L19 8Z"
         stroke="#D2D5DA"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

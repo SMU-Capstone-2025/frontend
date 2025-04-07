@@ -12,20 +12,20 @@ const LinkOn = () => {
       <path
         d="M9 7C9 7 7 7 7 7C4.23858 7 2 9.23858 2 12C2 14.7614 4.23858 17 7 17C7 17 9 17 9 17"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M8 12H16"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
       <path
         d="M15 17C15 17 17 17 17 17C19.7614 17 22 14.7614 22 12C22 9.23858 19.7614 7 17 7C17 7 15 7 15 7"
         stroke="#1F2937"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );
