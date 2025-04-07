@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.REACT_APP_API_BASE_URL,
+  baseURL: { DOCKTALK_API_BASE_URL },
   headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    Authorization: `Bearer {DOCKTALK_API_ACCESS_TOKEN}`,
   },
 });
 
