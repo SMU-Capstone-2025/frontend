@@ -3,7 +3,7 @@ import * as S from "./ProjectCard.styled";
 import PersonOn from "../../assets/icons/Person/PersonOn";
 
 const ProjectCard = ({ id }) => {
-  const cardThemeColor = id % 2 === 0 ? "blue" : "yellow";
+  const cardThemeColor = id % 4 === 0 || id % 4 === 3 ? "blue" : "yellow";
   return (
     <S.Container>
       <S.CardCover color={cardThemeColor} />
