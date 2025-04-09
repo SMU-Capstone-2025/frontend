@@ -3,7 +3,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import CloseOn from "../../assets/icons/Close/CloseOn";
 import Button from "../../components/Button/Button";
 
-import { axiosInstance } from "../../apis/axiosInstance";
+import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +11,7 @@ const Login = () => {
 
   const acessToken = async (email, password) => {
     try {
-      const res = await axiosInstance.post("/login", {
+      const res = await axiosInstanceNoHeader.post("/login", {
         email: email,
         password: password,
       });
@@ -43,7 +43,7 @@ const Login = () => {
       )} // 메인화면에서 빼 온 부분 */}
       <div className="flex w-[1280px] h-[860px] py-12 flex-col justify-start items-center gap-12">
         <div className="flex w-[700.92px] h-[760px] relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 overflow-hidden py-[105px] px-24">
-          <div className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px]">
+          <div className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer">
             <CloseOn />
           </div>
           <div className="w-full h-[550px] flex flex-col justify-start items-center gap-7">
