@@ -28,6 +28,7 @@ const Login = () => {
       const token = await acessToken(email, password);
       console.log("보낸 바디:", email, password);
       console.log("받은 토큰", token);
+      //setToken해야될듯 리턴받은거로
     } catch (error) {
       console.log("에러 발생", error);
     }
