@@ -1,10 +1,13 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
-  baseURL: { DOCKTALK_API_BASE_URL },
+const axiosInstanceWithHeader = axios.create({
+  baseURL: "http://172.17.64.116:8080",
   headers: {
-    Authorization: `Bearer {DOCKTALK_API_ACCESS_TOKEN}`,
+    Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6ImFjY2VzcyIsImVtYWlsIjoidGVzdDFAZ21haWwuY29tIiwicm9sZSI6IlJPTEVfTUFOQUdFUiIsImlhdCI6MTc0NDE4MTI2MiwiZXhwIjoxNzQ0MTgzMDYyfQ.nNBt4xxN9bI_OqN-Z-IxAF1KY_GFkUMmKhhvV9yKS8M`,
   },
 });
 
-export { axiosInstance };
+const axiosInstanceNoHeader = axios.create({
+  baseURL: "http://172.17.64.116:8080",
+});
+export { axiosInstanceNoHeader, axiosInstanceWithHeader };
