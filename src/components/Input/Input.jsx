@@ -13,6 +13,7 @@ const Input = ({ type, title, placeholder, value, onChange, onBlur }) => {
         onChange={onChange}
         onBlur={onBlur}
         placeholder={placeholder}
+        required
       />
     </div>
   );
