@@ -49,7 +49,7 @@ const Signup = () => {
       const authCode = await getAuthCode(email);
       console.log("보낸 메일:", email);
       console.log("받은 코드", authCode.data.result);
-      setServerAuthCode(authCode);
+      setServerAuthCode(authCode.data.result);
     } catch (e) {
       console.log(e);
     }
@@ -60,16 +60,36 @@ const Signup = () => {
     if (userAuthCode === serverAuthCode) {
       console.log("유저,서버 인증코드 일치 성공~!");
       setDisplaySignupBtn(true);
-      return;
+    } else if (userAuthCode != serverAuthCode) {
+      console.log("유저,서버 인증코드 불일치. 유저코드: ", userAuthCode);
+      console.log("서버코드: ", serverAuthCode);
     }
   };
 
-  //   const handleSubmit = async (e) => {
-  //     e.preventDefault();
-  //     try{
-  //         // 이름 이메일 비밀번호 바디에 넣어서 회원가입 해주기
-  //     }
-  //   }
+  const signupapi = async (name, email, password) => {
+    try {
+      const res = await axiosInstanceNoHeader.post("/register/new", {
+        name: name,
+        email: email,
+        password: password,
+      });
+      console.log("회원가입 성공~!", res.data.result);
+      return res;
+    } catch (e) {
+      console.log("회원가입요청 실패~ㅠ", e);
+    }
+  };
+
+  const handleSignupSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const temp = await signupapi(name, email, password);
+      console.log("temp: ", temp);
+    } catch (e) {
+      console.log("handleSubmit에러", e);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center w-[1920px] h-[1080px] pb-[156px]">
       <Navbar />
@@ -92,7 +112,7 @@ const Signup = () => {
               </div>
               <form
                 action=""
-                onSubmit={handleSubmitAuthCode}
+                onSubmit={handleSignupSubmit}
                 className="w-full h-full flex flex-col justify-start items-start gap-9"
               >
                 <div className="">인풋을 감싸는 넓이 높이 지정 div</div>
@@ -120,7 +140,7 @@ const Signup = () => {
                 />
                 <Input
                   type={"password"}
-                  placeholder={"비밀번호를 다시 입력해주세요."}
+                  placeholder={"비밀번호를 한번 더 입력해주세요."}
                   title={"비밀번호 확인"}
                   value={passwordCheck}
                   onChange={(e) => setPasswordCheck(e.target.value)}
@@ -137,8 +157,9 @@ const Signup = () => {
                 )}
                 {!displaySignupBtn && (
                   <button
-                    type="submit"
+                    type="button"
                     id="btnSubmitAuth"
+                    onClick={handleSubmitAuthCode}
                     className="w-full h-full cursor-pointer"
                   >
                     <Button
