@@ -2,37 +2,43 @@ import React, { useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import CloseOn from "../../assets/icons/Close/CloseOn";
 import Button from "../../components/Button/Button";
-
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const acessToken = async (email, password) => {
+  const getLoginToken = async (email, password) => {
     try {
       const res = await axiosInstanceNoHeader.post("/login", {
         email: email,
         password: password,
       });
       console.log("로그인 성공~!\n", res);
-      return res.headers.access;
+      return res.headers;
     } catch (error) {
       console.log("로그인 실패~!\n", error);
       return error;
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = await acessToken(email, password);
+      const res = await getLoginToken(email, password);
       console.log("보낸 바디:", email, password);
-      console.log("받은 토큰", token);
-      //setToken해야될듯 리턴받은거로
+      console.log("받은 응답", res);
+
+      localStorage.setItem("accessToken", res.access);
+      // 토큰을 로컬 스토리지에 저장
+      localStorage.setItem("refreshToken", res.refresh);
+
+      console.log("axiosInstanceNoHeader", axiosInstanceNoHeader);
     } catch (error) {
       console.log("에러 발생", error);
     }
   };
+
   return (
     <div className="flex flex-col items-center w-[1920px] h-[1080px] pb-[156px]">
       <Navbar />

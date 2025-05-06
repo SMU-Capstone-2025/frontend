@@ -60,7 +60,7 @@ const Signup = () => {
     if (userAuthCode === serverAuthCode) {
       console.log("유저,서버 인증코드 일치 성공~!");
       setDisplaySignupBtn(true);
-    } else if (userAuthCode != serverAuthCode) {
+    } else if (userAuthCode !== serverAuthCode) {
       console.log("유저,서버 인증코드 불일치. 유저코드: ", userAuthCode);
       console.log("서버코드: ", serverAuthCode);
     }
