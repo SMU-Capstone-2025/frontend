@@ -23,10 +23,31 @@ const ProjectListPreview = () => {
 
   return (
     <S.Container>
-      {/* {projects.map((project, idx) => (
+      {projects.map((project, idx) => (
         <ProjectCard key={idx} project={project} />
-      ))} */}
-      <ProjectCard />
+      ))}
+      {/* <ProjectCard id="5" />
+      <ProjectCard id="6" />
+      <ProjectCard id="7" />
+      <ProjectCard id="8" />
+      <ProjectCard id="9" />
+      <ProjectCard id="10" />
+      <ProjectCard id="11" />
+      <ProjectCard id="12" />
+      <ProjectCard id="13" />
+      <ProjectCard id="14" />
+      <ProjectCard id="15" />
+      <ProjectCard id="16" />
+      <ProjectCard id="16" />
+      <ProjectCard id="17" />
+      <ProjectCard id="18" />
+      <ProjectCard id="19" />
+      <ProjectCard id="20" />
+      <ProjectCard id="21" />
+      <ProjectCard id="22" />
+      <ProjectCard id="23" />
+      <ProjectCard id="24" />
+      <ProjectCard id="25" /> */}
     </S.Container>
   );
 };
