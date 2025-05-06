@@ -32,12 +32,12 @@ axiosInstanceNoHeader.interceptors.response.use(
       originalRequest._retry = true;
 
       // refresh 요청 자체가 실패한 경우
-      // if (originalRequest.url.includes("/token/refresh")) {
-      //   localStorage.removeItem("accessToken");
-      //   localStorage.removeItem("refreshToken");
-      //   window.location.href = "/login"; // 로그인 페이지로 리다이렉트
-      //   return Promise.reject(error);
-      // }
+      if (originalRequest.url.includes("/token/refresh")) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login"; // 로그인 페이지로 리다이렉트
+        return Promise.reject(error);
+      }
 
       // 이미 refresh 진행 중이면 해당 Promise 기다림
       if (!refreshPromise) {
@@ -60,7 +60,7 @@ axiosInstanceNoHeader.interceptors.response.use(
           .then((res) => {
             console.log("refreshToken 성공", res);
 
-            const { access, refresh } = res.data;
+            const { access, refresh } = res.headers;
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
             return access;
@@ -68,8 +68,9 @@ axiosInstanceNoHeader.interceptors.response.use(
           .catch((err) => {
             console.log("refreshToken 실패", err);
             // refresh 실패 시 토큰 제거
-            // localStorage.removeItem("accessToken");
-            // localStorage.removeItem("refreshToken");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            window.location.href = "/login"; // 로그인 페이지로 리다이렉트
             throw err;
           })
           .finally(() => {
