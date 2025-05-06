@@ -7,7 +7,11 @@ const ScheduleListPreview = () => {
   const [schedules, setSchedules] = useState([]);
   const schedulePreview = async () => {
     try {
-      const res = await axiosInstanceNoHeader.get("/task/list/get");
+      const res = await axiosInstanceNoHeader.get("/task/list/get", {
+        params: {
+          projectId: "67f917f2faed8a4ff3f02bc3",
+        },
+      });
       console.log("일정 불러오기 성공~!\n", res);
       setSchedules(res.data.result);
       return res;
