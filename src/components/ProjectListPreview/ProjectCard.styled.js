@@ -15,7 +15,10 @@ const CardCover = styled.div`
   height: 59px;
   flex-shrink: 0;
   border-radius: 12px 12px 0px 0px;
-  background: var(--blue-400, #5ba7f7);
+  background: ${(props) =>
+    props.color === "blue"
+      ? "var(--blue-400, #5ba7f7)"
+      : "var(--yellow-300, #FDE047)"};
   z-index: 2;
 `;
 
@@ -39,8 +42,14 @@ const CardHeaderIcon = styled.div`
   align-items: center;
   border-radius: 500px;
   border: 1px solid var(--0, #fff);
-  background: var(--blue-100, #d5e8fc);
-  color: var(--blue-500, #3191f2);
+  background: ${(props) =>
+    props.color === "blue"
+      ? "var(--blue-100, #D5E8FC)"
+      : "var(--yellow-100, #FEF9C3)"};
+  color: ${(props) =>
+    props.color === "blue"
+      ? "var(--blue-500, #3191F2)"
+      : "var(--yellow-500, #EAB308)"};
   text-align: center;
   font-family: Pretendard;
   font-size: 28px;

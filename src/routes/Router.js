@@ -7,8 +7,9 @@ import DocumentDetailPage from "../pages/wireframe-project/document-page/Documen
 import Settings from "../pages/wireframe-project/settings-page/Settings";
 import WorkBoard from "../pages/wireframe-project/workboard-page/WorkBoard";
 import Document from "../pages/wireframe-project/document-page/Document";
-import DocumentCreatePage from "../pages/wireframe-project/document-page/DocumentCreatePage";
-import DocumentMainPage from "../pages/wireframe-project/document-page/DocumentMainPage";
+import Login from "../pages/login/Login";
+import Signup from "../pages/Signup/Signup";
+
 
 const Router = [
   {
@@ -16,6 +17,8 @@ const Router = [
     element: <RootLayout />,
     children: [
       { index: true, element: <DoctalkMain /> },
+      { path: "login", element: <Login /> },
+      { path: "signup", element: <Signup /> },
       {
         path: "project",
         element: <Project />,
