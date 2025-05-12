@@ -1,0 +1,14 @@
+/* 날짜 셀 크기 조정 */
+.fc .fc-daygrid-day-frame {
+  height: 176px !important;
+  width: 142px !important;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+/* 이벤트 (To-do) 스타일 */
+.fc .fc-event {
+  @apply w-full h-[73px] bg-gray-100 text-gray-800 text-sm font-medium rounded px-2 py-1 overflow-hidden whitespace-nowrap text-ellipsis;
+  border: none !important;
+  margin-top: 4px;
+}

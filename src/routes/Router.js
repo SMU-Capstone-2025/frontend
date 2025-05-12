@@ -9,7 +9,9 @@ import WorkBoard from "../pages/wireframe-project/workboard-page/WorkBoard";
 import Document from "../pages/wireframe-project/document-page/Document";
 import Login from "../pages/login/Login";
 import Signup from "../pages/Signup/Signup";
-
+import Mypage from "../pages/Mypage/Mypage";
+import DocumentMainPage from "../pages/wireframe-project/document-page/DocumentMainPage";
+import DocumentCreatePage from "../pages/wireframe-project/document-page/DocumentCreatePage";
 
 const Router = [
   {
@@ -19,6 +21,7 @@ const Router = [
       { index: true, element: <DoctalkMain /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
+      { path: "mypage", element: <Mypage /> },
       {
         path: "project",
         element: <Project />,
