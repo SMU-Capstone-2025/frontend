@@ -9,7 +9,8 @@ import WorkBoard from "../pages/wireframe-project/workboard-page/WorkBoard";
 import Document from "../pages/wireframe-project/document-page/Document";
 import Login from "../pages/login/Login";
 import Signup from "../pages/Signup/Signup";
-
+import DocumentCreatePage from "../pages/wireframe-project/document-page/DocumentCreatePage";
+import DocumentMainPage from "../pages/wireframe-project/document-page/DocumentMainPage";
 
 const Router = [
   {
