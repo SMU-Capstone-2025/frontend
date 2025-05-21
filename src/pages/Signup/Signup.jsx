@@ -74,9 +74,13 @@ const Signup = () => {
         password: password,
       });
       console.log("회원가입 성공~!", res.data.result);
+      alert("회원가입이 완료되었습니다");
+      window.location.href = "/login";
       return res;
     } catch (e) {
       console.log("회원가입요청 실패~ㅠ", e);
+      alert("회원가입에 실패했습니다");
+      window.location.href = "/signup";
     }
   };
 
@@ -100,7 +104,7 @@ const Signup = () => {
         </S.SidebarOverlay>
       )} // 메인화면에서 빼 온 부분 */}
       <div className="flex w-[1280px] h-[860px] py-12 flex-col justify-start items-center gap-12">
-        <div className="flex w-[700.92px] h-[760px] relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 py-[105px] px-24">
+        <div className="flex w-[700.92px] h-fit relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 py-[105px] px-24">
           <div className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer">
             <CloseOn />
           </div>
@@ -115,7 +119,7 @@ const Signup = () => {
                 onSubmit={handleSignupSubmit}
                 className="w-full h-full flex flex-col justify-start items-start gap-9"
               >
-                <div className="">인풋을 감싸는 넓이 높이 지정 div</div>
+                {/* <div className="">인풋을 감싸는 넓이 높이 지정 div</div> */}
                 <Input
                   type={"text"}
                   placeholder={"성함을 입력해주세요."}
@@ -182,6 +186,15 @@ const Signup = () => {
                     />
                   </button>
                 )}
+                <div className="self-stretch text-center justify-start">
+                  <span class="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
+                    가입한 계정이 있으신가요?{" "}
+                  </span>
+                  <span class="cursor-pointer text-sky-700 text-sm font-normal font-['Pretendard'] leading-tight">
+                    {/* <a href="/"></a> */}
+                    비밀번호 찾기
+                  </span>
+                </div>
               </form>
             </div>
           </div>

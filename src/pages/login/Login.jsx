@@ -15,9 +15,13 @@ const Login = () => {
         password: password,
       });
       console.log("로그인 성공~!\n", res);
+      alert("로그인 되었습니다");
+      window.location.href = "/";
       return res.headers;
     } catch (error) {
       console.log("로그인 실패~!\n", error);
+      alert("로그인에 실패했습니다");
+      window.location.href = "/login";
       return error;
     }
   };
@@ -78,7 +82,7 @@ const Login = () => {
                           type="text"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          placeholder="이름 혹은 이메일"
+                          placeholder="이메일을 입력해주세요"
                           required
                         />
                       </div>
@@ -91,18 +95,33 @@ const Login = () => {
                           type="password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          placeholder="8자리 이상"
+                          placeholder="8자리 이상의 비밀번호를 입력해주세요"
                           required
                         />
                       </div>
                     </div>
-                    <div className="flex justify-start items-center gap-4">
-                      로그인 정보기억하기 / 비밀번호를 잊어버리셨나요?
+                    <div className="w-full flex justify-between items-center gap-4">
+                      <label
+                        htmlFor="rememberLoginInfo"
+                        className="flex justify-start items-center gap-2 cursor-pointer"
+                      >
+                        <input
+                          id="rememberLoginInfo"
+                          type="checkbox"
+                          className="w-4 h-4 cursor-pointer"
+                        />
+                        <div className="justify-start text-gray-800 text-base font-semibold font-['Pretendard']">
+                          로그인 정보 기억하기
+                        </div>
+                      </label>
+                      <div className="justify-end cursor-pointer text-sky-600 text-sm font-normal font-['Pretendard'] leading-tight">
+                        비밀번호를 잊어버리셨나요?
+                      </div>
                     </div>
                   </div>
                   <div className="w-full flex flex-col justify-start items-start gap-11">
                     {/* 소셜로그인 버튼과 로그인버튼 감싸는 박스*/}
-                    구글 카톡 깃허브
+                    {/* 구글 카톡 깃허브 */}
                     <button
                       type="submit"
                       className="w-full h-12 cursor-pointer"
@@ -113,6 +132,14 @@ const Login = () => {
                         text={"로그인 하기"}
                       />
                     </button>
+                  </div>
+                  <div className="self-stretch text-center justify-start">
+                    <span class="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
+                      아직 계정이 없나요?{" "}
+                    </span>
+                    <span class="cursor-pointer text-sky-600 text-sm font-normal font-['Pretendard'] leading-tight">
+                      <a href="/signup"> 회원가입 하기</a>
+                    </span>
                   </div>
                 </form>
               </div>
