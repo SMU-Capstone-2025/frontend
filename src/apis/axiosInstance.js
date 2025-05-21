@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const axiosInstanceNoHeader = axios.create({
-  baseURL: "http://35.202.85.190:8080/",
+  baseURL: "http://35.202.85.190:8080",
+  // baseURL: BASE_URL,
 });
 
 const plainAxios = axios.create(); // refresh에만 쓰는 인스턴스
