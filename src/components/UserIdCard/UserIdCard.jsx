@@ -1,6 +1,25 @@
-import React from "react";
+import React, { use, useEffect, useState } from "react";
+import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
 const UserIdCard = () => {
+  const [userInfo, setUserInfo] = useState({});
+
+  const getUserIdInfo = async () => {
+    try {
+      const res = await axiosInstanceNoHeader.get("/mypage/user");
+      console.log("유저 정보 가져오기 성공~!", res);
+      setUserInfo(res.data.result);
+      return res;
+    } catch (error) {
+      console.log("유저 정보 가져오기 실패~!\n", error);
+      return error;
+    }
+  };
+
+  useEffect(() => {
+    getUserIdInfo();
+  });
+
   return (
     <div className="w-60 h-[100] p-3.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-200 flex flex-col justify-start items-center gap-2.5 overflow-hidden">
       <div className=" w-full flex justify-start items-center gap-2">
@@ -27,7 +46,7 @@ const UserIdCard = () => {
         </div>
       </div>
       <div className="text-center justify-center text-gray-400 text-xs font-bold font-['Pretendard'] leading-none">
-        사용자 정보 수정
+        프로필 이동
       </div>
     </div>
   );
