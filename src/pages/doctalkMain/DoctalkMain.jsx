@@ -8,7 +8,7 @@ import Layout from "../../components/NavbarLayout/Layout";
 const DoctalkMain = () => {
   return (
     <Layout>
-      <div className="flex flex-col justify-center items-center gap-12 w-[1280px] pt-12 relative top-3/4 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-15">
+      <div className="w-full max-w-[1280px] flex flex-col justify-center items-center gap-12 pt-16 px-4 z-10">
         <p className="text-gray-800 text-center font-pretendard text-2xl font-bold leading-[42px] tracking-[-1.2px]">
           독톡님, 오늘도 힘차게 시작해볼까요!
         </p>

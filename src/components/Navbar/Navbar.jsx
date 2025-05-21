@@ -23,7 +23,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   };
 
   return (
-    <div className="flex justify-between items-center w-full h-16 border-b border-gray-200 bg-white px-5 relative z-10">
+    <div className="fixed top-0 left-0 w-full h-16 flex justify-between items-center border-b border-gray-200 bg-white px-5 z-50">
       <div className="flex items-center gap-5">
         <div className="w-6 h-6 cursor-pointer" onClick={handleSidebarOpen}>
           <SidebarOn />

@@ -11,18 +11,24 @@ const Layout = ({ children }) => {
   };
 
   return (
-    <div className="relative flex flex-col justify-start items-center w-full h-full min-h-screen bg-gray-50">
+    <div className="relative w-full min-h-screen bg-gray-50">
       <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
       {sidebarOpen && (
-        <div className="flex w-full h-full">
-          <Sidebar />
+        <>
+          <div className="fixed top-16 left-0 z-50">
+            <Sidebar />
+          </div>
           <div
-            className="w-full h-full bg-black bg-opacity-50 relative z-40 cursor-pointer"
+            className="fixed top-16 left-0 w-full h-[calc(100%-64px)] bg-black bg-opacity-50 z-40 cursor-pointer"
             onClick={handleSidebarOpen}
           />
-        </div>
+        </>
       )}
-      <main className="flex-grow">{children}</main>
+
+      <main className="pt-16 flex flex-col items-center z-10 relative">
+        {children}
+      </main>
     </div>
   );
 };
