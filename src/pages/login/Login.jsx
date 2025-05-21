@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import CloseOn from "../../assets/icons/Close/CloseOn";
 import Button from "../../components/Button/Button";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
+import Layout from "../../components/NavbarLayout/Layout";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -44,15 +45,8 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-[1920px] h-[1080px] pb-[156px]">
-      <Navbar />
-      {/* {sidebarOpen && (
-        <S.SidebarOverlay>
-          <Sidebar />
-          <S.OutSidebar onClick={handleSidebarOpen} />
-        </S.SidebarOverlay>
-      )} // 메인화면에서 빼 온 부분 */}
-      <div className="flex w-[1280px] h-[860px] py-12 flex-col justify-start items-center gap-12">
+    <Layout>
+      <div className="flex w-[1280px] h-[860px] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 py-12 flex-col justify-start items-center gap-12 z-15">
         <div className="flex w-[700.92px] h-[760px] relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 overflow-hidden py-[105px] px-24">
           <div className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer">
             <CloseOn />
@@ -147,7 +141,7 @@ const Login = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

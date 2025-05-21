@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import * as S from "./Sidebar.styled";
 import PlusOff from "../../assets/icons/Plus/PlusOff";
 import ArrowRightOff from "../../assets/icons/ArrowRight/ArrowRightOff";
 
 const Sidebar = () => {
+  const [newProjectCreateModalOpen, setNewProjectCreateModalOpen] =
+    useState(false);
+  const handleNewProjectCreateModalOpen = () => {
+    setNewProjectCreateModalOpen(!newProjectCreateModalOpen);
+    console.log("프로젝트생성모달", newProjectCreateModalOpen);
+  };
   return (
     <S.Container>
       <S.ProjectContainer>
         <S.ProjectHeader>
           <S.HeaderText>Project</S.HeaderText>
-          <PlusOff />
+          <div
+            className="hover:cursor-pointer"
+            onClick={handleNewProjectCreateModalOpen}
+          >
+            <PlusOff />
+            {/* //onClick={handleNewProjectCreateModalOpen}을 PlusOff에 하면 작동하지않음 */}
+          </div>
         </S.ProjectHeader>
         <S.ProjectList>
           <S.ProjectListContent>
