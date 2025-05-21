@@ -10,7 +10,7 @@ import PersonOn from "../../assets/icons/Person/PersonOn";
 const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   const handleSidebarOpen = () => {
     setSidebarOpen(!sidebarOpen);
-    console.log(sidebarOpen);
+    console.log("sidebarOpen", sidebarOpen);
   };
 
   return (
