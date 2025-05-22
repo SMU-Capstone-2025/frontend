@@ -14,19 +14,34 @@ const Signup = () => {
   const [serverAuthCode, setServerAuthCode] = useState("");
   const [userAuthCode, setUserAuthCode] = useState("");
   const [displaySignupBtn, setDisplaySignupBtn] = useState(false);
+  const [emailSuccess, setEmaiSuccess] = useState(null);
+  const [passwordSuccess, setpasswordSuccess] = useState(null);
+  const [passwordCheckSuccess, setpasswordCheckSuccess] = useState(null);
+  const [userAuthCodeSuccess, setUserAuthCodeSuccess] = useState(null);
+
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const getEmailAvailCheck = async (email) => {
-    try {
-      const res = await axiosInstanceNoHeader.get("/register/avail-check", {
-        params: {
-          email: email,
-        },
-      });
-      console.log("이메일 중복 체크 성공~!사용가능한 이메일입니다\n", res);
-      return res;
-    } catch (error) {
-      console.log("이메일 중복 체크 실패~!\n", error.response.data.message);
-      return error;
+    const isValidEmail = validateEmail(email);
+
+    if (!isValidEmail) {
+      console.log("이메일 유효성 검사 실패", isValidEmail);
+      setEmaiSuccess(false);
+    } else {
+      try {
+        const res = await axiosInstanceNoHeader.get("/register/avail-check", {
+          params: {
+            email: email,
+          },
+        });
+        console.log("이메일 중복 체크 성공~!사용가능한 이메일입니다\n", res);
+        setEmaiSuccess(true);
+        return res;
+      } catch (error) {
+        console.log("이메일 중복 체크 실패~!\n", error.response.data.message);
+        setEmaiSuccess(false);
+        return error;
+      }
     }
   };
 
@@ -60,10 +75,12 @@ const Signup = () => {
     // 인증번호 체크
     if (userAuthCode === serverAuthCode) {
       console.log("유저,서버 인증코드 일치 성공~!");
+      setUserAuthCodeSuccess(true);
       setDisplaySignupBtn(true);
     } else if (userAuthCode !== serverAuthCode) {
       console.log("유저,서버 인증코드 불일치. 유저코드: ", userAuthCode);
       console.log("서버코드: ", serverAuthCode);
+      setUserAuthCodeSuccess(false);
     }
   };
 
@@ -128,6 +145,7 @@ const Signup = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={() => getEmailAvailCheck(email)}
+                  onSuccess={emailSuccess}
                 />
                 <Input
                   type={"password"}
@@ -142,6 +160,7 @@ const Signup = () => {
                   title={"비밀번호 확인"}
                   value={passwordCheck}
                   onChange={(e) => setPasswordCheck(e.target.value)}
+                  // onSuccess={passwordSuccess}
                 />
                 {serverAuthCode && (
                   <Input
@@ -151,6 +170,7 @@ const Signup = () => {
                     value={userAuthCode}
                     onChange={(e) => setUserAuthCode(e.target.value)}
                     onBlur={() => checkAuthCode(userAuthCode)}
+                    onSuccess={userAuthCodeSuccess}
                   />
                 )}
                 {!displaySignupBtn && (
