@@ -160,7 +160,14 @@ const Signup = () => {
                   title={"비밀번호 확인"}
                   value={passwordCheck}
                   onChange={(e) => setPasswordCheck(e.target.value)}
-                  // onSuccess={passwordSuccess}
+                  onBlur={() => {
+                    if (password === passwordCheck) {
+                      setpasswordCheckSuccess(true);
+                    } else {
+                      setpasswordCheckSuccess(false);
+                    }
+                  }}
+                  onSuccess={passwordCheckSuccess}
                 />
                 {serverAuthCode && (
                   <Input
