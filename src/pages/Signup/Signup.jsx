@@ -207,16 +207,16 @@ const Signup = () => {
                     />
                   </button>
                 )}
-                <div className="self-stretch text-center justify-start">
-                  <span class="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
-                    가입한 계정이 있으신가요?{" "}
-                  </span>
-                  <span class="cursor-pointer text-sky-700 text-sm font-normal font-['Pretendard'] leading-tight">
-                    {/* <a href="/"></a> */}
-                    비밀번호 찾기
-                  </span>
-                </div>
               </form>
+              <div className="self-stretch text-center justify-start">
+                <span class="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
+                  가입한 계정이 있으신가요?{" "}
+                </span>
+                <span class="cursor-pointer text-sky-700 text-sm font-normal font-['Pretendard'] leading-tight">
+                  {/* <a href="/"></a> */}
+                  비밀번호 찾기
+                </span>
+              </div>
             </div>
           </div>
         </div>
