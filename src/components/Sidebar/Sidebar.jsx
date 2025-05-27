@@ -10,7 +10,7 @@ const Sidebar = () => {
     setNewProjectCreateModalOpen(!newProjectCreateModalOpen);
     console.log("프로젝트생성모달", newProjectCreateModalOpen);
   };
-  const [userProjectListInfo, setUserProjectListInfo] = useState(null);
+  const [userProjectListInfo, setUserProjectListInfo] = useState([]);
 
   const getUserProjectListInfo = async () => {
     try {
@@ -52,8 +52,9 @@ const Sidebar = () => {
               <div className="flex w-6 h-6 justify-center items-center rounded-full border border-white bg-[#d5e8fc] text-[#3191f2] text-center font-['Pretendard'] text-xs font-semibold leading-[1.3] tracking-[-0.56px]">
                 {proj.name[0].toUpperCase()}
               </div>
-              <div className="flex flex-start  w-[164px] text-[#1f2937] font-['Pretendard'] text-sm font-semibold leading-[1.4] tracking-[-0.14px]"></div>
-              {proj.name}
+              <div className="flex flex-start w-[164px] text-[#1f2937] font-['Pretendard'] text-sm font-semibold leading-[1.4] tracking-[-0.14px]">
+                {proj.name}
+              </div>
             </div>
           ))}
         </div>
