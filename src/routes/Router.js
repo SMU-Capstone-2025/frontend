@@ -12,6 +12,7 @@ import Signup from "../pages/Signup/Signup";
 import Mypage from "../pages/Mypage/Mypage";
 import DocumentMainPage from "../pages/wireframe-project/document-page/DocumentMainPage";
 import DocumentCreatePage from "../pages/wireframe-project/document-page/DocumentCreatePage";
+import PasswordReset from "../pages/PasswordReset/PasswordReset";
 
 const Router = [
   {
@@ -22,6 +23,7 @@ const Router = [
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
       { path: "mypage", element: <Mypage /> },
+      { path: "password-reset", element: <PasswordReset /> },
       {
         path: "project",
         element: <Project />,
