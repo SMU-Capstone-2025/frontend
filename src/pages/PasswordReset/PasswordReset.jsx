@@ -19,9 +19,33 @@ const PasswordReset = () => {
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handlePasswordResetSubmit = async (e) => {};
+  const handlePasswordResetApi = async (password, passwordCheck) => {
+    try {
+      const res = await axiosInstanceNoHeader.put("/mypage/password/new", {
+        password: password,
+        passwordCheck: passwordCheck,
+      });
+      console.log("비밀번호 재설정 성공~!", res);
+      alert("비밀번호가 재설정되었습니다.");
+      return res;
+    } catch (err) {
+      console.log("비밀번호 재설정 실패~!", err);
+      return err;
+    }
+  };
 
-  const getEmailAvailCheck = async (email) => {
+  const handlePasswordResetSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const temp = await handlePasswordResetApi(password, passwordCheck);
+      console.log("보낸 바디:", password, passwordCheck);
+      console.log("받은 응답", temp);
+    } catch (error) {
+      console.log("에러 발생", error);
+    }
+  };
+
+  const getEmailAvailCheck = async (name, email) => {
     const isValidEmail = validateEmail(email);
 
     if (!isValidEmail) {
@@ -29,16 +53,23 @@ const PasswordReset = () => {
       setEmaiSuccess(false);
     } else {
       try {
-        const res = await axiosInstanceNoHeader.get("/register/avail-check", {
+        const res = await axiosInstanceNoHeader.get("/mypage/email/avail", {
           params: {
+            name: name,
             email: email,
           },
         });
-        console.log("이메일 중복 체크 성공~!사용가능한 이메일입니다\n", res);
+        console.log(
+          "이메일 존재여부 확인 성공, db에 존재하는 계정입니다\n",
+          res
+        );
         setEmaiSuccess(true);
         return res;
       } catch (error) {
-        console.log("이메일 중복 체크 실패~!\n", error.response.data.message);
+        console.log(
+          "이메일 존재여부 확인 실패, db에 존재하지 않는 계정입니다~!\n",
+          error
+        );
         setEmaiSuccess(false);
         return error;
       }
@@ -114,7 +145,7 @@ const PasswordReset = () => {
                   title={"아이디"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => getEmailAvailCheck(email)}
+                  onBlur={() => getEmailAvailCheck(name, email)}
                   onSuccess={emailSuccess}
                 />
                 {!displayPasswordResetBtn && (

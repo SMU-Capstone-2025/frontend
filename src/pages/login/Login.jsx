@@ -109,7 +109,7 @@ const Login = () => {
                         </div>
                       </label>
                       <div className="justify-end cursor-pointer text-sky-600 text-sm font-normal font-['Pretendard'] leading-tight">
-                        비밀번호를 잊어버리셨나요?
+                        <a href="/password-reset">비밀번호를 잊어버리셨나요?</a>
                       </div>
                     </div>
                   </div>
@@ -129,7 +129,7 @@ const Login = () => {
                   </div>
                   <div className="self-stretch text-center justify-start">
                     <span class="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
-                      아직 계정이 없나요?{" "}
+                      아직 계정이 없으신가요?{" "}
                     </span>
                     <span class="cursor-pointer text-sky-600 text-sm font-normal font-['Pretendard'] leading-tight">
                       <a href="/signup"> 회원가입 하기</a>
