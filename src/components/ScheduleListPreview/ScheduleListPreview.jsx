@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import * as S from "./ScheduleListPreview.styled";
 import ScheduleCard from "./ScheduleCard";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
 const ScheduleListPreview = () => {
   const [schedules, setSchedules] = useState([]);
+  const [deadline, setDeadline] = useState("");
   const schedulePreview = async () => {
     try {
       const res = await axiosInstanceNoHeader.get("/task/list/get", {
@@ -26,17 +26,17 @@ const ScheduleListPreview = () => {
   }, []);
 
   return (
-    <S.Container>
-      <S.DateWrapper>
-        <S.DdayText>D-DAY</S.DdayText>
-        <S.DateText>00월 00일 월요일</S.DateText>
-      </S.DateWrapper>
-      <S.CardList>
-        <ScheduleCard />
-        <ScheduleCard />
-        <ScheduleCard />
-      </S.CardList>
-    </S.Container>
+    <div className="grid grid-cols-2 gap-6 self-stretch flex-wrap">
+      <div>
+        <span className="font-bold text-lg">D-DAY</span>
+        <span className="ml-2 text-base">00월 00일 월요일</span>
+      </div>
+      <div className="col-span-2">
+        {schedules.map((schedule, idx) => (
+          <ScheduleCard key={idx} schedule={schedule} />
+        ))}
+      </div>
+    </div>
   );
 };
 
