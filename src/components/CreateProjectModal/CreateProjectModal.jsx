@@ -1,8 +1,9 @@
 import React from "react";
+import CloseOn from "../../assets/icons/Close/CloseOn";
 
 const CreateProjectModal = () => {
   return (
-    <div className="flex w-full h-full justify-center items-center bg-black/50">
+    <div className="flex w-full h-full justify-center items-center bg-black/50 z-99">
       <div className="w-[550px] h-[550px] flex flex-col justify-center relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-200 overflow-hidden">
         <div className="w-10 h-10 absolute rounded-2xl right-[20px] top-[20px] cursor-pointer">
           <CloseOn />

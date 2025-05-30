@@ -3,9 +3,10 @@ import PlusOff from "../../assets/icons/Plus/PlusOff";
 import ArrowRightOff from "../../assets/icons/ArrowRight/ArrowRightOff";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
-const Sidebar = () => {
-  const [newProjectCreateModalOpen, setNewProjectCreateModalOpen] =
-    useState(false);
+const Sidebar = ({
+  newProjectCreateModalOpen,
+  setNewProjectCreateModalOpen,
+}) => {
   const handleNewProjectCreateModalOpen = () => {
     setNewProjectCreateModalOpen(!newProjectCreateModalOpen);
     console.log("프로젝트생성모달", newProjectCreateModalOpen);
@@ -40,7 +41,6 @@ const Sidebar = () => {
             onClick={handleNewProjectCreateModalOpen}
           >
             <PlusOff />
-            {/* //onClick={handleNewProjectCreateModalOpen}을 PlusOff에 하면 작동하지않음 */}
           </div>
         </div>
         <div className="flex w-[200px] flex-col justify-center items-center gap-y-[14px] flex-shrink-0">

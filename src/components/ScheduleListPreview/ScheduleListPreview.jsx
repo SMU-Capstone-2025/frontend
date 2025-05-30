@@ -35,7 +35,7 @@ const ScheduleListPreview = ({ projectId }) => {
           00월 00일 월요일
         </span>
       </div>
-      <div className="flex flex-col items-start gap-1.5">
+      <div className="w-full flex flex-col items-start gap-1.5">
         {schedules.map((schedule, idx) => (
           <ScheduleCard key={idx} schedule={schedule} />
         ))}
