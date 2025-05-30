@@ -19,9 +19,10 @@ const PasswordReset = () => {
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handlePasswordResetApi = async (password, passwordCheck) => {
+  const handlePasswordResetApi = async (email, password, passwordCheck) => {
     try {
       const res = await axiosInstanceNoHeader.put("/mypage/password/new", {
+        email: email,
         password: password,
         passwordCheck: passwordCheck,
       });
@@ -77,10 +78,8 @@ const PasswordReset = () => {
   };
   const getAuthCode = async (email) => {
     try {
-      const res = await axiosInstanceNoHeader.get("/register/mail-check", {
-        params: {
-          email: email,
-        },
+      const res = await axiosInstanceNoHeader.post("/mypage/email/check", {
+        email: email,
       });
       console.log("인증번호 받기 성공~!", res);
       return res;
@@ -94,7 +93,7 @@ const PasswordReset = () => {
     try {
       const authCode = await getAuthCode(email);
       console.log("보낸 메일:", email);
-      console.log("받은 코드", authCode.data.result);
+      console.log("받은 코드", authCode);
       setServerAuthCode(authCode.data.result);
     } catch (e) {
       console.log(e);
@@ -212,74 +211,13 @@ const PasswordReset = () => {
                     />
                   </button>
                 )}
-                {/* <Input
-                  type={"password"}
-                  placeholder={"비밀번호를 입력해주세요."}
-                  title={"비밀번호"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <Input
-                  type={"password"}
-                  placeholder={"비밀번호를 한번 더 입력해주세요."}
-                  title={"비밀번호 확인"}
-                  value={passwordCheck}
-                  onChange={(e) => setPasswordCheck(e.target.value)}
-                  onBlur={() => {
-                    if (password === passwordCheck) {
-                      setpasswordCheckSuccess(true);
-                    } else {
-                      setpasswordCheckSuccess(false);
-                    }
-                  }}
-                  onSuccess={passwordCheckSuccess}
-                />
-                {serverAuthCode && (
-                  <Input
-                    type={"text"}
-                    placeholder={"인증번호를 입력해주세요."}
-                    title={"인증번호"}
-                    value={userAuthCode}
-                    onChange={(e) => setUserAuthCode(e.target.value)}
-                    onBlur={() => checkAuthCode(userAuthCode)}
-                    onSuccess={userAuthCodeSuccess}
-                  />
-                )}
-                {!displaySignupBtn && (
-                  <button
-                    type="button"
-                    id="btnSubmitAuth"
-                    onClick={handleSubmitAuthCode}
-                    className="w-full h-full cursor-pointer"
-                  >
-                    <Button
-                      width={"100%"}
-                      height={"100%"}
-                      text={"인증번호 전송"}
-                    />
-                  </button>
-                )}
-                {displaySignupBtn && (
-                  <button
-                    type="submit"
-                    id="btnSubmitJoin"
-                    className="w-full h-full cursor-pointer"
-                  >
-                    <Button
-                      width={"100%"}
-                      height={"100%"}
-                      text={"회원가입하기"}
-                    />
-                  </button>
-                )} */}
               </form>
               <div className="self-stretch text-center justify-start">
                 <span class="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
                   아직 가입한 계정이 없으신가요?{" "}
                 </span>
                 <span class="cursor-pointer text-sky-700 text-sm font-normal font-['Pretendard'] leading-tight">
-                  {/* <a href="/"></a> */}
-                  회원가입하기
+                  <a href="/signup">회원가입하기</a>
                 </span>
               </div>
             </div>

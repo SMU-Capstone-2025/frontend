@@ -213,8 +213,7 @@ const Signup = () => {
                   가입한 계정이 있으신가요?{" "}
                 </span>
                 <span class="cursor-pointer text-sky-700 text-sm font-normal font-['Pretendard'] leading-tight">
-                  {/* <a href="/"></a> */}
-                  비밀번호 찾기
+                  <a href="/password-reset">비밀번호 재설정하기</a>
                 </span>
               </div>
             </div>
