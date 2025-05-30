@@ -2,17 +2,18 @@ import React, { useEffect, useState } from "react";
 import ScheduleCard from "./ScheduleCard";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
-const ScheduleListPreview = () => {
+const ScheduleListPreview = ({ projectId }) => {
   const [schedules, setSchedules] = useState([]);
-  const [deadline, setDeadline] = useState("");
+
   const schedulePreview = async () => {
+    if (!projectId) return; // projectId 없으면 요청하지 않음
     try {
       const res = await axiosInstanceNoHeader.get("/task/list/get", {
         params: {
-          projectId: "67f917f2faed8a4ff3f02bc3",
+          projectId: projectId,
         },
       });
-      console.log("일정 불러오기 성공~!\n", res);
+      console.log("일정 불러오기 성공~!\n", projectId, res);
       setSchedules(res.data.result);
       return res;
     } catch (error) {
@@ -23,15 +24,18 @@ const ScheduleListPreview = () => {
 
   useEffect(() => {
     schedulePreview();
-  }, []);
+  }, [projectId]);
 
   return (
-    <div className="grid grid-cols-2 gap-6 self-stretch flex-wrap">
+    <div className="flex flex-col w-full max-w-[588px] flex-wrap items-start">
       <div>
-        <span className="font-bold text-lg">D-DAY</span>
-        <span className="ml-2 text-base">00월 00일 월요일</span>
+        <span className="font-bold text-lg text-[#e40505]">D-DAY</span>
+        <span className="ml-2 text-base text-[#6d7280]">
+          {/* {schedules.deadline} */}
+          00월 00일 월요일
+        </span>
       </div>
-      <div className="col-span-2">
+      <div className="flex flex-col items-start gap-1.5">
         {schedules.map((schedule, idx) => (
           <ScheduleCard key={idx} schedule={schedule} />
         ))}

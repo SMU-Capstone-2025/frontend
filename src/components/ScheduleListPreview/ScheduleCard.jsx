@@ -2,12 +2,12 @@ import React from "react";
 import * as S from "./ScheduleCard.styled";
 import PersonOn from "../../assets/icons/Person/PersonOn";
 
-const ScheduleCard = () => {
+const ScheduleCard = ({ schedule }) => {
   return (
     <S.Container>
       <S.TextWrapper>
-        <S.ProjectTitle>project: A</S.ProjectTitle>
-        <S.ScheduleName>어쩌구저쩌는 일하기</S.ScheduleName>
+        <S.ProjectTitle>{schedule.title}</S.ProjectTitle>
+        <S.ScheduleName>{schedule.content}</S.ScheduleName>
       </S.TextWrapper>
       <S.ContributorsIconsWrapper>
         <S.ContributorsIcons right="-28px">
