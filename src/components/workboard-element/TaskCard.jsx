@@ -3,11 +3,7 @@ import ProfileBlue from "../../assets/icons/Profile/ProfileBlue";
 import ProfileYellow from "../../assets/icons/Profile/ProfileYellow";
 import ProfilePlus from "../../assets/icons/Profile/ProfilePlus";
 
-<<<<<<< HEAD
 const TaskCard = ({ title, content, date, editors, onClick, onDelete }) => {
-=======
-function TaskCard({ title, description, date, editors = [] }) {
->>>>>>> 4e16bf0c48a600fac6b161a70e0579a0f0375c93
   return (
     <div
       className="flex p-4 flex-col items-start gap-[10px] w-full rounded-[10px] border border-[var(--gray-200,#E5E7EB)] bg-white cursor-pointer"
