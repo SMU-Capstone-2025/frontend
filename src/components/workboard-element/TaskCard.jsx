@@ -37,18 +37,11 @@ const TaskCard = ({ title, content, date, editors, onClick, onDelete }) => {
             {date}
           </p>
 
-          {/* 에디터 표시 (최대 2명 + 초과 표시) */}
+          {/* 에디터 표시 */}
           <div className="flex items-center -space-x-[10px]">
-            {editors.slice(0, 2).map((editor, idx) => (
-              <div
-                key={idx}
-                title={editor}
-                className="w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-xs font-bold"
-              >
-                {editor[0].toUpperCase()}
-              </div>
-            ))}
-            {editors.length > 2 && <ProfilePlus />}
+            <ProfileBlue />
+            <ProfileYellow />
+            <ProfilePlus />
           </div>
         </div>
       </div>
