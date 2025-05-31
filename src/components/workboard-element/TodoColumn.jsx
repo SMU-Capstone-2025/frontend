@@ -1,95 +1,174 @@
-import React from "react";
-import { Modal } from "../index";
-import { useTaskColumn } from "../../hooks/useTaskColumn";
+import React, { useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
+import { Modal } from "../index";
 import PlusOn from "../../assets/icons/Plus/PlusOn";
+import PlusHover from "../../assets/icons/Plus/PlusHover";
+import TaskForm from "./TaskForm";
 
-const dummyTasks = [
-  {
-    id: 1,
-    title: "어떻게 이별까지 사랑하겠어, 널 사랑하는 거지 - 악동뮤지션",
-    description:
-      "어떻게 이별까지 사랑하겠어 널 사랑하는 거지 사랑이라는 이유로 서로를 포기하고 찢어질 것같이 아파할 수 없어 난 어떻게 내가 어떻게 너를 이후에 우리 바다처럼 깊은 사랑이 다 마를 때까지 기다리는 게 이별일 텐데 어떻게 내가 어떻게 너를 이후에 우리 바다처럼 깊은 사랑이 다 마를 때까지 기다리는 게 이별일 텐데",
-    date: "2024-03-21",
-  },
-  {
-    id: 2,
-    title: "더미 데이터2입니다.",
-    description:
-      "두 번째 작업은 마감일이 임박했어요! 두 번째 작업은 곧 마감됩니다. ",
-    date: "2024-03-22",
-  },
-  {
-    id: 3,
-    title: "더미 데이터3입니다.",
-    description: "세 번째 작업은 회의 준비와 관련 있습니다.",
-    date: "2024-03-23",
-  },
-];
+// TodoColumn의 입력 폼
+const initialTask = {
+  projectId: "67f917f2faed8a4ff3f02bc3",
+  title: "",
+  modifiedBy: "",
+  version: "",
+  content: "",
+  editors: [],
+  deadline: "",
+  status: "PENDING",
+};
 
-const TodoColumn = () => {
-  const {
-    tasks,
-    newTask,
-    setNewTask,
-    isModalOpen,
-    setIsModalOpen,
-    handleAddTask,
-  } = useTaskColumn(dummyTasks);
+const TodoColumn = ({
+  taskList,
+  autoSaveTask,
+  loadTaskDetails,
+  handleDelete,
+  error,
+  token,
+  changeStatus,
+}) => {
+  const [newTask, setNewTask] = useState(initialTask); // 현재 편집 중인 작업
+  const [originalTask, setOriginalTask] = useState(null); // 원본 작업(변경 감지)
+  const [newFiles, setNewFiles] = useState([]); // 첨부파일
+  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
+  const [isDeleting, setIsDeleting] = useState(false); // 삭제 여부
+  const [isHovered, setIsHovered] = useState(false); // 아이콘 hover
+
+  // 기존 작업 리스트에서 "PENDING" 상태만 가져옴
+  const filteredTasks = useMemo(() => {
+    return taskList.filter((task) => task.status === "PENDING");
+  }, [taskList]);
+
+  // 모달 열기 + 작업 초기 상태
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+    setNewTask(initialTask);
+  };
+
+  // 작업 카드 클릭 -> 작업 상세 정보 로딩 + 모달 열기
+  const handleCardClick = async (taskId) => {
+    const latestVersion = await loadTaskDetails(taskId); // api로 버전 불러옴
+    const taskInfo = taskList.find((task) => task.taskId === taskId); // 리스트에서 해당 task 찾기
+
+    if (!taskInfo) {
+      console.log("해당 taskId의 정보 없음");
+      return;
+    }
+
+    // 작업 정보 + 버전 정보 = mergedTask
+    const mergedTask = {
+      taskId: taskInfo.taskId,
+      projectId: taskInfo.projectId,
+      title: taskInfo.title,
+      deadline: taskInfo.deadline,
+      editors: latestVersion.editors || taskInfo.editors || [],
+      modifiedBy: latestVersion.modifiedBy || taskInfo.modifiedBy || "",
+      version: latestVersion.version || "1.0.0",
+      content: latestVersion.content || "",
+      status: taskInfo.status || "PENDING",
+      attachmentList: latestVersion.attachmentList || [],
+    };
+    setOriginalTask(mergedTask);
+    setNewTask(mergedTask);
+    setIsModalOpen(true);
+  };
+
+  // 슈정 여부 비교
+  const hasTaskChanged = (original, current) => {
+    if (!original) return false;
+    return (
+      original.title !== current.title ||
+      original.status !== current.status ||
+      original.content !== current.content ||
+      original.deadline !== current.deadline ||
+      original.attachmentList !== current.attachmentList
+    );
+  };
 
   return (
     <div className="flex flex-col w-full max-w-[410px] sm:flex-1 sm:min-w-[280px] p-4 justify-center items-center gap-3 rounded-[12px] border border-[var(--gray-200,#E5E7EB)] bg-[var(--yellow-50,#FEFCE8)]">
-      <div className="flex w-full flex-col items-start gap-4 shrink-0">
-        <div className="flex h-[30px] justify-between items-center w-full">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-[31.72px] px-3 py-2 justify-center items-center gap-2.5 rounded-md bg-[var(--yellow-200,#fef08a)] text-[var(--yellow-900,#713F12)] text-sm font-semibold leading-[140%] tracking-[-0.14px]">
-              진행 전
-            </div>
-            <div className="text-[var(--yellow-900,#713F12)] text-sm font-semibold leading-[140%] tracking-[-0.14px] font-pretendard">
-              {tasks.length}
-            </div>
+      <div className="flex h-[30px] justify-between items-center w-full">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-[31.72px] px-3 py-2 justify-center items-center gap-2.5 rounded-md bg-[var(--yellow-200,#fef08a)] text-[var(--yellow-900,#713F12)] text-sm font-semibold">
+            진행 전
           </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-6 h-6 flex items-center justify-center cursor-pointer hover:bg-white"
-          >
-            <PlusOn />
-          </button>
+          <div className="text-[var(--yellow-900,#713F12)] text-sm font-semibold">
+            {filteredTasks.length}
+          </div>
         </div>
+        <button
+          onClick={handleOpenModal}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className="flex items-center justify-center w-6 h-6 cursor-pointer rounded-[10px]"
+        >
+          {isHovered ? <PlusHover /> : <PlusOn color="#713F12" />}
+        </button>
+      </div>
 
-        <div className="flex w-full flex-col items-start gap-2">
-          {tasks.map(({ id, title, description, date }) => (
+      <div className="flex flex-col items-start w-full gap-2">
+        {filteredTasks.map((task) => {
+          const latestVersion = task.versionHistory?.at(-1);
+          const attachments = latestVersion?.attachmentList || [];
+          return (
             <TaskCard
-              key={id}
-              title={title}
-              description={description}
-              date={date}
+              key={task.taskId}
+              title={task.title || "제목 없음"}
+              content={
+                task.content ||
+                task.versionHistory?.at(-1)?.content ||
+                "내용 없음"
+              }
+              date={task.deadline || "기한 없음"}
+              editors={task.editors || []}
+              attachmentCount={attachments.length}
+              onClick={() => handleCardClick(task.taskId)}
             />
-          ))}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard cursor-pointer hover:bg-white"
-          >
-            + 작업 만들기
-          </button>
-        </div>
+          );
+        })}
+
+        <button
+          onClick={handleOpenModal}
+          className="flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold hover:bg-white"
+        >
+          + 작업 만들기
+        </button>
       </div>
 
       <Modal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onAdd={handleAddTask}
+        onClose={async () => {
+          const isChanged = hasTaskChanged(originalTask, newTask);
+          if (!isDeleting && (!originalTask || isChanged)) {
+            await autoSaveTask(newTask);
+          } else {
+            console.log("🛑 저장X");
+          }
+
+          setIsModalOpen(false);
+          setNewTask(initialTask);
+          setOriginalTask(null);
+          setIsDeleting(false);
+        }}
+        onDelete={async () => {
+          setIsDeleting(true);
+          await handleDelete(newTask.taskId); // 삭제 요청
+          setIsModalOpen(false);
+          setNewTask(initialTask);
+          setOriginalTask(null);
+        }}
+        showDelete={!!newTask.taskId}
       >
-        <h2 className="text-lg font-bold mb-2">진행 전 작업 추가</h2>
-        <input
-          type="text"
-          placeholder="작업 제목 입력"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
-          className="w-full h-[14px] p-[15px_10px] mb-3 border border-gray-300 rounded text-sm outline-none focus:border-green-500"
+        <TaskForm
+          newTask={newTask}
+          setNewTask={setNewTask}
+          newFiles={newFiles}
+          setNewFiles={setNewFiles}
+          token={token}
+          onStatusUpdate={changeStatus}
         />
       </Modal>
+
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </div>
   );
 };

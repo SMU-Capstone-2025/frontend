@@ -1,7 +1,20 @@
-import React from "react";
+import { useState } from "react";
+import EllypsisOn from "../../assets/icons/Ellypsis/EllypsisOn";
+import CloseOn from "../../assets/icons/Close/CloseOn";
+import Bell from "../../assets/icons/Bell/BellOn";
+import Caesarzkn from "../../assets/icons/Caesarzkn/Caesarzkn";
 
-const Modal = ({ isOpen, onClose, onAdd, children }) => {
+const Modal = ({ isOpen, onClose, onDelete, showDelete, children }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   if (!isOpen) return null;
+
+  const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
+  const handleDelete = () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      onDelete?.();
+    }
+  };
 
   return (
     <div
@@ -9,25 +22,47 @@ const Modal = ({ isOpen, onClose, onAdd, children }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white w-[1042px] h-[768px] mx-4 rounded-xl shadow-lg p-6 relative animate-fadeIn overflow-auto"
+        className="bg-white w-full max-w-[1042px] h-full max-h-[768px] p-[30px] flex flex-col items-end gap-5 rounded-xl border border-[#E5E7EB] relative animate-fadeIn overflow-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {children}
-
-        <div className="mt-6 flex justify-end gap-2">
-          <button
-            onClick={onAdd}
-            className="px-4 py-2 bg-gray-800 text-white rounded font-semibold hover:bg-gray-700 transition"
-          >
-            추가
-          </button>
+        <div className="flex items-start gap-5">
+          {showDelete && (
+            <div className="relative">
+              <button
+                onClick={toggleDropdown}
+                className="hover:opacity-40 fill-[#D9D9D9]"
+              >
+                <EllypsisOn />
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute top-full right-0 flex flex-col items-start gap-2 px-4 py-[14px] rounded-lg border border-[#D2D5DA] bg-white z-20 w-[140px]">
+                  <button
+                    onClick={handleDelete}
+                    className="flex items-center gap-2 w-full rounded-md hover:bg-[#D9D9D9] hover:opacity-40 p-1"
+                  >
+                    <Caesarzkn />
+                    <span className="text-[#E40505] font-pretendard text-sm font-semibold">
+                      삭제하기
+                    </span>
+                  </button>
+                  <button className="flex items-center gap-2 w-full rounded-md hover:bg-[#D9D9D9] hover:opacity-40 p-1">
+                    <Bell />
+                    <span className="text-[#374151] font-pretendard text-sm font-semibold">
+                      알림받기
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-red-500 text-white rounded font-semibold hover:bg-red-400 transition"
+            className="hover:opacity-40 fill-[#D9D9D9] w-6 h-6"
           >
-            닫기
+            <CloseOn />
           </button>
         </div>
+        {children}
       </div>
     </div>
   );
