@@ -1,4 +1,3 @@
-// TaskCard.jsx
 import React from "react";
 import ProfileBlue from "../../assets/icons/Profile/ProfileBlue";
 import ProfileYellow from "../../assets/icons/Profile/ProfileYellow";
@@ -14,7 +13,7 @@ const TaskCard = ({ title, content, date, editors, onClick, onDelete }) => {
         {/* 제목 - 한 줄 이상 생략 */}
         <p
           title={title}
-          className="text-[var(--gray-800,#1F2937)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard break-words line-clamp-1"
+          className="text-[var(--gray-800,#1F2937)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard break-words overflow-hidden text-ellipsis whitespace-nowrap max-w-full"
         >
           {title}
         </p>
@@ -22,7 +21,7 @@ const TaskCard = ({ title, content, date, editors, onClick, onDelete }) => {
         {/* 설명 - 3줄, 줄바꿈 허용 */}
         <p
           title={content}
-          className="text-[var(--gray-500,#6D7280)] text-xs font-normal leading-[140%] font-pretendard break-words line-clamp-3"
+          className="text-[var(--gray-500,#6D7280)] text-xs font-normal leading-[140%] font-pretendard break-words line-clamp-3 overflow-hidden"
         >
           {content}
         </p>
