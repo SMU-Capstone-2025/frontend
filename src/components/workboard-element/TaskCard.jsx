@@ -3,11 +3,7 @@ import ProfileBlue from "../../assets/icons/Profile/ProfileBlue";
 import ProfileYellow from "../../assets/icons/Profile/ProfileYellow";
 import ProfilePlus from "../../assets/icons/Profile/ProfilePlus";
 
-<<<<<<< HEAD
 const TaskCard = ({ title, content, date, editors, onClick, onDelete }) => {
-=======
-function TaskCard({ title, description, date, editors = [] }) {
->>>>>>> 4e16bf0c48a600fac6b161a70e0579a0f0375c93
   return (
     <div
       className="flex p-4 flex-col items-start gap-[10px] w-full rounded-[10px] border border-[var(--gray-200,#E5E7EB)] bg-white cursor-pointer"
@@ -41,18 +37,11 @@ function TaskCard({ title, description, date, editors = [] }) {
             {date}
           </p>
 
-          {/* 에디터 표시 (최대 2명 + 초과 표시) */}
+          {/* 에디터 표시 */}
           <div className="flex items-center -space-x-[10px]">
-            {editors.slice(0, 2).map((editor, idx) => (
-              <div
-                key={idx}
-                title={editor}
-                className="w-6 h-6 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center text-xs font-bold"
-              >
-                {editor[0].toUpperCase()}
-              </div>
-            ))}
-            {editors.length > 2 && <ProfilePlus />}
+            <ProfileBlue />
+            <ProfileYellow />
+            <ProfilePlus />
           </div>
         </div>
       </div>
