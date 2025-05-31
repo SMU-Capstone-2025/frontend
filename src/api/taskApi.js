@@ -1,145 +1,176 @@
-// taskApi.js
 import axios from "axios";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL;
 
-/*
-  error.response?.data => 백엔드에서 보내준 에러 메시지(ex: 401, 500 오류)
-  error.message => 네트워크 자체 에러일 때 메시지(ex: timeout, 연결 실패 등)
-  throw error => 위에서 에러를 한 번 처리한 뒤, 
-  다시 상위로 던져줌(호출한 쪽에서 또 try-catch 할 수 있도록)
-*/
+// ✅ 공통 헤더 생성 함수
+const getAuthHeaders = (token, contentType = "application/json") => ({
+  "Content-Type": contentType,
+  Authorization: `Bearer ${token}`,
+});
 
-// 로그인 API
+// ✅ 임시 로그인
 export const login = async (email, password) => {
   try {
-    const res = await axios.post(`${API_BASE}/login`, {
-      email: email,
-      password: password,
-    });
-
+    const res = await axios.post(`${API_BASE}/login`, { email, password });
     const token = res.headers["access"];
+    console.log("로그인 성공:", token);
     return token;
   } catch (error) {
-    console.error("로그인 실패:", error.response?.data || error.message);
+    console.error("❌ 로그인 실패:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// 작업 리스트 불러오기 API
+// ✅ 작업 목록 조회
 export const fetchTaskList = async (token, projectId) => {
   try {
     const res = await axios.get(`${API_BASE}/task/list/get`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        projectId: projectId,
-      },
+      headers: getAuthHeaders(token),
+      params: { projectId },
     });
-    console.log(res.data);
-    return res.data; // 전체 작업 배열
+    console.log("작업 목록:", res.data.result);
+    return res.data;
   } catch (error) {
-    console.error("목록 조회 실패:", error.response?.data || error.message);
+    console.error("❌ 작업 목록 실패:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// 작업 생성 API
+// ✅ 작업 생성
 export const createTask = async (taskData, token) => {
   try {
     const res = await axios.post(`${API_BASE}/task/post`, taskData, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: getAuthHeaders(token),
     });
     return res.data.result;
   } catch (error) {
-    console.error("작업 생성 실패:", error.response?.data || error.message);
+    console.error("❌ 작업 생성 실패:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// 작업 내 신규 버전 추가 API
-export const createVersion = async (versionRequestData, token) => {
+// ✅ 작업 버전 생성
+export const createVersion = async (versionData, token) => {
   try {
-    const res = await axios.post(
-      `${API_BASE}/task/version/save`,
-      versionRequestData,
+    const res = await axios.post(`${API_BASE}/task/version/save`, versionData, {
+      headers: getAuthHeaders(token),
+    });
+    return res.data;
+  } catch (error) {
+    console.error("❌ 버전 추가 실패:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// ✅ 작업 삭제
+export const deleteTask = async (taskId, token) => {
+  try {
+    const res = await axios.delete(`${API_BASE}/task/delete`, {
+      headers: getAuthHeaders(token),
+      params: { taskId },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("❌ 작업 삭제 실패:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// ✅ 작업 상세 조회
+export const getTaskDetails = async (taskId, token) => {
+  try {
+    const res = await axios.get(`${API_BASE}/task/get`, {
+      headers: getAuthHeaders(token),
+      params: { taskId },
+    });
+    return res.data;
+  } catch (error) {
+    console.error(
+      "❌ 작업 세부 조회 실패:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+// ✅ 버전 목록 조회
+export const fetchVersionList = async (taskId, token) => {
+  try {
+    const res = await axios.get(`${API_BASE}/task/version/list`, {
+      headers: getAuthHeaders(token),
+      params: { taskId },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.error("❌ 버전 목록 실패:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// ✅ 작업 상태 변경
+export const changeTaskStatus = async (taskId, status, token) => {
+  try {
+    const res = await axios.put(
+      `${API_BASE}/task/status`,
+      {},
       {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: getAuthHeaders(token),
+        params: { taskId, status },
       }
     );
     return res.data;
   } catch (error) {
-    console.error("버전 추가 실패:", error.response?.data || error.message);
+    console.error("❌ 상태 변경 실패:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// 작업 삭제 API
-export const deleteTask = async (taskId, token) => {
+// ✅ 로그 목록 조회
+export const fetchLogList = async (taskId, token) => {
   try {
-    const res = await axios.delete(`${API_BASE}/task/delete`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        taskId: taskId,
-      },
+    const res = await axios.get(`${API_BASE}/task/log`, {
+      headers: getAuthHeaders(token),
+      params: { taskId },
     });
     return res.data;
   } catch (error) {
-    console.error("작업 삭제 실패:", error.response?.data || error.message);
+    console.error("❌ 로그 조회 실패:", error.response?.data || error.message);
     throw error;
   }
 };
 
-// 작업 세부 정보 조회 API
-export const getTaskDetails = async (taskId, token) => {
+// ✅ 파일 업로드
+export const uploadFile = async (file, token) => {
   try {
-    const res = await axios.get(`${API_BASE}/task/get`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        taskId: taskId,
-      },
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await axios.post(`${API_BASE}/file/upload`, formData, {
+      headers: getAuthHeaders(token, "multipart/form-data"),
     });
-    return res.data;
+
+    return res.data.result;
   } catch (error) {
     console.error(
-      "작업 세부 정보 조회 실패:",
+      "❌ 파일 업로드 실패:",
       error.response?.data || error.message
     );
     throw error;
   }
 };
 
-// 버전 히스토리 API
-export const fetchVersionList = async (taskId, token) => {
-  try {
-    const res = await axios.get(`${API_BASE}/task/version/list`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      params: {
-        taskId: taskId,
-      },
-    });
-    return res.data.result; // 버전 배열
-  } catch (error) {
-    console.error(
-      "❌ 버전 히스토리 불러오기 실패:",
-      error.response?.data || error.message
-    );
-    throw error;
-  }
-};
+// // ✅ 파일 다운로드
+// export const downloadFile = async (fileId, token) => {
+//   try {
+//     const res = await axios.get(`${API_BASE}/file/download`, {
+//       headers: getAuthHeaders(token),
+//       params: { fileId },
+//       responseType: "blob",
+//     });
+
+//     return res.data;
+//   } catch (error) {
+//     console.error("❌ 파일 다운로드 실패:", error.response?.data || error.message);
+//     throw error;
+//   }
+// };
