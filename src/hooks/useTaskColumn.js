@@ -18,7 +18,7 @@ const useTaskColumn = () => {
   const [completedList, setCompletedList] = useState([]);
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
-  const projectId = "67f917f2faed8a4ff3f02bc3"; // 임시 프로젝트 ID
+  const projectId = "683c4fc636a6eb51cc468087"; // 임시 프로젝트 ID
 
   // ✅로그인 후 토큰 저장(처음 실행시) + 작업 목록 불러오기
   useEffect(() => {
