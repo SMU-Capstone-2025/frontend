@@ -84,14 +84,14 @@ const Calender = () => {
         }}
         events={[
           {
-            title: "To-do: 문서 검토",
-            start: "2025-05-14",
-            end: "2025-05-16",
+            title: "api 연동하기",
+            start: "2025-06-12",
+            end: "2025-06-13",
           },
-          {
-            title: "To-do: 회의 준비",
-            start: "2025-05-18",
-          },
+          // {
+          //   title: "To-do: 회의 준비",
+          //   start: "2025-05-18",
+          // },
         ]}
         dayMaxEventRows={3}
       />

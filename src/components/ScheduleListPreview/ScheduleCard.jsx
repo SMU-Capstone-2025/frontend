@@ -6,8 +6,8 @@ const ScheduleCard = ({ schedule }) => {
   return (
     <S.Container>
       <S.TextWrapper>
-        <S.ProjectTitle>{schedule.title}</S.ProjectTitle>
-        <S.ScheduleName>{schedule.content}</S.ScheduleName>
+        <S.ProjectTitle>{schedule.title}새로운 프로젝트</S.ProjectTitle>
+        <S.ScheduleName>{schedule.content}api 연동하기</S.ScheduleName>
       </S.TextWrapper>
       <S.ContributorsIconsWrapper>
         <S.ContributorsIcons right="-28px">
@@ -16,9 +16,9 @@ const ScheduleCard = ({ schedule }) => {
         <S.ContributorsIcons right="-14px" color={"#FEF9C3"}>
           <PersonOn color={"#FACC15"} />
         </S.ContributorsIcons>
-        <S.ContributorsIcons right="0px" color={"lightgray 50%"}>
+        {/* <S.ContributorsIcons right="0px" color={"lightgray 50%"}>
           <S.Text>+1</S.Text>
-        </S.ContributorsIcons>
+        </S.ContributorsIcons> */}
       </S.ContributorsIconsWrapper>
     </S.Container>
   );

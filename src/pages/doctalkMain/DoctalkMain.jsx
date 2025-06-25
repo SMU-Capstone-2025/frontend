@@ -15,7 +15,7 @@ const DoctalkMain = () => {
     <Layout>
       <div className="w-full max-w-[1280px] flex flex-col justify-center items-center gap-12 pt-16 px-4 z-10">
         <p className="text-gray-800 text-center font-pretendard text-2xl font-bold leading-[42px] tracking-[-1.2px]">
-          손영준 님, 오늘도 힘차게 시작해볼까요!
+          김수뭉 님, 오늘도 힘차게 시작해볼까요!
         </p>
         <div className="flex justify-center items-start w-full gap-2">
           <div className="flex flex-col items-start gap-3 w-[628px]">

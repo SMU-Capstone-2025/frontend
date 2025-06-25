@@ -29,16 +29,17 @@ const ScheduleListPreview = ({ projectId }) => {
   return (
     <div className="flex flex-col w-full max-w-[588px] flex-wrap items-start">
       <div>
-        <span className="font-bold text-lg text-[#e40505]">D-DAY</span>
+        <span className="font-bold text-lg text-[#e40505]">D-10</span>
         <span className="ml-2 text-base text-[#6d7280]">
           {/* {schedules.deadline} */}
-          00월 00일 월요일
+          06월 12일 목요일
         </span>
       </div>
       <div className="w-full flex flex-col items-start gap-1.5">
-        {schedules.map((schedule, idx) => (
+        <ScheduleCard schedule={schedules} />
+        {/* {schedules.map((schedule, idx) => (
           <ScheduleCard key={idx} schedule={schedule} />
-        ))}
+        ))} */}
       </div>
     </div>
   );
