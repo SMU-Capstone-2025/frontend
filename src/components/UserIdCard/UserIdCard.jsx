@@ -6,9 +6,14 @@ const UserIdCard = () => {
 
   const getUserIdInfo = async () => {
     try {
-      const res = await axiosInstanceNoHeader.get("/mypage/user");
+      const res = await axiosInstanceNoHeader.get("/mypage/user", {
+        params: {
+          Authorization: localStorage.getItem("accesToken"), // Assuming userId is stored in localStorage
+        },
+      });
       console.log("유저 정보 가져오기 성공~!", res.data.result);
       setUserInfo(res.data.result);
+      localStorage.setItem("userName", userInfo.name);
       return res;
     } catch (error) {
       console.log("유저 정보 가져오기 실패~!\n", error);
@@ -59,7 +64,12 @@ const UserIdCard = () => {
             : "기본 요금제"}
         </div>
       </div>
-      <div className="text-center justify-center text-gray-400 text-xs font-bold font-['Pretendard'] leading-none">
+      <div
+        className="text-center justify-center text-gray-400 text-xs font-bold font-['Pretendard'] leading-none cursor-pointer"
+        onClick={() => {
+          window.location.href = "/mypage";
+        }}
+      >
         프로필 이동
       </div>
     </div>
