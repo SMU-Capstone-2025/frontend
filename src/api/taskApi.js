@@ -2,19 +2,12 @@ import axios from "axios";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL;
 
-// ✅ 공통 헤더 생성 함수
-const getAuthHeaders = (token, contentType = "application/json") => ({
-  "Content-Type": contentType,
-  Authorization: `Bearer ${token}`,
-});
-
 // ✅ 임시 로그인
 export const login = async (email, password) => {
   try {
     const res = await axios.post(`${API_BASE}/login`, { email, password });
-    const token = res.headers["access"];
-    console.log("로그인 성공:", token);
-    return token;
+    console.log(res.headers["access"]);
+    return res.headers["access"];
   } catch (error) {
     console.error("❌ 로그인 실패:", error.response?.data || error.message);
     throw error;
@@ -25,7 +18,10 @@ export const login = async (email, password) => {
 export const fetchTaskList = async (token, projectId) => {
   try {
     const res = await axios.get(`${API_BASE}/task/list/get`, {
-      headers: getAuthHeaders(token),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       params: { projectId },
     });
     console.log("작업 목록:", res.data.result);
@@ -40,7 +36,10 @@ export const fetchTaskList = async (token, projectId) => {
 export const createTask = async (taskData, token) => {
   try {
     const res = await axios.post(`${API_BASE}/task/post`, taskData, {
-      headers: getAuthHeaders(token),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     return res.data.result;
   } catch (error) {
@@ -53,9 +52,12 @@ export const createTask = async (taskData, token) => {
 export const createVersion = async (versionData, token) => {
   try {
     const res = await axios.post(`${API_BASE}/task/version/save`, versionData, {
-      headers: getAuthHeaders(token),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
-    return res.data;
+    return res.data.result;
   } catch (error) {
     console.error("❌ 버전 추가 실패:", error.response?.data || error.message);
     throw error;
@@ -66,7 +68,10 @@ export const createVersion = async (versionData, token) => {
 export const deleteTask = async (taskId, token) => {
   try {
     const res = await axios.delete(`${API_BASE}/task/delete`, {
-      headers: getAuthHeaders(token),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       params: { taskId },
     });
     return res.data;
@@ -80,7 +85,10 @@ export const deleteTask = async (taskId, token) => {
 export const getTaskDetails = async (taskId, token) => {
   try {
     const res = await axios.get(`${API_BASE}/task/get`, {
-      headers: getAuthHeaders(token),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       params: { taskId },
     });
     return res.data;
@@ -97,7 +105,10 @@ export const getTaskDetails = async (taskId, token) => {
 export const fetchVersionList = async (taskId, token) => {
   try {
     const res = await axios.get(`${API_BASE}/task/version/list`, {
-      headers: getAuthHeaders(token),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       params: { taskId },
     });
     return res.data.result;
@@ -114,7 +125,10 @@ export const changeTaskStatus = async (taskId, status, token) => {
       `${API_BASE}/task/status`,
       {},
       {
-        headers: getAuthHeaders(token),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         params: { taskId, status },
       }
     );
@@ -129,7 +143,10 @@ export const changeTaskStatus = async (taskId, status, token) => {
 export const fetchLogList = async (taskId, token) => {
   try {
     const res = await axios.get(`${API_BASE}/task/log`, {
-      headers: getAuthHeaders(token),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       params: { taskId },
     });
     return res.data;
@@ -140,15 +157,21 @@ export const fetchLogList = async (taskId, token) => {
 };
 
 // ✅ 파일 업로드
-export const uploadFile = async (file, token) => {
+export const uploadFile = async (file, taskId, token) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await axios.post(`${API_BASE}/file/upload`, formData, {
-      headers: getAuthHeaders(token, "multipart/form-data"),
-    });
-
+    const res = await axios.post(
+      `${API_BASE}/file/upload/${taskId}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return res.data.result;
   } catch (error) {
     console.error(
@@ -159,18 +182,26 @@ export const uploadFile = async (file, token) => {
   }
 };
 
-// // ✅ 파일 다운로드
-// export const downloadFile = async (fileId, token) => {
-//   try {
-//     const res = await axios.get(`${API_BASE}/file/download`, {
-//       headers: getAuthHeaders(token),
-//       params: { fileId },
-//       responseType: "blob",
-//     });
-
-//     return res.data;
-//   } catch (error) {
-//     console.error("❌ 파일 다운로드 실패:", error.response?.data || error.message);
-//     throw error;
-//   }
-// };
+// ✅ 파일 다운로드
+export const fetchFileBlob = async (fileId, token) => {
+  try {
+    const res = await axios.get(`${API_BASE}/file/download`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      params: { fileId },
+      responseType: "blob",
+    });
+    return {
+      blob: res.data,
+      headers: res.headers,
+    };
+  } catch (error) {
+    console.error(
+      "❌ 파일 다운로드 실패:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
