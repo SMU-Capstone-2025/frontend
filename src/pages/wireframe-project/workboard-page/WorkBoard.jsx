@@ -16,6 +16,7 @@ const WorkBoard = () => {
     loadTaskDetails,
     autoSaveTask,
     error,
+    token,
   } = useTaskColumn();
   return (
     <div className="flex flex-wrap justify-start items-start gap-6 w-full">
@@ -26,6 +27,7 @@ const WorkBoard = () => {
         loadTaskDetails={loadTaskDetails}
         autoSaveTask={autoSaveTask}
         error={error}
+        token={token}
       />
       <InProgressColumn
         taskList={inProgressList}
@@ -34,6 +36,7 @@ const WorkBoard = () => {
         loadTaskDetails={loadTaskDetails}
         autoSaveTask={autoSaveTask}
         error={error}
+        token={token}
       />
       <CompletedColumn
         taskList={completedList}
@@ -42,6 +45,7 @@ const WorkBoard = () => {
         loadTaskDetails={loadTaskDetails}
         autoSaveTask={autoSaveTask}
         error={error}
+        token={token}
       />
     </div>
   );
