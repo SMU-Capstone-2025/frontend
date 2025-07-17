@@ -6,10 +6,9 @@ import TaskForm from "./TaskForm";
 import PlusHover from "../../assets/icons/Plus/PlusHover";
 
 const initialTask = {
-  projectId: "683c4fc636a6eb51cc468087",
+  projectId: "687519535c29ce3bfec23162",
   title: "",
   modifiedBy: "",
-  version: "",
   content: "",
   editors: [],
   deadline: "",
@@ -41,28 +40,25 @@ const CompletedColumn = ({
     setIsModalOpen(true);
     setNewTask(initialTask);
   };
-
   const handleCardClick = async (taskId) => {
-    const latestVersion = await loadTaskDetails(taskId);
-    // latestVersion => 해당 taskId의 카드 상세 정보
-    const taskInfo = taskList.find((task) => task.taskId === taskId);
-
+    const taskInfo = await loadTaskDetails(taskId);
     if (!taskInfo) {
       console.log("해당 taskId의 정보 없음");
       return;
     }
 
+    // 작업 정보 + 버전 정보
     const mergedTask = {
       taskId: taskInfo.taskId,
       projectId: taskInfo.projectId,
       title: taskInfo.title,
       deadline: taskInfo.deadline,
-      editors: latestVersion.editors || taskInfo.editors || [],
-      modifiedBy: latestVersion.modifiedBy || taskInfo.modifiedBy || "",
-      version: latestVersion.version || "1.0.0",
-      content: latestVersion.content || "",
+      editors: taskInfo.editors || taskInfo.editors || [],
+      modifiedBy: taskInfo.modifiedBy || taskInfo.modifiedBy || "",
+      version: taskInfo.version || "1.0.0",
+      content: taskInfo.content || "",
       status: taskInfo.status || "COMPLETED",
-      attachmentList: latestVersion.attachmentList || [],
+      attachmentList: taskInfo.attachmentList || [],
     };
     setOriginalTask(mergedTask);
     setNewTask(mergedTask);
@@ -103,8 +99,8 @@ const CompletedColumn = ({
 
       <div className="flex flex-col items-start w-full gap-2">
         {filteredTasks.map((task) => {
-          const latestVersion = task.versionHistory?.at(-1);
-          const attachments = latestVersion?.attachmentList || [];
+          const taskInfo = task.versionHistory?.at(-1);
+          const attachments = taskInfo?.attachmentList || [];
           return (
             <TaskCard
               key={task.taskId}

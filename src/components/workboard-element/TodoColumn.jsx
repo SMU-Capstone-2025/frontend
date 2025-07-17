@@ -7,10 +7,9 @@ import TaskForm from "./TaskForm";
 
 // TodoColumn의 입력 폼
 const initialTask = {
-  projectId: "683c4fc636a6eb51cc468087",
+  projectId: "687519535c29ce3bfec23162",
   title: "",
   modifiedBy: "",
-  version: "",
   content: "",
   editors: [],
   deadline: "",
@@ -46,9 +45,7 @@ const TodoColumn = ({
 
   // 작업 카드 클릭 -> 작업 상세 정보 로딩 + 모달 열기
   const handleCardClick = async (taskId) => {
-    const latestVersion = await loadTaskDetails(taskId); // api로 버전 불러옴
-    const taskInfo = taskList.find((task) => task.taskId === taskId); // 리스트에서 해당 task 찾기
-
+    const taskInfo = await loadTaskDetails(taskId);
     if (!taskInfo) {
       console.log("해당 taskId의 정보 없음");
       return;
@@ -57,15 +54,13 @@ const TodoColumn = ({
     // 작업 정보 + 버전 정보 = mergedTask
     const mergedTask = {
       taskId: taskInfo.taskId,
-      projectId: taskInfo.projectId,
       title: taskInfo.title,
       deadline: taskInfo.deadline,
-      editors: latestVersion.editors || taskInfo.editors || [],
-      modifiedBy: latestVersion.modifiedBy || taskInfo.modifiedBy || "",
-      version: latestVersion.version || "1.0.0",
-      content: latestVersion.content || "",
+      coworkers: taskInfo.editors || [],
+      modifiedBy: taskInfo.modifiedBy || "",
+      content: taskInfo.content || "",
       status: taskInfo.status || "PENDING",
-      attachmentList: latestVersion.attachmentList || [],
+      attachmentList: taskInfo.attachmentList || [],
     };
     setOriginalTask(mergedTask);
     setNewTask(mergedTask);
