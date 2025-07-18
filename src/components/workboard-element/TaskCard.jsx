@@ -13,7 +13,7 @@ const TaskCard = ({ title, content, date, editors, onClick, onDelete }) => {
         {/* 제목 */}
         <p
           title={title}
-          className="text-[var(--gray-800,#1F2937)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-pretendard break-words overflow-hidden text-ellipsis whitespace-nowrap max-w-full"
+          className="text-[var(--gray-800,#1F2937)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-[Livvic] break-words overflow-hidden text-ellipsis whitespace-nowrap max-w-full"
         >
           {title}
         </p>
@@ -22,7 +22,7 @@ const TaskCard = ({ title, content, date, editors, onClick, onDelete }) => {
 
         <p
           title={content}
-          className="text-[var(--gray-500,#6D7280)] text-xs font-normal leading-[140%] font-pretendard break-words line-clamp-3 overflow-hidden"
+          className="text-[var(--gray-500,#6D7280)] text-xs font-normal leading-[140%] font-pretendard break-words line-clamp-3 overflow-hidden font-[Palanquin]"
         >
           {content}
         </p>
@@ -32,7 +32,7 @@ const TaskCard = ({ title, content, date, editors, onClick, onDelete }) => {
 
           <p
             title={date}
-            className="text-[#787878] text-xs font-normal leading-[140%] font-pretendard truncate max-w-[200px]"
+            className="text-[#787878] text-xs font-normal leading-[140%] font-pretendard truncate max-w-[200px] font-[Palanquin]"
           >
             {date}
           </p>
