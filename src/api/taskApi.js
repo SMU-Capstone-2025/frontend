@@ -48,15 +48,27 @@ export const createTask = async (taskData, token) => {
   }
 };
 
-// ✅ 작업 버전 생성
-export const createVersion = async (versionData, token) => {
+// ✅ 작업 버전 생성 (선택적으로 fileId 포함)
+export const createVersion = async (versionData, token, fileInfo = null) => {
+  let query = "";
+  if (fileInfo?.fileId && !fileInfo.fileName) {
+    // 파일 삭제 상황(파일 삭제 시 -> fileId 필요)
+    query = `?fileId=${encodeURIComponent(fileInfo.fileId)}`;
+  } else if (fileInfo?.fileId && fileInfo?.fileName) {
+    // 파일 업로드 상황(파일 업로드 시 -> fileName,fileId 필요)
+    query = `?fileId=${encodeURIComponent(fileInfo.fileId)}&fileName=${encodeURIComponent(fileInfo.fileName)}`;
+  }
   try {
-    const res = await axios.post(`${API_BASE}/task/version/save`, versionData, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await axios.post(
+      `${API_BASE}/task/version/save${query}`,
+      versionData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return res.data.result;
   } catch (error) {
     console.error("❌ 버전 추가 실패:", error.response?.data || error.message);
@@ -172,6 +184,7 @@ export const uploadFile = async (file, taskId, token) => {
         },
       }
     );
+    console.log("파일 업로드 성공:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error(
@@ -202,6 +215,23 @@ export const fetchFileBlob = async (fileId, token) => {
       "❌ 파일 다운로드 실패:",
       error.response?.data || error.message
     );
+    throw error;
+  }
+};
+
+// ✅ 파일 삭제
+export const deleteFile = async (fileId, token) => {
+  try {
+    const res = await axios.delete(`${API_BASE}/file/delete`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      params: { fileId },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.error("❌ 파일 삭제 실패:", error.response?.data || error.message);
     throw error;
   }
 };
