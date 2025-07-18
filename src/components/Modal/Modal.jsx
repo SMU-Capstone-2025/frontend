@@ -18,7 +18,7 @@ const Modal = ({ isOpen, onClose, onDelete, showDelete, children }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000] font-[Livvic]"
       onClick={onClose}
     >
       <div
