@@ -10,6 +10,8 @@ import {
   fetchVersionList,
   changeTaskStatus,
   //fetchLogList,
+  uploadFile,
+  deleteFile,
 } from "../api/taskApi";
 
 const useTaskColumn = () => {
@@ -18,7 +20,7 @@ const useTaskColumn = () => {
   const [completedList, setCompletedList] = useState([]);
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
-  const projectId = "683c4fc636a6eb51cc468087"; // 임시 프로젝트 ID
+  const projectId = "687519535c29ce3bfec23162"; // 임시 프로젝트 ID
 
   // ✅로그인 후 토큰 저장(처음 실행시) + 작업 목록 불러오기
   useEffect(() => {
@@ -51,7 +53,7 @@ const useTaskColumn = () => {
   };
 
   // ✅새 작업 추가
-  const createNewTask = async (data) => {
+  const createNewTask = async (data, fileId = null) => {
     if (!token) return;
 
     const status = ["PENDING", "PROGRESS", "COMPLETED"].includes(data.status)
@@ -64,19 +66,21 @@ const useTaskColumn = () => {
         projectId: data.projectId,
         status,
         modifiedBy: data.modifiedBy || "관리자",
-        version: data.version || "1.0.0",
         content: data.content || "기본 내용",
         editors: data.editors || ["user1"],
         deadline: data.deadline || "2025-07-11",
       };
 
       const createdTask = await createTask(taskPayload, token);
+      console.log("createTask:", createdTask);
+      const history = await fetchVersionList(createdTask.id, token);
+      console.log("📜 version history:", history);
 
       const versionData = {
         taskId: createdTask.id,
         title: createdTask.title,
         status,
-        version: data.version || "1.0.0",
+        version: "1.0.0", // 처음은 무조건 1.0.0
         modifiedBy: data.modifiedBy || "상명대생",
         content: data.content || "내용 공백",
         editors: data.editors || "상명대",
@@ -84,14 +88,14 @@ const useTaskColumn = () => {
         attachmentList: [],
       };
       // ✅작업 추가 -> 버전 추가
-      await createVersion(versionData, token);
-
+      await createVersion(versionData, token, fileId);
       const versionHistory = await fetchVersionList(createdTask.id, token);
       const newTask = {
         ...createdTask,
         taskId: createdTask.id,
         status,
         versionHistory,
+        currentVersion: versionHistory.at(-1)?.version,
       };
 
       // 상태에 따라 해당 컬럼 리스트에 추가
@@ -142,23 +146,33 @@ const useTaskColumn = () => {
   };
 
   // ✅자동 버전 증가
-  const getNextVersion = (version = "1.0.0") => {
-    const parts = version.split(".").map(Number);
-    if (parts.length !== 3 || parts.some(isNaN)) return "1.0.0";
-    parts[2] += 1;
-    return parts.join(".");
+  const getNextVersion = (history = []) => {
+    const versions = history
+      .map((v) => v.version)
+      .map((ver) => ver.split(".").map(Number))
+      .filter((v) => v.length === 3 && v.every((n) => !isNaN(n)));
+
+    if (versions.length === 0) return "1.0.0";
+
+    versions.sort((a, b) => {
+      for (let i = 0; i < 3; i++) {
+        if (a[i] !== b[i]) return b[i] - a[i];
+      }
+      return 0;
+    });
+
+    const latest = versions[0];
+    latest[2] += 1;
+    return latest.join(".");
   };
 
-  // ✅작업 자동 저장
+  // ✅ 일반적인 자동 저장 로직 (파일 없이)
   const autoSaveTask = async (data) => {
     if (!data.title || !data.content || !data.deadline) return;
-
     try {
       if (data.taskId) {
-        // ✅ 기존 작업 → 다음 버전 자동 생성
         const history = await fetchVersionList(data.taskId, token);
-        const currentVersion = history?.at(-1)?.version || "1.0.0";
-        const nextVersion = getNextVersion(currentVersion);
+        const nextVersion = getNextVersion(history);
 
         const versionData = {
           taskId: data.taskId,
@@ -167,12 +181,13 @@ const useTaskColumn = () => {
           modifiedBy: data.modifiedBy || "관리자",
           content: data.content,
           editors: data.editors || ["user1"],
-          deadline: data.deadline || "2025-07-11",
-          attachmentList: [],
+          deadline: data.deadline,
+          projectId: data.projectId,
+          status: data.status || "PENDING",
         };
 
         await createVersion(versionData, token);
-        await loadTaskList(); // 새 버전 추가 -> 다시 목록 불러오기
+        await loadTaskList();
       } else {
         await createNewTask(data);
       }
@@ -181,7 +196,60 @@ const useTaskColumn = () => {
     }
   };
 
-  // 작업 상태 변경
+  // ✅ 파일 추가 시 호출
+  const saveTaskWithFile = async (data, file) => {
+    if (!data.taskId || !file) return;
+    try {
+      const uploadResult = await uploadFile(file, data.taskId, token); // { fileId, fileName }
+      const history = await fetchVersionList(data.taskId, token);
+      const nextVersion = getNextVersion(history);
+
+      const versionData = {
+        taskId: data.taskId,
+        title: data.title,
+        version: nextVersion,
+        modifiedBy: data.modifiedBy || "관리자",
+        content: data.content,
+        editors: data.editors || ["user1"],
+        deadline: data.deadline,
+        projectId: data.projectId,
+        status: data.status || "PENDING",
+      };
+
+      await createVersion(versionData, token, uploadResult);
+      await loadTaskList();
+    } catch (err) {
+      console.error("파일 포함 자동 저장 실패:", err);
+    }
+  };
+
+  // ✅ 파일 삭제 후 버전 저장
+  const saveTaskAfterFileDelete = async (data, fileId) => {
+    if (!data.taskId || !fileId) return;
+    try {
+      const history = await fetchVersionList(data.taskId, token);
+      const nextVersion = getNextVersion(history);
+
+      const versionData = {
+        taskId: data.taskId,
+        title: data.title,
+        version: nextVersion,
+        modifiedBy: data.modifiedBy || "관리자",
+        content: data.content,
+        editors: data.editors || ["user1"],
+        deadline: data.deadline,
+        projectId: data.projectId,
+        status: data.status || "PENDING",
+      };
+
+      await createVersion(versionData, token, { fileId });
+      await loadTaskList();
+    } catch (err) {
+      console.error("파일 삭제 후 자동 저장 실패:", err);
+    }
+  };
+
+  // ✅ 작업 상태 변경
   const changeStatus = async (taskId, newStatus) => {
     try {
       await changeTaskStatus(taskId, newStatus, token);
@@ -204,6 +272,8 @@ const useTaskColumn = () => {
     error,
     changeStatus,
     loadTaskList,
+    saveTaskWithFile,
+    saveTaskAfterFileDelete,
   };
 };
 
