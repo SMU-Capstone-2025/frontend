@@ -10,6 +10,7 @@ const Container = styled.div`
   background: var(--0, #fff);
   padding: 0px 20px;
   z-index: 100;
+  position: relative;
 `;
 
 const LeftsideWarpper = styled.div`
@@ -65,6 +66,8 @@ const LogoWarapper = styled.div`
   gap: 10px;
   flex-shrink: 0;
   cursor: pointer;
+  position: absolute;
+  left: 47%;
   /* position: fixed;
   left: 898px;
   top: 0; */
