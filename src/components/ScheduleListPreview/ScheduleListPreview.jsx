@@ -23,6 +23,8 @@ const ScheduleListPreview = ({ projectId }) => {
     }
   };
 
+  //마감일 리스트 생성 및 2025-07-30 형식으로 D- 계산 후 자료저장 이후 07월 30일 수요일 형식도 저장해야함
+
   const caculateDeadline = (deadline) => {
     console.log("마감일 계산 함수 호출:", deadline);
 
