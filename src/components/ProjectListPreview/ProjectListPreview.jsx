@@ -9,16 +9,15 @@ const ProjectListPreview = ({ onFirstProjectId }) => {
   const projectPreview = async () => {
     try {
       const res = await axiosInstanceNoHeader.get("/project/list");
-      console.log("프로젝트 불러오기 성공~!\n", res);
       setProjects(res.data.result);
-      // 첫 번째 프로젝트 id를 상위로 전달
+      // 첫 번째 유효한 projectId를 상위로 전달
       if (onFirstProjectId && res.data.result && res.data.result.length > 0) {
-        for (let i = 0; i < res.data.result.length; i++) {
-          if (res.data.result[i].projectId) {
-            onFirstProjectId(res.data.result[i].projectId);
-            console.log("첫 번째 프로젝트 ID:", res.data.result[i].projectId);
-            break; // 첫 번째 유효한 projectId 찾기
-          }
+        const firstValidProject = res.data.result.find(
+          (proj) => proj.projectId
+        );
+        if (firstValidProject) {
+          onFirstProjectId(firstValidProject.projectId);
+          console.log("첫 번째 프로젝트 ID:", firstValidProject.projectId);
         }
       }
       return res;
@@ -28,14 +27,18 @@ const ProjectListPreview = ({ onFirstProjectId }) => {
     }
   };
 
+  // idx 배열을 컴포넌트 함수 내에서 선언
+  const idx = Array.from({ length: projects.length }, (_, i) => i);
+
   useEffect(() => {
     projectPreview();
   }, []);
+  // console.log("프로젝트 리스트:", idx);
 
   return (
     <S.Container>
-      {projects.map((project, idx) => (
-        <ProjectCard key={idx} project={project} />
+      {projects.map((project) => (
+        <ProjectCard key={project.projectId} project={project} />
       ))}
     </S.Container>
   );

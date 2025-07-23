@@ -16,9 +16,9 @@ const ScheduleCard = ({ schedule }) => {
         <S.ContributorsIcons right="-14px" color={"#FEF9C3"}>
           <PersonOn color={"#FACC15"} />
         </S.ContributorsIcons>
-        {/* <S.ContributorsIcons right="0px" color={"lightgray 50%"}>
+        <S.ContributorsIcons right="0px" color={"lightgray 50%"}>
           <S.Text>+1</S.Text>
-        </S.ContributorsIcons> */}
+        </S.ContributorsIcons>
       </S.ContributorsIconsWrapper>
     </S.Container>
   );
