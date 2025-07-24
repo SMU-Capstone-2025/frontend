@@ -1,11 +1,11 @@
-import axios from "axios";
+import { axiosInstanceNoHeader } from "../apis/axiosInstance";
 
 const API_BASE = process.env.REACT_APP_API_BASE_URL;
 
 // ✅ 임시 로그인
 export const login = async (email, password) => {
   try {
-    const res = await axios.post(`${API_BASE}/login`, { email, password });
+    const res = await axiosInstanceNoHeader.post("/login", { email, password });
     console.log(res.headers["access"]);
     return res.headers["access"];
   } catch (error) {
@@ -13,15 +13,10 @@ export const login = async (email, password) => {
     throw error;
   }
 };
-
 // ✅ 작업 목록 조회
-export const fetchTaskList = async (token, projectId) => {
+export const fetchTaskList = async (projectId) => {
   try {
-    const res = await axios.get(`${API_BASE}/task/list/get`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    const res = await axiosInstanceNoHeader.get("/task/list/get", {
       params: { projectId },
     });
     console.log("작업 목록:", res.data.result);
@@ -33,14 +28,9 @@ export const fetchTaskList = async (token, projectId) => {
 };
 
 // ✅ 작업 생성
-export const createTask = async (taskData, token) => {
+export const createTask = async (taskData) => {
   try {
-    const res = await axios.post(`${API_BASE}/task/post`, taskData, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await axiosInstanceNoHeader.post("/task/post", taskData);
     return res.data.result;
   } catch (error) {
     console.error("❌ 작업 생성 실패:", error.response?.data || error.message);
@@ -48,26 +38,19 @@ export const createTask = async (taskData, token) => {
   }
 };
 
-// ✅ 작업 버전 생성 (선택적으로 fileId 포함)
-export const createVersion = async (versionData, token, fileInfo = null) => {
+// ✅ 작업 버전 생성
+export const createVersion = async (versionData, fileInfo = null) => {
   let query = "";
   if (fileInfo?.fileId && !fileInfo.fileName) {
-    // 파일 삭제 상황(파일 삭제 시 -> fileId 필요)
     query = `?fileId=${encodeURIComponent(fileInfo.fileId)}`;
   } else if (fileInfo?.fileId && fileInfo?.fileName) {
-    // 파일 업로드 상황(파일 업로드 시 -> fileName,fileId 필요)
     query = `?fileId=${encodeURIComponent(fileInfo.fileId)}&fileName=${encodeURIComponent(fileInfo.fileName)}`;
   }
+
   try {
-    const res = await axios.post(
-      `${API_BASE}/task/version/save${query}`,
-      versionData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const res = await axiosInstanceNoHeader.post(
+      `/task/version/save${query}`,
+      versionData
     );
     return res.data.result;
   } catch (error) {
@@ -77,13 +60,9 @@ export const createVersion = async (versionData, token, fileInfo = null) => {
 };
 
 // ✅ 작업 삭제
-export const deleteTask = async (taskId, token) => {
+export const deleteTask = async (taskId) => {
   try {
-    const res = await axios.delete(`${API_BASE}/task/delete`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    const res = await axiosInstanceNoHeader.delete("/task/delete", {
       params: { taskId },
     });
     return res.data;
@@ -94,13 +73,9 @@ export const deleteTask = async (taskId, token) => {
 };
 
 // ✅ 작업 상세 조회
-export const getTaskDetails = async (taskId, token) => {
+export const getTaskDetails = async (taskId) => {
   try {
-    const res = await axios.get(`${API_BASE}/task/get`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    const res = await axiosInstanceNoHeader.get("/task/get", {
       params: { taskId },
     });
     return res.data;
@@ -114,13 +89,9 @@ export const getTaskDetails = async (taskId, token) => {
 };
 
 // ✅ 버전 목록 조회
-export const fetchVersionList = async (taskId, token) => {
+export const fetchVersionList = async (taskId) => {
   try {
-    const res = await axios.get(`${API_BASE}/task/version/list`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    const res = await axiosInstanceNoHeader.get("/task/version/list", {
       params: { taskId },
     });
     return res.data.result;
@@ -129,18 +100,13 @@ export const fetchVersionList = async (taskId, token) => {
     throw error;
   }
 };
-
 // ✅ 작업 상태 변경
-export const changeTaskStatus = async (taskId, status, token) => {
+export const changeTaskStatus = async (taskId, status) => {
   try {
-    const res = await axios.put(
-      `${API_BASE}/task/status`,
+    const res = await axiosInstanceNoHeader.put(
+      "/task/status",
       {},
       {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         params: { taskId, status },
       }
     );
@@ -150,15 +116,10 @@ export const changeTaskStatus = async (taskId, status, token) => {
     throw error;
   }
 };
-
 // ✅ 로그 목록 조회
-export const fetchLogList = async (taskId, token) => {
+export const fetchLogList = async (taskId) => {
   try {
-    const res = await axios.get(`${API_BASE}/task/log`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    const res = await axiosInstanceNoHeader.get("/task/log", {
       params: { taskId },
     });
     return res.data;
@@ -169,18 +130,17 @@ export const fetchLogList = async (taskId, token) => {
 };
 
 // ✅ 파일 업로드
-export const uploadFile = async (file, taskId, token) => {
+export const uploadFile = async (file, taskId) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await axios.post(
-      `${API_BASE}/file/upload/${taskId}`,
+    const res = await axiosInstanceNoHeader.post(
+      `/file/upload/${taskId}`,
       formData,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // FormData는 이거 따로 설정 필요
         },
       }
     );
@@ -196,13 +156,9 @@ export const uploadFile = async (file, taskId, token) => {
 };
 
 // ✅ 파일 다운로드
-export const fetchFileBlob = async (fileId, token) => {
+export const fetchFileBlob = async (fileId) => {
   try {
-    const res = await axios.get(`${API_BASE}/file/download`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    const res = await axiosInstanceNoHeader.get("/file/download", {
       params: { fileId },
       responseType: "blob",
     });
@@ -220,13 +176,9 @@ export const fetchFileBlob = async (fileId, token) => {
 };
 
 // ✅ 파일 삭제
-export const deleteFile = async (fileId, token) => {
+export const deleteFile = async (fileId) => {
   try {
-    const res = await axios.delete(`${API_BASE}/file/delete`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    const res = await axiosInstanceNoHeader.delete("/file/delete", {
       params: { fileId },
     });
     return res.data.result;
