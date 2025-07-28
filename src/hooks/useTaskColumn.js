@@ -1,7 +1,6 @@
 // useTaskColumn.js
 import { useState, useEffect } from "react";
 import {
-  login,
   createTask,
   createVersion,
   fetchTaskList,
@@ -10,6 +9,7 @@ import {
   fetchVersionList,
   changeTaskStatus,
   //fetchLogList,
+  uploadFile,
 } from "../api/taskApi";
 
 const useTaskColumn = () => {
@@ -17,30 +17,17 @@ const useTaskColumn = () => {
   const [inProgressList, setInProgressList] = useState([]);
   const [completedList, setCompletedList] = useState([]);
   const [error, setError] = useState(null);
-  const [token, setToken] = useState(null);
-  const projectId = "683c4fc636a6eb51cc468087"; // 임시 프로젝트 ID
+  const token = localStorage.getItem("accessToken");
+  const projectId = "687519535c29ce3bfec23162"; // 임시 프로젝트 ID
 
-  // ✅로그인 후 토큰 저장(처음 실행시) + 작업 목록 불러오기
   useEffect(() => {
-    const init = async () => {
-      if (token) return; // 이미 토큰 있으면 실행 안 함
-      try {
-        const loggedInToken = await login("qwe123@naver.com", "qwe123");
-        setToken(loggedInToken);
-        localStorage.setItem("token", loggedInToken);
-        await loadTaskList(loggedInToken, projectId);
-      } catch (error) {
-        setError("로그인 실패!");
-      }
-    };
-    init();
-  }, [token]);
-
+    if (!projectId) return;
+    loadTaskList();
+  }, [projectId]);
   // ✅전체 작업 목록 불러오기 및 컬럼별 분류
-  const loadTaskList = async (authToken = token) => {
-    if (!authToken) return;
+  const loadTaskList = async () => {
     try {
-      const { result } = await fetchTaskList(authToken, projectId);
+      const { result } = await fetchTaskList(projectId);
 
       setTodoList(result.filter((t) => t.status === "PENDING"));
       setInProgressList(result.filter((t) => t.status === "PROGRESS"));
@@ -51,7 +38,7 @@ const useTaskColumn = () => {
   };
 
   // ✅새 작업 추가
-  const createNewTask = async (data) => {
+  const createNewTask = async (data, fileId = null) => {
     if (!token) return;
 
     const status = ["PENDING", "PROGRESS", "COMPLETED"].includes(data.status)
@@ -64,37 +51,36 @@ const useTaskColumn = () => {
         projectId: data.projectId,
         status,
         modifiedBy: data.modifiedBy || "관리자",
-        version: data.version || "1.0.0",
         content: data.content || "기본 내용",
         editors: data.editors || ["user1"],
         deadline: data.deadline || "2025-07-11",
       };
 
-      const createdTask = await createTask(taskPayload, token);
+      const createdTask = await createTask(taskPayload);
+      await fetchVersionList(createdTask.id);
 
       const versionData = {
         taskId: createdTask.id,
         title: createdTask.title,
         status,
-        version: data.version || "1.0.0",
+        version: "1.0.0",
         modifiedBy: data.modifiedBy || "상명대생",
         content: data.content || "내용 공백",
         editors: data.editors || "상명대",
         deadline: data.deadline,
-        attachmentList: [],
       };
-      // ✅작업 추가 -> 버전 추가
-      await createVersion(versionData, token);
 
-      const versionHistory = await fetchVersionList(createdTask.id, token);
+      await createVersion(versionData, fileId);
+
+      const versionHistory = await fetchVersionList(createdTask.id);
       const newTask = {
         ...createdTask,
         taskId: createdTask.id,
         status,
         versionHistory,
+        currentVersion: versionHistory.at(-1)?.version,
       };
 
-      // 상태에 따라 해당 컬럼 리스트에 추가
       if (status === "PENDING") {
         setTodoList((prev) => [...prev, newTask]);
       } else if (status === "PROGRESS") {
@@ -102,6 +88,8 @@ const useTaskColumn = () => {
       } else if (status === "COMPLETED") {
         setCompletedList((prev) => [...prev, newTask]);
       }
+
+      return newTask;
     } catch (err) {
       setError("작업 생성 실패");
       console.error("작업 생성 실패:", err);
@@ -112,7 +100,7 @@ const useTaskColumn = () => {
   // ✅작업 삭제
   const handleDelete = async (taskId) => {
     try {
-      await deleteTask(taskId, token);
+      await deleteTask(taskId);
       await loadTaskList(); // 삭제 후 목록 새로고침
       console.log("작업 삭제 O:", taskId);
     } catch (err) {
@@ -133,7 +121,7 @@ const useTaskColumn = () => {
   const loadTaskDetails = async (taskId) => {
     if (!token) return;
     try {
-      const res = await getTaskDetails(taskId, token);
+      const res = await getTaskDetails(taskId);
       return res.result;
     } catch (err) {
       console.error("작업 상세 조회 실패", err);
@@ -142,23 +130,33 @@ const useTaskColumn = () => {
   };
 
   // ✅자동 버전 증가
-  const getNextVersion = (version = "1.0.0") => {
-    const parts = version.split(".").map(Number);
-    if (parts.length !== 3 || parts.some(isNaN)) return "1.0.0";
-    parts[2] += 1;
-    return parts.join(".");
+  const getNextVersion = (history = []) => {
+    const versions = history
+      .map((v) => v.version)
+      .map((ver) => ver.split(".").map(Number))
+      .filter((v) => v.length === 3 && v.every((n) => !isNaN(n)));
+
+    if (versions.length === 0) return "1.0.0";
+
+    versions.sort((a, b) => {
+      for (let i = 0; i < 3; i++) {
+        if (a[i] !== b[i]) return b[i] - a[i];
+      }
+      return 0;
+    });
+
+    const latest = versions[0];
+    latest[2] += 1;
+    return latest.join(".");
   };
 
-  // ✅작업 자동 저장
+  // ✅ 일반적인 자동 저장 로직 (파일 없이)
   const autoSaveTask = async (data) => {
     if (!data.title || !data.content || !data.deadline) return;
-
     try {
       if (data.taskId) {
-        // ✅ 기존 작업 → 다음 버전 자동 생성
-        const history = await fetchVersionList(data.taskId, token);
-        const currentVersion = history?.at(-1)?.version || "1.0.0";
-        const nextVersion = getNextVersion(currentVersion);
+        const history = await fetchVersionList(data.taskId);
+        const nextVersion = getNextVersion(history);
 
         const versionData = {
           taskId: data.taskId,
@@ -167,12 +165,13 @@ const useTaskColumn = () => {
           modifiedBy: data.modifiedBy || "관리자",
           content: data.content,
           editors: data.editors || ["user1"],
-          deadline: data.deadline || "2025-07-11",
-          attachmentList: [],
+          deadline: data.deadline,
+          projectId: data.projectId,
+          status: data.status || "PENDING",
         };
 
-        await createVersion(versionData, token);
-        await loadTaskList(); // 새 버전 추가 -> 다시 목록 불러오기
+        await createVersion(versionData);
+        await loadTaskList();
       } else {
         await createNewTask(data);
       }
@@ -181,10 +180,75 @@ const useTaskColumn = () => {
     }
   };
 
-  // 작업 상태 변경
+  // ✅ 파일 추가 시 호출
+  const saveTaskWithFile = async (data, file) => {
+    if (!file) return;
+
+    try {
+      if (!data.taskId) {
+        const created = await createTask(data, file);
+        return created;
+      }
+
+      const uploadResult = await uploadFile(file, data.taskId);
+      const history = await fetchVersionList(data.taskId);
+      const nextVersion = getNextVersion(history);
+
+      const versionData = {
+        taskId: data.taskId,
+        title: data.title,
+        version: nextVersion,
+        modifiedBy: data.modifiedBy || "관리자",
+        content: data.content,
+        editors: data.editors || ["user1"],
+        deadline: data.deadline,
+        projectId: data.projectId,
+        status: data.status || "PENDING",
+      };
+
+      const { fileId, fileName } = uploadResult;
+      if (!fileId || !fileName) {
+        console.error("❌ fileId 또는 fileName 누락됨");
+        return;
+      }
+
+      await createVersion(versionData, { fileId, fileName });
+      await loadTaskList();
+    } catch (err) {
+      console.error("파일 포함 자동 저장 실패:", err);
+    }
+  };
+
+  // ✅ 파일 삭제 후 버전 저장
+  const saveTaskAfterFileDelete = async (data, fileId) => {
+    if (!data.taskId || !fileId) return;
+    try {
+      const history = await fetchVersionList(data.taskId);
+      const nextVersion = getNextVersion(history);
+
+      const versionData = {
+        taskId: data.taskId,
+        title: data.title,
+        version: nextVersion,
+        modifiedBy: data.modifiedBy || "관리자",
+        content: data.content,
+        editors: data.editors || ["user1"],
+        deadline: data.deadline,
+        projectId: data.projectId,
+        status: data.status || "PENDING",
+      };
+
+      await createVersion(versionData, { fileId });
+      await loadTaskList();
+    } catch (err) {
+      console.error("파일 삭제 후 자동 저장 실패:", err);
+    }
+  };
+
+  // ✅ 작업 상태 변경
   const changeStatus = async (taskId, newStatus) => {
     try {
-      await changeTaskStatus(taskId, newStatus, token);
+      await changeTaskStatus(taskId, newStatus);
       await loadTaskList();
       console.log(`상태 변경 완료: ${taskId} → ${newStatus}`);
     } catch (err) {
@@ -204,6 +268,8 @@ const useTaskColumn = () => {
     error,
     changeStatus,
     loadTaskList,
+    saveTaskWithFile,
+    saveTaskAfterFileDelete,
   };
 };
 

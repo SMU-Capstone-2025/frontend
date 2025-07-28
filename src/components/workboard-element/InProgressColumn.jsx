@@ -6,10 +6,9 @@ import TaskForm from "./TaskForm";
 import PlusHover from "../../assets/icons/Plus/PlusHover";
 
 const initialTask = {
-  projectId: "683c4fc636a6eb51cc468087",
+  projectId: "687519535c29ce3bfec23162",
   title: "",
   modifiedBy: "",
-  version: "",
   content: "",
   editors: [],
   deadline: "",
@@ -32,6 +31,7 @@ const InProgressColumn = ({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  // 기존 작업 리스트에서 "PROGRESS" 상태만 가져옴
   const filteredTasks = useMemo(() => {
     return taskList.filter((task) => task.status === "PROGRESS");
   }, [taskList]);
@@ -43,10 +43,7 @@ const InProgressColumn = ({
   };
 
   const handleCardClick = async (taskId) => {
-    const latestVersion = await loadTaskDetails(taskId);
-    const taskInfo = taskList.find((task) => task.taskId === taskId);
-
-    // latestVersion => 해당 taskId의 카드 상세 정보
+    const taskInfo = await loadTaskDetails(taskId);
     if (!taskInfo) {
       console.log("해당 taskId의 정보 없음");
       return;
@@ -57,12 +54,11 @@ const InProgressColumn = ({
       projectId: taskInfo.projectId,
       title: taskInfo.title,
       deadline: taskInfo.deadline,
-      editors: latestVersion.editors || taskInfo.editors || [],
-      modifiedBy: latestVersion.modifiedBy || taskInfo.modifiedBy || "",
-      version: latestVersion.version || "1.0.0",
-      content: latestVersion.content || "",
+      coworkers: taskInfo.editors || [],
+      modifiedBy: taskInfo.modifiedBy || "",
+      content: taskInfo.content || "",
       status: taskInfo.status || "PROGRESS",
-      attachmentList: latestVersion.attachmentList || [],
+      attachmentList: taskInfo.attachmentList || [],
     };
     setOriginalTask(mergedTask);
     setNewTask(mergedTask);
@@ -84,7 +80,7 @@ const InProgressColumn = ({
   return (
     <div className="flex flex-col w-full max-w-[410px] sm:flex-1 sm:min-w-[280px] p-4 justify-center items-center gap-3 rounded-[12px] border border-[var(--gray-200,#E5E7EB)] bg-[var(--red-50,#FEF2F2)]">
       <div className="flex h-[30px] justify-between items-center w-full">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 font-[Livvic]">
           <div className="flex h-[31.72px] px-3 py-2 justify-center items-center gap-2.5 rounded-md bg-[var(--red-200,#FECACA)] text-[var(--red-800,#991B1B)] text-sm font-semibold">
             진행 중
           </div>
@@ -104,8 +100,8 @@ const InProgressColumn = ({
 
       <div className="flex flex-col items-start w-full gap-2">
         {filteredTasks.map((task) => {
-          const latestVersion = task.versionHistory?.at(-1);
-          const attachments = latestVersion?.attachmentList || [];
+          const taskInfo = task.versionHistory?.at(-1);
+          const attachments = taskInfo?.attachmentList || [];
           return (
             <TaskCard
               key={task.taskId}
@@ -125,7 +121,7 @@ const InProgressColumn = ({
 
         <button
           onClick={handleOpenModal}
-          className="flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold hover:bg-white"
+          className="font-[Liviic] flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold hover:bg-white"
         >
           + 작업 만들기
         </button>
