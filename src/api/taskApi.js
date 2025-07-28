@@ -1,18 +1,5 @@
 import { axiosInstanceNoHeader } from "../apis/axiosInstance";
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL;
-
-// ✅ 임시 로그인
-export const login = async (email, password) => {
-  try {
-    const res = await axiosInstanceNoHeader.post("/login", { email, password });
-    console.log(res.headers["access"]);
-    return res.headers["access"];
-  } catch (error) {
-    console.error("❌ 로그인 실패:", error.response?.data || error.message);
-    throw error;
-  }
-};
 // ✅ 작업 목록 조회
 export const fetchTaskList = async (projectId) => {
   try {
