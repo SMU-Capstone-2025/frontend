@@ -12,18 +12,18 @@ import {
   uploadFile,
 } from "../api/taskApi";
 
-const useTaskColumn = () => {
+const useTaskColumn = (projectId) => {
   const [todoList, setTodoList] = useState([]);
   const [inProgressList, setInProgressList] = useState([]);
   const [completedList, setCompletedList] = useState([]);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("accessToken");
-  const projectId = "687519535c29ce3bfec23162"; // 임시 프로젝트 ID
 
   useEffect(() => {
     if (!projectId) return;
     loadTaskList();
   }, [projectId]);
+
   // ✅전체 작업 목록 불러오기 및 컬럼별 분류
   const loadTaskList = async () => {
     try {
@@ -48,13 +48,14 @@ const useTaskColumn = () => {
     try {
       const taskPayload = {
         title: data.title,
-        projectId: data.projectId,
+        projectId,
         status,
         modifiedBy: data.modifiedBy || "관리자",
         content: data.content || "기본 내용",
         editors: data.editors || ["user1"],
         deadline: data.deadline || "2025-07-11",
       };
+      console.log("📤 taskPayload →", taskPayload); // ✅ 이거 추가
 
       const createdTask = await createTask(taskPayload);
       await fetchVersionList(createdTask.id);
@@ -66,8 +67,9 @@ const useTaskColumn = () => {
         version: "1.0.0",
         modifiedBy: data.modifiedBy || "상명대생",
         content: data.content || "내용 공백",
-        editors: data.editors || "상명대",
+        editors: data.editors || ["상명대"],
         deadline: data.deadline,
+        projectId,
       };
 
       await createVersion(versionData, fileId);
@@ -166,7 +168,7 @@ const useTaskColumn = () => {
           content: data.content,
           editors: data.editors || ["user1"],
           deadline: data.deadline,
-          projectId: data.projectId,
+          projectId,
           status: data.status || "PENDING",
         };
 
@@ -202,7 +204,7 @@ const useTaskColumn = () => {
         content: data.content,
         editors: data.editors || ["user1"],
         deadline: data.deadline,
-        projectId: data.projectId,
+        projectId,
         status: data.status || "PENDING",
       };
 
@@ -234,7 +236,7 @@ const useTaskColumn = () => {
         content: data.content,
         editors: data.editors || ["user1"],
         deadline: data.deadline,
-        projectId: data.projectId,
+        projectId,
         status: data.status || "PENDING",
       };
 
