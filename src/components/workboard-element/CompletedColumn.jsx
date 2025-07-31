@@ -5,17 +5,18 @@ import PlusOn from "../../assets/icons/Plus/PlusOn";
 import TaskForm from "./TaskForm";
 import PlusHover from "../../assets/icons/Plus/PlusHover";
 
-const initialTask = {
-  projectId: "687519535c29ce3bfec23162",
+const initialTask = (projectId) => ({
+  projectId,
   title: "",
   modifiedBy: "",
   content: "",
   editors: [],
   deadline: "",
   status: "COMPLETED",
-};
+});
 
 const CompletedColumn = ({
+  projectId,
   taskList,
   autoSaveTask,
   loadTaskDetails,
@@ -24,7 +25,7 @@ const CompletedColumn = ({
   token,
   changeStatus,
 }) => {
-  const [newTask, setNewTask] = useState(initialTask);
+  const [newTask, setNewTask] = useState(initialTask(projectId));
   const [originalTask, setOriginalTask] = useState(null);
   const [newFiles, setNewFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,7 +39,7 @@ const CompletedColumn = ({
   // 모달 열기
   const handleOpenModal = () => {
     setIsModalOpen(true);
-    setNewTask(initialTask);
+    setNewTask(initialTask(projectId));
   };
   const handleCardClick = async (taskId) => {
     const taskInfo = await loadTaskDetails(taskId);
@@ -138,7 +139,7 @@ const CompletedColumn = ({
           }
 
           setIsModalOpen(false);
-          setNewTask(initialTask);
+          setNewTask(initialTask(projectId));
           setOriginalTask(null);
           setIsDeleting(false);
         }}
@@ -146,7 +147,7 @@ const CompletedColumn = ({
           setIsDeleting(true);
           await handleDelete(newTask.taskId);
           setIsModalOpen(false);
-          setNewTask(initialTask);
+          setNewTask(initialTask(projectId));
           setOriginalTask(null);
         }}
         showDelete={!!newTask.taskId}
