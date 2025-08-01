@@ -6,17 +6,18 @@ import PlusHover from "../../assets/icons/Plus/PlusHover";
 import TaskForm from "./TaskForm";
 
 // TodoColumn의 입력 폼
-const initialTask = {
-  projectId: "687519535c29ce3bfec23162",
+const initialTask = (projectId) => ({
+  projectId,
   title: "",
   modifiedBy: "",
   content: "",
   editors: [],
   deadline: "",
   status: "PENDING",
-};
+});
 
 const TodoColumn = ({
+  projectId,
   taskList,
   autoSaveTask,
   loadTaskDetails,
@@ -25,9 +26,8 @@ const TodoColumn = ({
   token,
   changeStatus,
 }) => {
-  const [newTask, setNewTask] = useState(initialTask); // 현재 편집 중인 작업
+  const [newTask, setNewTask] = useState(initialTask(projectId)); // 현재 편집 중인 작업
   const [originalTask, setOriginalTask] = useState(null); // 원본 작업(변경 감지)
-  const [newFiles, setNewFiles] = useState([]); // 첨부파일
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
   const [isDeleting, setIsDeleting] = useState(false); // 삭제 여부
   const [isHovered, setIsHovered] = useState(false); // 아이콘 hover
@@ -40,7 +40,7 @@ const TodoColumn = ({
   // 모달 열기 + 작업 초기 상태
   const handleOpenModal = () => {
     setIsModalOpen(true);
-    setNewTask(initialTask);
+    setNewTask(initialTask(projectId));
   };
 
   // 작업 카드 클릭 -> 작업 상세 정보 로딩 + 모달 열기
@@ -140,7 +140,7 @@ const TodoColumn = ({
           }
 
           setIsModalOpen(false);
-          setNewTask(initialTask);
+          setNewTask(initialTask(projectId));
           setOriginalTask(null);
           setIsDeleting(false);
         }}
