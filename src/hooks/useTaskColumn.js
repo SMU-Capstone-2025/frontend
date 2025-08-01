@@ -21,13 +21,13 @@ const useTaskColumn = (projectId) => {
 
   useEffect(() => {
     if (!projectId) return;
-    loadTaskList();
+    loadTaskList(projectId);
   }, [projectId]);
 
   // ✅전체 작업 목록 불러오기 및 컬럼별 분류
-  const loadTaskList = async () => {
+  const loadTaskList = async (pid) => {
     try {
-      const { result } = await fetchTaskList(projectId);
+      const { result } = await fetchTaskList(pid);
 
       setTodoList(result.filter((t) => t.status === "PENDING"));
       setInProgressList(result.filter((t) => t.status === "PROGRESS"));
@@ -103,7 +103,7 @@ const useTaskColumn = (projectId) => {
   const handleDelete = async (taskId) => {
     try {
       await deleteTask(taskId);
-      await loadTaskList(); // 삭제 후 목록 새로고침
+      await loadTaskList(projectId); // 삭제 후 목록 새로고침
       console.log("작업 삭제 O:", taskId);
     } catch (err) {
       console.error("작업 삭제 X:", err.message);
@@ -173,7 +173,7 @@ const useTaskColumn = (projectId) => {
         };
 
         await createVersion(versionData);
-        await loadTaskList();
+        await loadTaskList(projectId);
       } else {
         await createNewTask(data);
       }
@@ -213,9 +213,9 @@ const useTaskColumn = (projectId) => {
         console.error("❌ fileId 또는 fileName 누락됨");
         return;
       }
-
+      console.log("작업버전ㅇㅁㄴㅇ", projectId);
       await createVersion(versionData, { fileId, fileName });
-      await loadTaskList();
+      await loadTaskList(projectId);
     } catch (err) {
       console.error("파일 포함 자동 저장 실패:", err);
     }
@@ -241,7 +241,7 @@ const useTaskColumn = (projectId) => {
       };
 
       await createVersion(versionData, { fileId });
-      await loadTaskList();
+      await loadTaskList(projectId);
     } catch (err) {
       console.error("파일 삭제 후 자동 저장 실패:", err);
     }
@@ -251,7 +251,7 @@ const useTaskColumn = (projectId) => {
   const changeStatus = async (taskId, newStatus) => {
     try {
       await changeTaskStatus(taskId, newStatus);
-      await loadTaskList();
+      await loadTaskList(projectId);
       console.log(`상태 변경 완료: ${taskId} → ${newStatus}`);
     } catch (err) {
       console.error("작업 상태 변경 실패", err);

@@ -158,6 +158,7 @@ const TodoColumn = ({
           setNewTask={setNewTask}
           token={token}
           onStatusUpdate={changeStatus}
+          projectId={projectId}
         />
       </Modal>
 

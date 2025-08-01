@@ -159,6 +159,7 @@ const CompletedColumn = ({
           setNewFiles={setNewFiles}
           token={token}
           onStatusUpdate={changeStatus}
+          projectId={projectId}
         />
       </Modal>
 
