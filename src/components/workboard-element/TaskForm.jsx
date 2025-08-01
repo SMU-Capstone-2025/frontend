@@ -19,13 +19,11 @@ const TaskForm = ({
   token,
   onStatusUpdate,
   error,
+  projectId,
 }) => {
-  const {
-    autoSaveTask,
-    loadTaskDetails,
-    saveTaskAfterFileDelete,
-    saveTaskWithFile,
-  } = useTaskColumn();
+  const { loadTaskDetails, saveTaskAfterFileDelete, saveTaskWithFile } =
+    useTaskColumn(projectId);
+
   // input 값 변경 핸들러(제목, 마감일, 내용 사용)
   const handleInputChange = (field) => (e) => {
     const value = e.target.value;
