@@ -1,13 +1,10 @@
-import {
-  axiosInstanceNoHeader as axiosInstance,
-  axiosInstanceNoHeader,
-} from "../apis/axiosInstance";
+import { axiosInstanceNoHeader } from "../apis/axiosInstance";
 
 // ✅ 프로젝트 세부 내용 조회
 export const fetchProject = async (projectId) => {
   try {
     console.log("-> 요청 projectId:", projectId);
-    const res = await axiosInstance.get("/project/load", {
+    const res = await axiosInstanceNoHeader.get("/project/load", {
       params: { projectId },
     });
     console.log("프로젝트 조회", res.data.result);
@@ -26,10 +23,9 @@ export const inviteMembersToProject = async ({ projectId, authorities }) => {
       authorities,
     });
 
-    const res = await axiosInstance.put(
-      "/project/invite",
+    const res = await axiosInstanceNoHeader.put(
+      `project/invite/${projectId}`,
       {
-        projectId,
         authorities,
       },
       {
@@ -47,13 +43,26 @@ export const inviteMembersToProject = async ({ projectId, authorities }) => {
 };
 
 // ✅ 프로젝트 정보 업데이트
-export const updateProject = async (projectId, projectName, description) => {
+export const updateProject = async (
+  projectId,
+  projectName,
+  description,
+  imageId = null
+) => {
   try {
-    const res = await axiosInstanceNoHeader.put("/project/update", {
-      projectId,
-      projectName,
-      description,
-    });
+    const res = await axiosInstanceNoHeader.put(
+      `/project/update/${projectId}`,
+      {
+        projectName,
+        description,
+        imageId,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return res.data;
   } catch (error) {
     console.error(
@@ -65,11 +74,11 @@ export const updateProject = async (projectId, projectName, description) => {
 };
 
 // ✅ 프로젝트 내 권한 변경
-export const updateProjectAuthorities = async (projectId, authorities) => {
+export const updateProjectAuthorities = async (projectId, userEmail, role) => {
   try {
-    const res = await axiosInstanceNoHeader.put("/project/auth", {
-      projectId,
-      authorities,
+    const res = await axiosInstanceNoHeader.put(`/project/auth/${projectId}`, {
+      userEmail,
+      role,
     });
     return res.data;
   } catch (error) {
