@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const TextInfoWrapper = styled.div`
   display: flex;
-  padding: 40px 20px;
+  padding: 35px 20px;
   flex-direction: column;
   align-items: flex-start;
   gap: 30px;
@@ -27,7 +27,6 @@ export const NameInputRow = styled.div`
 export const FormLabel = styled.span`
   align-self: stretch;
   color: var(--gray-800, #1f2937);
-  font-family: Pretendard;
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
@@ -83,4 +82,28 @@ export const ProjectDetailInput = styled.input`
   align-self: stretch;
   border-radius: 4px;
   border: 1px solid var(--gray-200, #e5e7eb);
+`;
+
+export const ButtonWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: end;
+`;
+
+export const SaveButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3191f2;
+  color: white;
+  font-weight: 500;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  line-height: 24px;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;

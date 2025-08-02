@@ -40,7 +40,6 @@ export const CoverUploadButton = styled.button`
 
 export const CoverUploadText = styled.span`
   color: var(--gray-600, #4b5563);
-  font-family: Pretendard;
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
