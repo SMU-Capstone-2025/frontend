@@ -16,17 +16,13 @@ export const fetchProject = async (projectId) => {
 };
 
 // ✅ 프로젝트에 신규 인원 추가
-export const inviteMembersToProject = async ({ projectId, authorities }) => {
+export const inviteMembersToProject = async ({ projectId, email }) => {
   try {
-    console.log("서버로 보낼 데이터:", {
-      projectId,
-      authorities,
-    });
-
+    console.log("요청 보내는 이메일->", email);
     const res = await axiosInstanceNoHeader.put(
       `project/invite/${projectId}`,
       {
-        authorities,
+        email,
       },
       {
         headers: {
@@ -84,5 +80,33 @@ export const updateProjectAuthorities = async (projectId, userEmail, role) => {
   } catch (error) {
     console.error("권한 변경 실패:", error.response?.data || error.message);
     throw error;
+  }
+};
+
+// ✅ 파일 id 받아오기
+export const fetchFileImage = async (fileId) => {
+  try {
+    const res = await axiosInstanceNoHeader.get("/file/get", {
+      params: { fileId },
+      responseType: "blob",
+    });
+    const imageUrl = URL.createObjectURL(res.data);
+    return imageUrl;
+  } catch (error) {
+    console.error("사진 안보임:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// ✅ 초대 수락
+export const acceptProjectInvite = async (credentialCode) => {
+  try {
+    const res = await axiosInstanceNoHeader.get("/project/invite/accept", {
+      params: { credentialCode },
+    });
+    return res.data;
+  } catch (err) {
+    console.error("❌ 초대 수락 실패:", err.response?.data || err.message);
+    throw err;
   }
 };
