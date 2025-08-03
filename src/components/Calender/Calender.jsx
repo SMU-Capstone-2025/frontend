@@ -121,7 +121,19 @@ const Calender = () => {
           if (day === 6) return ["!text-blue-500"];
           return [];
         }}
-        events={events}
+        events={[
+          {
+            title: "울랄라 작업하기",
+            start: "2025-07-12",
+            end: "2025-07-16",
+          },
+          {
+            title: "슬프게 작업",
+            start: "2025-07-13",
+            end: "2025-07-20",
+          },
+          ...events,
+        ]}
         dayMaxEventRows={3}
       />
     </div>

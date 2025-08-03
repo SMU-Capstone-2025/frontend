@@ -5,8 +5,8 @@ import Layout from "../../components/NavbarLayout/Layout";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
 const DoctalkMain = () => {
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const [userInfo, setUserInfo] = useState(null);
+  const [selectedProjectId, setSelectedProjectId] = useState("");
+  const [userInfo, setUserInfo] = useState("");
 
   const getUserIdInfo = async () => {
     try {
@@ -15,9 +15,10 @@ const DoctalkMain = () => {
           Authorization: localStorage.getItem("accesToken"), // Assuming userId is stored in localStorage
         },
       });
-      console.log("유저 정보 가져오기 성공~!", res.data.result);
+      console.log("유저 정보 가져오기 성공~!dd", res.data.result);
       setUserInfo(res.data.result);
-      localStorage.setItem("userName", userInfo.name);
+      localStorage.setItem("userName", res.data.result?.name);
+
       return res;
     } catch (error) {
       console.log("유저 정보 가져오기 실패~!\n", error);
