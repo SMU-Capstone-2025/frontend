@@ -117,23 +117,35 @@ const Calender = () => {
         contentHeight={1205}
         dayCellClassNames={(arg) => {
           const day = arg.date.getDay();
-          if (day === 0) return ["!text-red-500"];
-          if (day === 6) return ["!text-blue-500"];
+          if (day === 0) return ["text-red-500"];
+          if (day === 6) return ["text-blue-500"];
           return [];
         }}
         events={[
           {
             title: "울랄라 작업하기",
-            start: "2025-07-12",
-            end: "2025-07-16",
+            start: "2025-08-12",
+            end: "2025-08-16",
           },
           {
             title: "슬프게 작업",
-            start: "2025-07-13",
-            end: "2025-07-20",
+            start: "2025-08-13",
+            end: "2025-08-20",
           },
           ...events,
         ]}
+        eventDisplay="block"
+        eventTextColor="#000"
+        eventBackgroundColor="#f9fafb"
+        eventBorderColor="#E5E7EB"
+        eventClick={(info) => {
+          console.log("이벤트 클릭:", info.event.title);
+        }}
+        dayHeaderContent={(arg) => {
+          const day = arg.date.getDay();
+          const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+          return dayNames[day];
+        }}
         dayMaxEventRows={3}
       />
     </div>
