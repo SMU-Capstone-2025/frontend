@@ -19,7 +19,7 @@ const AddMemberForm = ({ email, onChange, onAdd, onCopyLink }) => {
           <LinkOn />
         </S.AddLinkButton>
         <S.AddMemberButton title="멤버 추가" onClick={onAdd}>
-          <PlusOn />
+          <PlusOn color="#fff" />
           <span>멤버 추가</span>
         </S.AddMemberButton>
       </S.MemberAddButtonWrapper>

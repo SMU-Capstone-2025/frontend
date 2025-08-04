@@ -6,18 +6,18 @@ import PlusHover from "../../assets/icons/Plus/PlusHover";
 import TaskForm from "./TaskForm";
 
 // TodoColumn의 입력 폼
-const initialTask = {
-  projectId: "683c4fc636a6eb51cc468087",
+const initialTask = (projectId) => ({
+  projectId,
   title: "",
   modifiedBy: "",
-  version: "",
   content: "",
   editors: [],
   deadline: "",
   status: "PENDING",
-};
+});
 
 const TodoColumn = ({
+  projectId,
   taskList,
   autoSaveTask,
   loadTaskDetails,
@@ -26,9 +26,8 @@ const TodoColumn = ({
   token,
   changeStatus,
 }) => {
-  const [newTask, setNewTask] = useState(initialTask); // 현재 편집 중인 작업
+  const [newTask, setNewTask] = useState(initialTask(projectId)); // 현재 편집 중인 작업
   const [originalTask, setOriginalTask] = useState(null); // 원본 작업(변경 감지)
-  const [newFiles, setNewFiles] = useState([]); // 첨부파일
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
   const [isDeleting, setIsDeleting] = useState(false); // 삭제 여부
   const [isHovered, setIsHovered] = useState(false); // 아이콘 hover
@@ -41,14 +40,12 @@ const TodoColumn = ({
   // 모달 열기 + 작업 초기 상태
   const handleOpenModal = () => {
     setIsModalOpen(true);
-    setNewTask(initialTask);
+    setNewTask(initialTask(projectId));
   };
 
   // 작업 카드 클릭 -> 작업 상세 정보 로딩 + 모달 열기
   const handleCardClick = async (taskId) => {
-    const latestVersion = await loadTaskDetails(taskId); // api로 버전 불러옴
-    const taskInfo = taskList.find((task) => task.taskId === taskId); // 리스트에서 해당 task 찾기
-
+    const taskInfo = await loadTaskDetails(taskId);
     if (!taskInfo) {
       console.log("해당 taskId의 정보 없음");
       return;
@@ -57,15 +54,13 @@ const TodoColumn = ({
     // 작업 정보 + 버전 정보 = mergedTask
     const mergedTask = {
       taskId: taskInfo.taskId,
-      projectId: taskInfo.projectId,
       title: taskInfo.title,
       deadline: taskInfo.deadline,
-      editors: latestVersion.editors || taskInfo.editors || [],
-      modifiedBy: latestVersion.modifiedBy || taskInfo.modifiedBy || "",
-      version: latestVersion.version || "1.0.0",
-      content: latestVersion.content || "",
+      coworkers: taskInfo.editors || [],
+      modifiedBy: taskInfo.modifiedBy || "",
+      content: taskInfo.content || "",
       status: taskInfo.status || "PENDING",
-      attachmentList: latestVersion.attachmentList || [],
+      attachmentList: taskInfo.attachmentList || [],
     };
     setOriginalTask(mergedTask);
     setNewTask(mergedTask);
@@ -87,7 +82,7 @@ const TodoColumn = ({
   return (
     <div className="flex flex-col w-full max-w-[410px] sm:flex-1 sm:min-w-[280px] p-4 justify-center items-center gap-3 rounded-[12px] border border-[var(--gray-200,#E5E7EB)] bg-[var(--yellow-50,#FEFCE8)]">
       <div className="flex h-[30px] justify-between items-center w-full">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 font-[Livvic]">
           <div className="flex h-[31.72px] px-3 py-2 justify-center items-center gap-2.5 rounded-md bg-[var(--yellow-200,#fef08a)] text-[var(--yellow-900,#713F12)] text-sm font-semibold">
             진행 전
           </div>
@@ -128,7 +123,7 @@ const TodoColumn = ({
 
         <button
           onClick={handleOpenModal}
-          className="flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold hover:bg-white"
+          className="font-[Liviic] flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold hover:bg-white"
         >
           + 작업 만들기
         </button>
@@ -145,7 +140,7 @@ const TodoColumn = ({
           }
 
           setIsModalOpen(false);
-          setNewTask(initialTask);
+          setNewTask(initialTask(projectId));
           setOriginalTask(null);
           setIsDeleting(false);
         }}
@@ -161,10 +156,9 @@ const TodoColumn = ({
         <TaskForm
           newTask={newTask}
           setNewTask={setNewTask}
-          newFiles={newFiles}
-          setNewFiles={setNewFiles}
           token={token}
           onStatusUpdate={changeStatus}
+          projectId={projectId}
         />
       </Modal>
 

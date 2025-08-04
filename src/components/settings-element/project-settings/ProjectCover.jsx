@@ -1,23 +1,59 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as S from "./ProjectCover.styled";
 import defaultCover from "../../../assets/image/defaultCover.png";
+import { fetchFileImage } from "../../../api/projectApi"; // ⬅️ 파일 가져오는 함수
 
 const ProjectCoverUploader = ({ coverImage, setCoverImage }) => {
   const fileInputRef = useRef();
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  const handleFileClick = () => fileInputRef.current.click();
+  // imageId일 경우
+  useEffect(() => {
+    const loadImage = async () => {
+      if (typeof coverImage === "string" && coverImage.length === 24) {
+        try {
+          const url = await fetchFileImage(coverImage);
+          setPreviewUrl(url);
+        } catch (err) {
+          console.error("서버 이미지 로딩 실패", err);
+          setPreviewUrl(defaultCover);
+        }
+      } else {
+        // coverImage가 local preview URL일 경우
+        setPreviewUrl(coverImage || defaultCover);
+      }
+    };
 
+    loadImage();
+  }, [coverImage]);
+
+  // 파일 업로드 시 미리보기
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setCoverImage(imageUrl);
+      setCoverImage(imageUrl); // 실제로는 서버 업로드 후 imageId를 set해야 함
     }
   };
 
+  const handleFileClick = () => fileInputRef.current.click();
+
   return (
     <S.CoverSection>
-      <S.CoverImagePreview $image={coverImage || defaultCover} />
+      <S.CoverImagePreview
+        src={previewUrl || defaultCover}
+        alt="프로젝트 커버"
+        onClick={() => setIsPreviewOpen(true)}
+      />
+      {isPreviewOpen && (
+        <S.ModalBackdrop onClick={() => setIsPreviewOpen(false)}>
+          <S.ModalImage
+            src={previewUrl}
+            onClick={(e) => e.stopPropagation()} // 이미지 클릭 시 닫히지 않도록
+          />
+        </S.ModalBackdrop>
+      )}
       <S.HiddenFileInput
         type="file"
         ref={fileInputRef}

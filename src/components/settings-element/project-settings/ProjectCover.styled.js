@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const CoverSection = styled.div`
-  height: 124px;
+  max-height: 400px;
   align-self: stretch;
   position: relative;
   border-radius: 8px;
@@ -12,13 +12,13 @@ export const HiddenFileInput = styled.input`
   display: none;
 `;
 
-export const CoverImagePreview = styled.div`
+export const CoverImagePreview = styled.img`
   width: 100%;
-  height: 124px;
-  border-radius: 8px;
-  background-size: cover;
-  background-position: center;
-  background-image: ${({ $image }) => `url(${$image})`};
+  height: 100%;
+  max-height: 400px;
+  object-position: center;
+  object-fit: cover;
+  border-bottom: 1px solid #e5e7eb;
 `;
 
 export const CoverUploadButton = styled.button`
@@ -33,16 +33,35 @@ export const CoverUploadButton = styled.button`
   left: 20px;
   top: 20px;
   border-radius: 4px;
-  border: 1px solid var(--gray-200, #e5e7eb);
+  /* border: 1px solid var(--gray-200, #e5e7eb); */
   background: var(--gray-300, #d2d5da);
   cursor: pointer;
 `;
 
 export const CoverUploadText = styled.span`
   color: var(--gray-600, #4b5563);
-  font-family: Pretendard;
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
   line-height: 140%;
+`;
+
+export const ModalBackdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ModalImage = styled.img`
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  object-fit: contain;
 `;

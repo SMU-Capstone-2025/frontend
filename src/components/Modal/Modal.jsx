@@ -18,7 +18,7 @@ const Modal = ({ isOpen, onClose, onDelete, showDelete, children }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000] font-[Livvic]"
       onClick={onClose}
     >
       <div
@@ -35,7 +35,10 @@ const Modal = ({ isOpen, onClose, onDelete, showDelete, children }) => {
                 <EllypsisOn />
               </button>
               {isDropdownOpen && (
-                <div className="absolute top-full right-0 flex flex-col items-start gap-2 px-4 py-[14px] rounded-lg border border-[#D2D5DA] bg-white z-20 w-[140px]">
+                <div
+                  className="absolute top-full right-0 flex flex-col items-start gap-2 px-4 py-[14px] rounded-lg border border-[#D2D5DA] bg-white z-20 w-[140px]"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <button
                     onClick={handleDelete}
                     className="flex items-center gap-2 w-full rounded-md hover:bg-[#D9D9D9] hover:opacity-40 p-1"

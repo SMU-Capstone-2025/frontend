@@ -1,11 +1,12 @@
 import React from "react";
 import * as S from "./ProjectMetaForm.styled";
 
-const ProjectTextForm = ({
+const ProjectMetaForm = ({
   projectName,
   setProjectName,
   projectDescription,
   setProjectDescription,
+  onSave,
 }) => {
   return (
     <S.TextInfoWrapper>
@@ -31,8 +32,11 @@ const ProjectTextForm = ({
           onChange={(e) => setProjectDescription(e.target.value)}
         />
       </S.ProjectDetailSection>
+      <S.ButtonWrapper>
+        <S.SaveButton onClick={onSave}>저장</S.SaveButton>
+      </S.ButtonWrapper>
     </S.TextInfoWrapper>
   );
 };
 
-export default ProjectTextForm;
+export default ProjectMetaForm;

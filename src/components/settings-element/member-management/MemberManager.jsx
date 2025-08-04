@@ -2,17 +2,31 @@ import React, { useState } from "react";
 import MemberList from "./MemberList";
 import AddMemberForm from "./AddMemberForm";
 import * as S from "./MemberManager.styled";
+import { inviteMembersToProject } from "../../../api/projectApi";
 
-const MemberManager = ({ members, setMembers }) => {
+const MemberManager = ({ projectId, members, setMembers }) => {
   const [newMember, setNewMember] = useState({
     email: "",
-    role: "member",
+    role: "ROLE_MEMBER",
   });
 
-  const handleAddMember = () => {
+  const handleAddMember = async () => {
     if (!newMember.email.trim()) return;
-    setMembers([...members, { ...newMember, id: members.length + 1 }]);
-    setNewMember({ email: "", role: "member" });
+
+    try {
+      // 실제 서버 초대 요청 보내기
+      await inviteMembersToProject({
+        projectId,
+        email: newMember.email,
+      });
+
+      alert("초대 이메일이 전송됐습니다!");
+
+      setNewMember({ email: "", role: "ROLE_MEMBER" });
+    } catch (err) {
+      alert("멤버 초대에 실패했습니다.");
+      console.error(err);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -34,7 +48,11 @@ const MemberManager = ({ members, setMembers }) => {
         onAdd={handleAddMember}
         onCopyLink={handleCopyInviteLink}
       />
-      <MemberList members={members} setMembers={setMembers} />
+      <MemberList
+        projectId={projectId}
+        members={members}
+        setMembers={setMembers}
+      />
     </S.MembersSection>
   );
 };
