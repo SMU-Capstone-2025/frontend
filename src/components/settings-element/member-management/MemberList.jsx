@@ -2,29 +2,57 @@ import React from "react";
 import * as S from "./MemberList.styled";
 import CloseOn from "../../../assets/icons/Close/CloseOn";
 import PersonOn from "../../../assets/icons/Person/PersonOn";
-const MemberList = ({ members, setMembers }) => {
-  const handleRoleChange = (id, newRole) => {
-    setMembers(
-      members.map((member) =>
-        member.id === id ? { ...member, role: newRole } : member
-      )
-    );
-  };
-
+import {
+  fetchProject,
+  updateProjectAuthorities,
+} from "../../../api/projectApi";
+const MemberList = ({ projectId, members, setMembers }) => {
   const handleRemove = (id) => {
     setMembers(members.filter((member) => member.id !== id));
+  };
+
+  const handleRoleChange = async (id, newRole) => {
+    const target = members.find((m) => m.id === id);
+    if (!target) return;
+
+    try {
+      // 권한 변경 요청(단일 객체로 해야 함)
+      await updateProjectAuthorities(projectId, target.email, newRole);
+      console.log("권한 변경 성공");
+
+      // 최신 프로젝트 정보로 멤버 목록 다시 불러오기
+      const res = await fetchProject(projectId);
+      const { coworkers } = res.result;
+
+      setMembers(
+        coworkers.map((user, idx) => ({
+          id: idx + 1,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        }))
+      );
+    } catch (err) {
+      alert("❌ 권한 변경 실패");
+      console.error(err);
+    }
   };
 
   return (
     <S.ListSection>
       {members.map((member) => {
         // 우선 기본 값으로 생성
-        const { id, name = "example", email = "", role = "member" } = member;
+        const {
+          id,
+          name = "user00",
+          email = "user00@example.com",
+          role = "ROLE_MEMBER",
+        } = member;
         return (
           <S.MemberWrapper key={id}>
             <S.MemberSection>
-              <S.Avatar>
-                <PersonOn />
+              <S.Avatar className={id % 2 === 0 ? "yellow" : "blue"}>
+                <PersonOn color={id % 2 === 0 ? "#FACC15" : "#5BA7F7"} />
               </S.Avatar>
               <S.MemberInfo>
                 <S.MemberName>{name}</S.MemberName>
@@ -36,8 +64,8 @@ const MemberList = ({ members, setMembers }) => {
                 value={role}
                 onChange={(e) => handleRoleChange(id, e.target.value)}
               >
-                <option value="owner">Owner</option>
-                <option value="member">Member</option>
+                <option value="ROLE_MANAGER">Owner</option>
+                <option value="ROLE_MEMBER">Member</option>
               </S.SelectRole>
               <S.RemoveButton onClick={() => handleRemove(id)}>
                 <CloseOn />

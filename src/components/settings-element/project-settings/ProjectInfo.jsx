@@ -10,6 +10,7 @@ const ProjectInfo = ({
   setCoverImage,
   projectDescription,
   setProjectDescription,
+  onSave,
 }) => {
   return (
     <S.InfoSection>
@@ -22,6 +23,7 @@ const ProjectInfo = ({
         setProjectName={setProjectName}
         projectDescription={projectDescription}
         setProjectDescription={setProjectDescription}
+        onSave={onSave}
       />
     </S.InfoSection>
   );

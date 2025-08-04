@@ -4,7 +4,6 @@ export const MemberAddWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
 `;
 
 export const MemberAddInputWrapper = styled.div`
@@ -50,6 +49,7 @@ export const AddMemberButton = styled.button`
   color: #fff;
   border: none;
   background: var(--blue-500, #3191f2);
+  font-weight: 500;
   cursor: pointer;
 
   span {
@@ -57,10 +57,8 @@ export const AddMemberButton = styled.button`
     text-align: center;
 
     /* sm Semi Bold */
-    font-family: Pretendard;
     font-size: 14px;
     font-style: normal;
-    font-weight: 600;
     line-height: 140%; /* 19.6px */
     letter-spacing: -0.14px;
   }

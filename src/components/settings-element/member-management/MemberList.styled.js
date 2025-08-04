@@ -30,7 +30,13 @@ export const Avatar = styled.div`
   gap: 13.333px;
   border-radius: 666.667px;
   border: 1.333px solid var(--0, #fff);
-  background: var(--blue-100, #d5e8fc);
+
+  &.blue {
+    background: var(--blue-100, #d5e8fc);
+  }
+  &.yellow {
+    background: var(--yellow-100, #fef9c3);
+  }
 `;
 
 export const MemberInfo = styled.div`
@@ -45,7 +51,6 @@ export const MemberName = styled.p`
   color: var(--gray-800, #1f2937);
 
   /* xs Bold */
-  font-family: Pretendard;
   font-size: 12px;
   font-style: normal;
   font-weight: 700;
@@ -56,7 +61,6 @@ export const MemberEmail = styled.p`
   color: var(--gray-800, #1f2937);
 
   /* xs Regular */
-  font-family: Pretendard;
   font-size: 12px;
   font-style: normal;
   font-weight: 400;
