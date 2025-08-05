@@ -13,17 +13,37 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
     setSidebarOpen(!sidebarOpen);
     console.log("sidebarOpen", sidebarOpen);
   };
+
   const [UserIdCardOpen, setUserIdCardOpen] = useState(false);
+
   const handleUserIdCardOpen = () => {
     setUserIdCardOpen(!UserIdCardOpen);
     console.log("UserIdCardOpen", UserIdCardOpen);
   };
+
   const goToHome = () => {
     window.location.href = "/";
   };
 
+  const logout = async () => {
+    try {
+      // await axiosInstanceNoHeader.post("/logout", {});
+      console.log("로그아웃 성공");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userName");
+      window.location.href = "/login"; // Redirect to login page
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+    }
+  };
+  const handleLogout = () => {
+    console.log("로그아웃 버튼 클릭");
+    logout();
+  };
+
   return (
-    <div className="fixed top-0 left-0 w-full h-16 flex justify-between items-center border-b border-gray-200 bg-white px-5 z-50">
+    <div className="fixed top-0 left-0 w-full h-16 flex justify-between items-center border-b border-gray-200 bg-[#f9fafb] px-5 z-50">
       <div className="flex items-center gap-5">
         <div className="w-6 h-6 cursor-pointer" onClick={handleSidebarOpen}>
           <SidebarOn />
@@ -60,6 +80,12 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             </div>
           </>
         )}
+        <Button
+          width={"fit-content"}
+          height={"40px"}
+          text={"로그아웃"}
+          onClick={handleLogout}
+        />
         <Button width={"fit-content"} height={"40px"} text={"화상 회의 시작"} />
       </div>
     </div>

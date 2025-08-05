@@ -29,9 +29,13 @@ const ProjectListPreview = ({ onFirstProjectId }) => {
     }
   };
 
+  // idx 배열을 컴포넌트 함수 내에서 선언
+  const idx = Array.from({ length: projects.length }, (_, i) => i);
+
   useEffect(() => {
     projectPreview();
   }, []);
+  // console.log("프로젝트 리스트:", idx);
 
   return (
     <S.Container>

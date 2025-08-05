@@ -3,7 +3,7 @@ import axios from "axios";
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const axiosInstanceNoHeader = axios.create({
-  baseURL: "http://35.202.85.190:8080",
+  baseURL: "http://3.34.91.202:8080/",
   // baseURL: BASE_URL,
 });
 
@@ -14,6 +14,8 @@ let refreshPromise = null;
 axiosInstanceNoHeader.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");
+    // console.log("asdf111");
+
     if (accessToken && accessToken !== "undefined") {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -26,6 +28,7 @@ axiosInstanceNoHeader.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    // console.log("asdf222");
 
     if (
       error.response &&
@@ -33,6 +36,7 @@ axiosInstanceNoHeader.interceptors.response.use(
       !originalRequest._retry
     ) {
       originalRequest._retry = true;
+      // console.log("err1");
 
       // refresh 요청 자체가 실패한 경우
       if (originalRequest.url.includes("/token/refresh")) {
@@ -46,8 +50,9 @@ axiosInstanceNoHeader.interceptors.response.use(
       if (!refreshPromise) {
         const refreshToken = localStorage.getItem("refreshToken");
         console.log("refreshTokenasdfasdf", refreshToken);
-        // 여기에 추가해보셈
+
         if (!refreshToken || refreshToken === "undefined") {
+          console.log("refreshToken이 없습니다.");
           console.warn("refreshToken이 유효하지 않음:", refreshToken);
           localStorage.clear();
           window.location.href = "/login";

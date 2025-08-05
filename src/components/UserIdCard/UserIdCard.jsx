@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
+import PersonOn from "../../assets/icons/Person/PersonOn";
 
 const UserIdCard = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -32,14 +33,10 @@ const UserIdCard = () => {
           <img
             className="w-12 h-12 rounded-full"
             src={userInfo.profileImage}
-            alt="profile"
+            alt="프로필 이미지"
           />
         ) : (
-          <img
-            className="w-12 h-12 rounded-full"
-            src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-978409_1280.png"
-            alt=""
-          />
+          <PersonOn color={"#5BA7F7"} />
         )}
         {/* Default profile image if no profileImage is available */}
 
