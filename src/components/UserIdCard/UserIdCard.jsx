@@ -41,10 +41,10 @@ const UserIdCard = () => {
         {/* Default profile image if no profileImage is available */}
 
         <div className="flex flex-col justify-start items-start gap-1">
-          <div className="flex-row text-gray-900 text-base font-bold font-['Pretendard']">
+          <div className="flex-row text-gray-900 text-base font-bold font-['Livvic']">
             {userInfo ? userInfo.name : "이름"}
           </div>
-          <div className="flex-row text-gray-500 text-sm font-normal font-['Pretendard']">
+          <div className="flex-row text-gray-500 text-sm font-normal font-['Palanquin']">
             {userInfo ? userInfo.email : "이메일"}
           </div>
         </div>
@@ -53,7 +53,7 @@ const UserIdCard = () => {
         data-property-1="basics"
         className="self-stretch h-7 px-12 py-[5px] bg-gray-600 rounded inline-flex justify-center items-center gap-2.5"
       >
-        <div className="justify-start text-white text-xs font-bold font-['Pretendard'] leading-none [text-shadow:_0px_4px_20px_rgb(0_0_0_/_0.15)]">
+        <div className="justify-start text-white text-xs font-bold font-['Palanquin'] leading-none [text-shadow:_0px_4px_20px_rgb(0_0_0_/_0.15)]">
           {userInfo
             ? userInfo.membership === "상위요금제"
               ? "멤버쉽요금제 vip"
@@ -62,7 +62,7 @@ const UserIdCard = () => {
         </div>
       </div>
       <div
-        className="text-center justify-center text-gray-400 text-xs font-bold font-['Pretendard'] leading-none cursor-pointer"
+        className="text-center justify-center text-gray-400 text-xs font-bold font-['Palanquin'] leading-none cursor-pointer"
         onClick={() => {
           window.location.href = "/mypage";
         }}

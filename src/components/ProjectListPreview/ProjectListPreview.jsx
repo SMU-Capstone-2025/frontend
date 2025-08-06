@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as S from "./ProjectListPreview.styled";
 import ProjectCard from "./ProjectCard";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
@@ -38,7 +37,7 @@ const ProjectListPreview = ({ onFirstProjectId }) => {
   // console.log("프로젝트 리스트:", idx);
 
   return (
-    <S.Container>
+    <div className="grid grid-cols-2 gap-6 self-stretch ">
       {projects.map((project, idx) => (
         <ProjectCard
           key={idx}
@@ -46,7 +45,7 @@ const ProjectListPreview = ({ onFirstProjectId }) => {
           onClick={() => handleCardClick(project.projectId)}
         />
       ))}
-    </S.Container>
+    </div>
   );
 };
 
