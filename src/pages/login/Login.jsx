@@ -3,6 +3,7 @@ import CloseOn from "../../assets/icons/Close/CloseOn";
 import Button from "../../components/Button/Button";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 import Layout from "../../components/NavbarLayout/Layout";
+import Input from "../../components/Input/Input";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -52,9 +53,9 @@ const Login = () => {
           </div>
           <div className="w-full h-[550px] flex flex-col justify-start items-center gap-7">
             <div className="w-full h-full flex flex-col justify-start items-end gap-14">
-              <div className="w-full h-full flex flex-col justify-start items-center gap-14">
+              <div className="w-[520px] h-full flex flex-col justify-start items-center gap-14">
                 {/* loginContentContainer */}
-                <div className="flex justify-start text-gray-900 text-3xl font-bold font-['Pretendard'] leading-loose">
+                <div className="flex justify-start text-gray-900 text-3xl font-bold font-['Palanquin'] leading-loose">
                   로그인
                 </div>
                 <form
@@ -62,36 +63,25 @@ const Login = () => {
                   onSubmit={handleSubmit}
                   className="w-full h-full flex flex-col justify-start items-start gap-9"
                 >
-                  <div className="flex flex-col justify-start items-start gap-3">
+                  <div className="w-full flex flex-col justify-start items-start gap-3">
                     {/* id, pw등 input 감싸는 컨테이너*/}
-                    <div className="flex flex-col justify-start items-start gap-6">
+                    <div className="w-full flex flex-col justify-start items-start gap-6">
                       {/*input list id,pw등등*/}
-                      <div className="w-full h-full flex flex-col justify-start items-start gap-1">
-                        <div className="justify-start text-gray-800 text-base font-semibold font-['Pretendard']">
-                          아이디
-                        </div>
-                        <input
-                          className="w-full h-12 py-3 px-4 rounded-lg outline outline-1 outline-gray-300 overflow-hidden"
-                          type="text"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="이메일을 입력해주세요"
-                          required
-                        />
-                      </div>
-                      <div className="w-full h-full flex flex-col justify-start items-start gap-1">
-                        <div className="justify-start text-gray-800 text-base font-semibold font-['Pretendard']">
-                          비밀번호
-                        </div>
-                        <input
-                          className="w-[520px] h-12 py-3 px-4 rounded-lg outline outline-1 outline-gray-300 overflow-hidden"
-                          type="password"
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          placeholder="8자리 이상의 비밀번호를 입력해주세요"
-                          required
-                        />
-                      </div>
+
+                      <Input
+                        title={"아이디"}
+                        type={"text"}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder={"이메일을 입력해주세요"}
+                      />
+                      <Input
+                        title={"비밀번호"}
+                        type={"password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder={"8자리 이상의 비밀번호를 입력해주세요"}
+                      />
                     </div>
                     <div className="w-full flex justify-between items-center gap-4">
                       <label
@@ -103,11 +93,11 @@ const Login = () => {
                           type="checkbox"
                           className="w-4 h-4 cursor-pointer"
                         />
-                        <div className="justify-start text-gray-800 text-base font-semibold font-['Pretendard']">
+                        <div className="justify-start text-gray-800 text-base font-semibold font-['Palanquin']">
                           로그인 정보 기억하기
                         </div>
                       </label>
-                      <div className="justify-end cursor-pointer text-sky-600 text-sm font-normal font-['Pretendard'] leading-tight">
+                      <div className="justify-end cursor-pointer text-sky-600 text-sm font-normal font-['Palanquin'] leading-tight">
                         <a href="/password-reset">비밀번호를 잊어버리셨나요?</a>
                       </div>
                     </div>
@@ -115,22 +105,20 @@ const Login = () => {
                   <div className="w-full flex flex-col justify-start items-start gap-11">
                     {/* 소셜로그인 버튼과 로그인버튼 감싸는 박스*/}
                     {/* 구글 카톡 깃허브 */}
-                    <button
-                      type="submit"
-                      className="w-full h-12 cursor-pointer"
-                    >
+                    <div className="w-full h-12 cursor-pointer">
                       <Button
+                        type={"submit"}
                         width={"100%"}
                         height={"100%"}
                         text={"로그인 하기"}
                       />
-                    </button>
+                    </div>
                   </div>
                   <div className="self-stretch text-center justify-start">
-                    <span class="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
+                    <span className="text-gray-800 text-sm font-normal font-['Palanquin'] leading-tight">
                       아직 계정이 없으신가요?{" "}
                     </span>
-                    <span class="cursor-pointer text-sky-600 text-sm font-normal font-['Pretendard'] leading-tight">
+                    <span className="cursor-pointer text-sky-600 text-sm font-normal font-['Palanquin'] leading-tight">
                       <a href="/signup"> 회원가입 하기</a>
                     </span>
                   </div>

@@ -46,16 +46,16 @@ const CreateProjectModal = ({
   return (
     <div className="w-[550px] h-[550px] flex flex-col justify-center items-center relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-200 overflow-hidden">
       <div
-        className="w-10 h-10 absolute rounded-2xl right-[20px] top-[20px] cursor-pointer"
+        className="w-8 h-8 absolute right-[20px] top-[20px] cursor-pointer"
         onClick={() => setNewProjectCreateModalOpen(!newProjectCreateModalOpen)}
       >
         <CloseOn />
       </div>
-      <div className="w-[450px] h-[400px] flex flex-col justify-start items-center gap-7">
-        <form
-          className="w-full flex flex-col justify-center items-center gap-3"
-          onSubmit={handleSubmit}
-        >
+      <form
+        className="w-[450px] h-[400px] flex flex-col justify-between items-center gap-7"
+        onSubmit={handleSubmit}
+      >
+        <div className="w-full flex flex-col justify-center items-center gap-3">
           <Input
             type={"text"}
             title={"프로젝트 이름"}
@@ -72,13 +72,12 @@ const CreateProjectModal = ({
             onBlur={() => {
               // 이메일 형식 검증 로직 추가 가능
             }}
-            className="w-[400px] h-[50px] bg-gray-100 rounded-lg px-4 outline-none"
           />
-          <button className="w-full h-14" type="submit">
-            <Button text={"프로젝트 만들기"} width={"100%"} height={"100%"} />
-          </button>
-        </form>
-      </div>
+        </div>
+        <div className="w-full h-14">
+          <Button text={"프로젝트 만들기"} width={"100%"} height={"100%"} />
+        </div>
+      </form>
     </div>
   );
 };

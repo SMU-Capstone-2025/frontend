@@ -38,7 +38,7 @@ const Signup = () => {
         setEmaiSuccess(true);
         return res;
       } catch (error) {
-        console.log("이메일 중복 체크 실패~!\n", error.response.data.message);
+        console.log("실패, 서버 메세지:\n", error.response.data.message);
         setEmaiSuccess(false);
         return error;
       }
@@ -122,97 +122,94 @@ const Signup = () => {
           <div className="w-full h-full flex flex-col justify-start items-center gap-7">
             <div className="w-full h-full flex flex-col justify-start items-center gap-14">
               {/* loginContentContainer */}
-              <div className="flex justify-start text-gray-900 text-3xl font-bold font-['Pretendard'] leading-loose">
+              <div className="flex justify-start text-gray-900 text-3xl font-bold font-['Palanquin'] leading-loose">
                 회원가입
               </div>
-              <form
-                action=""
-                onSubmit={handleSignupSubmit}
-                className="w-full h-full flex flex-col justify-start items-start gap-9"
-              >
-                {/* <div className="">인풋을 감싸는 넓이 높이 지정 div</div> */}
-                <Input
-                  type={"text"}
-                  placeholder={"성함을 입력해주세요."}
-                  title={"이름"}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <Input
-                  type={"email"}
-                  placeholder={"이메일을 입력해주세요."}
-                  title={"아이디"}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => getEmailAvailCheck(email)}
-                  onSuccess={emailSuccess}
-                />
-                <Input
-                  type={"password"}
-                  placeholder={"비밀번호를 입력해주세요."}
-                  title={"비밀번호"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <Input
-                  type={"password"}
-                  placeholder={"비밀번호를 한번 더 입력해주세요."}
-                  title={"비밀번호 확인"}
-                  value={passwordCheck}
-                  onChange={(e) => setPasswordCheck(e.target.value)}
-                  onBlur={() => {
-                    if (password === passwordCheck) {
-                      setpasswordCheckSuccess(true);
-                    } else {
-                      setpasswordCheckSuccess(false);
-                    }
-                  }}
-                  onSuccess={passwordCheckSuccess}
-                />
-                {serverAuthCode && (
+              <form onSubmit={handleSignupSubmit}>
+                <div className="w-[520px] h-full flex flex-col justify-start items-start gap-9">
                   <Input
                     type={"text"}
-                    placeholder={"인증번호를 입력해주세요."}
-                    title={"인증번호"}
-                    value={userAuthCode}
-                    onChange={(e) => setUserAuthCode(e.target.value)}
-                    onBlur={() => checkAuthCode(userAuthCode)}
-                    onSuccess={userAuthCodeSuccess}
+                    placeholder={"성함을 입력해주세요."}
+                    title={"이름"}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
-                )}
-                {!displaySignupBtn && (
-                  <button
-                    type="button"
-                    id="btnSubmitAuth"
-                    onClick={handleSubmitAuthCode}
-                    className="w-full h-full cursor-pointer"
-                  >
-                    <Button
-                      width={"100%"}
-                      height={"100%"}
-                      text={"인증번호 전송"}
+                  <Input
+                    type={"email"}
+                    placeholder={"이메일을 입력해주세요."}
+                    title={"아이디"}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onBlur={() => getEmailAvailCheck(email)}
+                    onSuccess={emailSuccess}
+                  />
+                  <Input
+                    type={"password"}
+                    placeholder={"비밀번호를 입력해주세요."}
+                    title={"비밀번호"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <Input
+                    type={"password"}
+                    placeholder={"비밀번호를 한번 더 입력해주세요."}
+                    title={"비밀번호 확인"}
+                    value={passwordCheck}
+                    onChange={(e) => setPasswordCheck(e.target.value)}
+                    onBlur={() => {
+                      if (password === passwordCheck) {
+                        setpasswordCheckSuccess(true);
+                      } else {
+                        setpasswordCheckSuccess(false);
+                      }
+                    }}
+                    onSuccess={passwordCheckSuccess}
+                  />
+                  {serverAuthCode && (
+                    <Input
+                      type={"text"}
+                      placeholder={"인증번호를 입력해주세요."}
+                      title={"인증번호"}
+                      value={userAuthCode}
+                      onChange={(e) => setUserAuthCode(e.target.value)}
+                      onBlur={() => checkAuthCode(userAuthCode)}
+                      onSuccess={userAuthCodeSuccess}
                     />
-                  </button>
-                )}
-                {displaySignupBtn && (
-                  <button
-                    type="submit"
-                    id="btnSubmitJoin"
-                    className="w-full h-full cursor-pointer"
-                  >
-                    <Button
-                      width={"100%"}
-                      height={"100%"}
-                      text={"회원가입하기"}
-                    />
-                  </button>
-                )}
+                  )}
+                  {!displaySignupBtn && (
+                    <div
+                      id="btnSubmitAuth"
+                      onClick={handleSubmitAuthCode}
+                      className="w-full h-full cursor-pointer"
+                    >
+                      <Button
+                        type={"button"}
+                        width={"100%"}
+                        height={"100%"}
+                        text={"인증번호 전송"}
+                      />
+                    </div>
+                  )}
+                  {displaySignupBtn && (
+                    <div
+                      id="btnSubmitJoin"
+                      className="w-full h-full cursor-pointer"
+                    >
+                      <Button
+                        type={"submit"}
+                        width={"100%"}
+                        height={"100%"}
+                        text={"회원가입하기"}
+                      />
+                    </div>
+                  )}
+                </div>
               </form>
               <div className="self-stretch text-center justify-start">
-                <span class="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
+                <span className="text-gray-800 text-sm font-normal font-['Palanquin'] leading-tight">
                   가입한 계정이 있으신가요?{" "}
                 </span>
-                <span class="cursor-pointer text-sky-700 text-sm font-normal font-['Pretendard'] leading-tight">
+                <span className="cursor-pointer text-sky-700 text-sm font-normal font-['Palanquin'] leading-tight">
                   <a href="/password-reset">비밀번호 재설정하기</a>
                 </span>
               </div>
