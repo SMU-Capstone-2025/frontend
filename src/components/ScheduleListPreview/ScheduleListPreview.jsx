@@ -55,14 +55,29 @@ const ScheduleListPreview = ({ projectId }) => {
   //schedules의 deadline을 기준으로 정렬
 
   return (
-    <div className="flex flex-col w-full max-w-[588px] flex-wrap items-start">
+    <div className="flex flex-col w-full max-w-[588px] flex-wrap items-start gap-3">
       <div>
-        <span className="font-bold text-lg text-[#e40505]">
+        <span className="font-bold font-['Livvic'] text-lg text-[#e40505]">
           D-{caculateDeadline("2025-07-30")}
         </span>
-        <span className="ml-2 text-base text-[#6d7280]">
+        <span className="ml-2 text-base font-['Livvic'] font-semibold text-[#6d7280]">
           {/* {schedules.deadline} */}
           07월 30일 목요일
+        </span>
+      </div>
+      <div className="w-full flex flex-col items-start gap-1.5">
+        <ScheduleCard schedule={schedules} />
+        {schedules.map((schedule, idx) => (
+          <ScheduleCard key={idx} schedule={schedule} />
+        ))}
+      </div>
+      <div>
+        <span className="font-bold font-['Livvic'] text-lg text-[#e40505]">
+          D-{caculateDeadline("2025-08-30")}
+        </span>
+        <span className="ml-2 text-base font-['Livvic'] font-semibold text-[#6d7280]">
+          {/* {schedules.deadline} */}
+          08월 30일 목요일
         </span>
       </div>
       <div className="w-full flex flex-col items-start gap-1.5">
