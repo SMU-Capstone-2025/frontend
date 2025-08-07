@@ -24,15 +24,15 @@ const ProjectCard = ({ key, project, onClick }) => {
       />
       <div className="flex flex-col w-[262px] items-start gap-[14px] absolute left-5 top-[30px] z-10">
         <div
-          className={`flex w-[56px] h-[56px] justify-center items-center rounded-full border border-white ${headerIconBg} text-center font-['Pretendard'] text-[28px] font-semibold leading-[1.3] tracking-[-0.56px]`}
+          className={`flex w-[56px] h-[56px] justify-center items-center rounded-full border border-white ${headerIconBg} text-center font-['Palanquin'] text-[28px] font-semibold leading-[1.3] tracking-[-0.56px]`}
         >
           {project.name[0].toUpperCase()}
         </div>
         <div className="flex flex-col items-start gap-[6px] self-stretch">
-          <p className="text-[#1f2937] font-['Pretendard'] text-lg font-semibold leading-[1.4] tracking-[-0.36px]">
+          <p className="text-[#1f2937] font-['Livvic'] text-lg font-semibold leading-[1.4] tracking-[-0.36px]">
             {project.name}
           </p>
-          <p className="overflow-hidden text-ellipsis text-[#6d7280] font-['Pretendard'] text-xs font-normal leading-[1.4] line-clamp-2">
+          <p className="overflow-hidden text-ellipsis text-[#6d7280] font-['Palanquin'] text-xs font-normal leading-[1.4] line-clamp-2">
             {project.description}
           </p>
         </div>
@@ -44,7 +44,7 @@ const ProjectCard = ({ key, project, onClick }) => {
             <PersonOn color={"#FACC15"} />
           </div>
           <div className="flex w-6 h-6 p-1 items-center rounded-full border border-white bg-[lightgray] absolute left-[20px]">
-            <p className="w-full h-full text-white text-center font-['Pretendard'] text-[10px] font-bold leading-[1.4]">
+            <p className="w-full h-full text-white text-center font-['Palanquin'] text-[10px] font-bold leading-[1.4]">
               +1
             </p>
           </div>

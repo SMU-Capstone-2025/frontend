@@ -17,9 +17,9 @@ const Layout = ({ children }) => {
       {newProjectCreateModalOpen && (
         <div
           className="fixed inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-[99] "
-          // onClick={() =>
-          //   setNewProjectCreateModalOpen(!newProjectCreateModalOpen)
-          // }
+          onClick={() =>
+            setNewProjectCreateModalOpen(!newProjectCreateModalOpen)
+          }
         >
           <div className="z-[100] relative">
             <CreateProjectModal

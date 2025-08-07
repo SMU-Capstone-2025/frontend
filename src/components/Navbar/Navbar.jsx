@@ -27,18 +27,17 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
 
   const logout = async () => {
     try {
-      // await axiosInstanceNoHeader.post("/logout", {});
+      await axiosInstanceNoHeader.post("/logout");
       console.log("로그아웃 성공");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("userName");
-      window.location.href = "/login"; // Redirect to login page
+      // window.location.href = "/login"; // Redirect to login page
     } catch (error) {
       console.error("로그아웃 실패:", error);
     }
   };
   const handleLogout = () => {
-    console.log("로그아웃 버튼 클릭");
     logout();
   };
 
@@ -80,12 +79,16 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             </div>
           </>
         )}
-        <Button
-          width={"fit-content"}
-          height={"40px"}
-          text={"로그아웃"}
-          onClick={handleLogout}
-        />
+        {/* 로그인이 되어 있을 때만 로그아웃 버튼 노출 */}
+        {localStorage.getItem("accessToken") &&
+        localStorage.getItem("accessToken") !== "undefined" ? (
+          <Button
+            width={"fit-content"}
+            height={"40px"}
+            text={"로그아웃"}
+            onClick={handleLogout}
+          />
+        ) : null}
         <Button width={"fit-content"} height={"40px"} text={"화상 회의 시작"} />
       </div>
     </div>
