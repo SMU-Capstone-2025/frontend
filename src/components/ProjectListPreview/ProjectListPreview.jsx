@@ -40,7 +40,8 @@ const ProjectListPreview = ({ onFirstProjectId }) => {
     <div className="grid grid-cols-2 gap-6 self-stretch ">
       {projects.map((project, idx) => (
         <ProjectCard
-          key={idx}
+          key={project.projectId || idx}
+          keyNum={idx}
           project={project}
           onClick={() => handleCardClick(project.projectId)}
         />

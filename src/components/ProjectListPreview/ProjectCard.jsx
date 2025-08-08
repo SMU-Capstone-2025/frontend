@@ -1,8 +1,9 @@
 import React from "react";
 import PersonOn from "../../assets/icons/Person/PersonOn";
 
-const ProjectCard = ({ key, project, onClick }) => {
-  const cardThemeColor = key % 4 === 0 || key % 4 === 3 ? "blue" : "yellow";
+const ProjectCard = ({ keyNum, project, onClick }) => {
+  const cardThemeColor =
+    keyNum % 4 === 0 || keyNum % 4 === 3 ? "blue" : "yellow";
 
   // 색상 변수
   const coverBg = cardThemeColor === "blue" ? "bg-[#5ba7f7]" : "bg-[#FDE047]";
