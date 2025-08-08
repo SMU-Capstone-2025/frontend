@@ -18,6 +18,7 @@ const DoctalkMain = () => {
       console.log("유저 정보 가져오기 성공~!dd", res.data.result);
       setUserInfo(res.data.result);
       localStorage.setItem("userName", res.data.result?.name);
+      localStorage.setItem("email", res.data.result?.email);
 
       return res;
     } catch (error) {

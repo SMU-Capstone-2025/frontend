@@ -18,6 +18,14 @@ const useTaskColumn = (projectId) => {
   const [completedList, setCompletedList] = useState([]);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("accessToken");
+  const userEmail = localStorage.getItem("email");
+  // editors를 항상 string[]으로 보장
+  const getDefaultEditors = (inputEditors) => {
+    if (Array.isArray(inputEditors) && inputEditors.length > 0) {
+      return inputEditors.filter((e) => typeof e === "string" && e.trim());
+    }
+    return userEmail ? [userEmail] : [];
+  };
 
   useEffect(() => {
     if (!projectId) return;
@@ -50,12 +58,12 @@ const useTaskColumn = (projectId) => {
         title: data.title,
         projectId,
         status,
-        modifiedBy: data.modifiedBy || "관리자",
+        modifiedBy: userEmail,
         content: data.content || "기본 내용",
-        editors: data.editors || ["user1"],
+        editors: getDefaultEditors(data.editors),
         deadline: data.deadline || "2025-07-11",
       };
-      console.log("📤 taskPayload →", taskPayload); // ✅ 이거 추가
+      console.log("📤 taskPayload →", taskPayload);
 
       const createdTask = await createTask(taskPayload);
       await fetchVersionList(createdTask.id);
@@ -65,10 +73,10 @@ const useTaskColumn = (projectId) => {
         title: createdTask.title,
         status,
         version: "1.0.0",
-        modifiedBy: data.modifiedBy || "상명대생",
+        modifiedBy: data.modifiedBy || userEmail,
         content: data.content || "내용 공백",
-        editors: data.editors || ["상명대"],
-        deadline: data.deadline,
+        editors: getDefaultEditors(data.editors),
+        deadline: data.deadline || null,
         projectId,
       };
 
@@ -164,10 +172,10 @@ const useTaskColumn = (projectId) => {
           taskId: data.taskId,
           title: data.title,
           version: nextVersion,
-          modifiedBy: data.modifiedBy || "관리자",
+          modifiedBy: data.modifiedBy || userEmail,
           content: data.content,
-          editors: data.editors || ["user1"],
-          deadline: data.deadline,
+          editors: getDefaultEditors(data.editors),
+          deadline: data.deadline || null,
           projectId,
           status: data.status || "PENDING",
         };
@@ -200,9 +208,9 @@ const useTaskColumn = (projectId) => {
         taskId: data.taskId,
         title: data.title,
         version: nextVersion,
-        modifiedBy: data.modifiedBy || "관리자",
+        modifiedBy: data.modifiedBy || userEmail,
         content: data.content,
-        editors: data.editors || ["user1"],
+        editors: getDefaultEditors(data.editors),
         deadline: data.deadline,
         projectId,
         status: data.status || "PENDING",
@@ -232,9 +240,9 @@ const useTaskColumn = (projectId) => {
         taskId: data.taskId,
         title: data.title,
         version: nextVersion,
-        modifiedBy: data.modifiedBy || "관리자",
+        modifiedBy: data.modifiedBy || userEmail,
         content: data.content,
-        editors: data.editors || ["user1"],
+        editors: getDefaultEditors(data.editors),
         deadline: data.deadline,
         projectId,
         status: data.status || "PENDING",
