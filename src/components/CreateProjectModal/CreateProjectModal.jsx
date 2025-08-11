@@ -9,14 +9,15 @@ const CreateProjectModal = ({
   newProjectCreateModalOpen,
 }) => {
   const [projectName, setProjectName] = useState("");
+  const [description, setDescription] = useState("");
   const [memberEmail, setMemberEmail] = useState("");
 
-  const createProjectapi = async (projectName, memberEmail) => {
+  const createProjectapi = async (projectName, description, memberEmail) => {
     try {
       const res = await axiosInstanceNoHeader.post("/project/register", {
         projectId: "",
         projectName: projectName,
-        description: "test description",
+        description: description,
         invitedEmails: [memberEmail],
       });
       console.log("프로젝트 생성 성공~!\n", res);
@@ -32,9 +33,9 @@ const CreateProjectModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await createProjectapi(projectName, memberEmail);
-      console.log("보낸 바디:", projectName, memberEmail);
-      console.log("받은 응답", res);
+      const res = await createProjectapi(projectName, description, memberEmail);
+      console.log("modal보낸 바디:", projectName, description, memberEmail);
+      console.log("modal받은 응답", res);
 
       // 프로젝트 생성 후 모달 닫기
       // setNewProjectCreateModalOpen(false);
@@ -64,6 +65,13 @@ const CreateProjectModal = ({
             onChange={(e) => setProjectName(e.target.value)}
           />
           <Input
+            type={"text"}
+            title={"프로젝트 설명"}
+            placeholder={"프로젝트에 대한 설명을 입력해주세요."}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <Input
             type="text"
             title={"멤버"}
             placeholder={"프로젝트에 참여할 멤버의 이메일을 입력해주세요."}
@@ -75,7 +83,12 @@ const CreateProjectModal = ({
           />
         </div>
         <div className="w-full h-14">
-          <Button text={"프로젝트 만들기"} width={"100%"} height={"100%"} />
+          <Button
+            type={"submit"}
+            text={"프로젝트 만들기"}
+            width={"100%"}
+            height={"100%"}
+          />
         </div>
       </form>
     </div>
