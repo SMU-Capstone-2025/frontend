@@ -28,8 +28,29 @@ const DocumentCreatePage = () => {
 
   const editor = useDocumentEditor(); // tiptap 에디터 생성
 
-  const { title, setTitle, status, setStatus, isLoading, autoSaveAndBack } =
-    useDocState({ editor, documentId, projectId, navigate, isEditMode });
+  const {
+    title,
+    setTitle,
+    status,
+    setStatus,
+    isLoading,
+    autoSaveAndBack,
+    updateTime,
+  } = useDocState({ editor, documentId, projectId, navigate, isEditMode });
+
+  // 날짜 포맷 함수
+  const formatDateTime = (isoString) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    // 서버 시간과 맞추기 위해 9시간 더해줘야 함
+    date.setHours(date.getHours() + 9);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const hh = String(date.getHours()).padStart(2, "0");
+    const min = String(date.getMinutes()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+  };
 
   // 소켓 전송 시 최신 제목
   const titleRef = useRef(title);
@@ -156,8 +177,8 @@ const DocumentCreatePage = () => {
                 {userName}
               </span>
             </div>
-            <span className="text-gray-400 text-[14px] leading-[150%]">
-              업데이트 시간: 0000-00-00
+            <span className="text-gray-400 text-[14px] leading-[150%] font-[Palanquin]">
+              업데이트 시간: {formatDateTime(updateTime) || "불러오는 중..."}
             </span>
           </div>
 
