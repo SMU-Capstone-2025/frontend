@@ -36,6 +36,8 @@ const Layout = ({ children }) => {
           <>
             <div className="fixed top-16 left-0 z-50">
               <Sidebar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
                 newProjectCreateModalOpen={newProjectCreateModalOpen}
                 setNewProjectCreateModalOpen={setNewProjectCreateModalOpen}
               />
