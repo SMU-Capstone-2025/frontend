@@ -15,13 +15,14 @@ const Layout = ({ children }) => {
   return (
     <>
       {newProjectCreateModalOpen && (
-        <div
-          className="fixed inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-[99] "
-          onClick={() =>
-            setNewProjectCreateModalOpen(!newProjectCreateModalOpen)
-          }
-        >
-          <div className="z-[100] relative">
+        <div>
+          <div
+            className="fixed cursor-pointer inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-[90] "
+            onClick={() =>
+              setNewProjectCreateModalOpen(!newProjectCreateModalOpen)
+            }
+          />
+          <div className="fixed z-[99] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <CreateProjectModal
               newProjectCreateModalOpen={newProjectCreateModalOpen}
               setNewProjectCreateModalOpen={setNewProjectCreateModalOpen}
