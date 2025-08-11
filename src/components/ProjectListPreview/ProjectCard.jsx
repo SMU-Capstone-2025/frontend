@@ -16,8 +16,7 @@ const ProjectCard = ({ keyNum, project, onClick }) => {
 
   return (
     <div
-      className="w-[302px] h-[219px] rounded-[12px] border border-gray-200 bg-white relative z-[1]
-    "
+      className="w-[302px] h-[219px] rounded-[12px] border border-gray-200 bg-white relative z-[1] cursor-pointer"
       onClick={onClick}
     >
       <div

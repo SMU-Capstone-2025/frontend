@@ -1,14 +1,17 @@
 import React from "react";
 import PersonOn from "../../assets/icons/Person/PersonOn";
 
-const ScheduleCard = ({ schedule }) => {
+const ScheduleCard = ({ schedule, onClick }) => {
   // 버전 히스토리의 가장 최근 요소
   const lastContent =
     schedule.versionHistory?.[schedule.versionHistory.length - 1]?.content ||
     "";
 
   return (
-    <div className="flex p-5 justify-between items-start self-stretch rounded-lg outline outline-1 outline-gray-200  bg-white">
+    <div
+      className="flex p-5 justify-between items-start self-stretch rounded-lg outline outline-1 outline-gray-200  bg-white cursor-pointer"
+      onClick={onClick}
+    >
       <div className="flex flex-col items-start w-[300px] gap-1">
         <div className="font-['Livvic'] text-black text-base font-semibold">
           {schedule.title}

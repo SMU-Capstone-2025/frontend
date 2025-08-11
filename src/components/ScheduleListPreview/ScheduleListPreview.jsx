@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ScheduleCard from "./ScheduleCard";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const weekdays = [
   "일요일",
@@ -36,6 +37,10 @@ const calcDday = (yyyyMmDd) => {
 
 const ScheduleListPreview = ({ projectId }) => {
   const [schedules, setSchedules] = useState([]);
+  const navigate = useNavigate();
+  const handleCardClick = (projectId) => {
+    navigate(`/project/workboard/${projectId}`);
+  };
 
   const fetchSchedules = async () => {
     if (!projectId) return;
@@ -64,7 +69,10 @@ const ScheduleListPreview = ({ projectId }) => {
           <div key={schedule.id} className="w-full">
             {isSameDeadline ? ( // 같은 마감일인 경우 카드만 렌더
               //카드에 최신 버전 content를 넘겨서 렌더
-              <ScheduleCard schedule={{ ...schedule, content: lastContent }} />
+              <ScheduleCard
+                schedule={{ ...schedule, content: lastContent }}
+                onClick={() => handleCardClick(schedule.projectId)}
+              />
             ) : (
               <>
                 <div className="pb-1 flex justify-start items-start">
@@ -90,6 +98,7 @@ const ScheduleListPreview = ({ projectId }) => {
                 </div>
                 <ScheduleCard
                   schedule={{ ...schedule, content: lastContent }}
+                  onClick={() => handleCardClick(schedule.projectId)}
                 />
               </>
             )}
