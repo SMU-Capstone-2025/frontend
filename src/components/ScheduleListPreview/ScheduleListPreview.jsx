@@ -30,7 +30,6 @@ const calcDday = (yyyyMmDd) => {
   today.setHours(0, 0, 0, 0);
   const due = new Date(y, m - 1, d);
   const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
-  if (diffDays < 0) return -1;
   if (diffDays === 0) return 0;
   return `${diffDays}`;
 };
@@ -76,7 +75,12 @@ const ScheduleListPreview = ({ projectId }) => {
             ) : (
               <>
                 <div className="pb-1 flex justify-start items-start">
-                  {calcDday(schedule.deadline) === 0 ? ( // D-day가 0인 경우 빨간색으로 표시
+                  {calcDday(schedule.deadline) < 0 ? ( // D-day가 음수인 경우
+                    <span className="pl-1 font-semibold font-['Livvic'] text-base leading-tight text-[#e40505]">
+                      D+{Math.abs(calcDday(schedule.deadline))}
+                    </span>
+                  ) : // D-day가 0인 경우 빨간색으로 표시
+                  calcDday(schedule.deadline) === 0 ? ( // D-day가 0인 경우 빨간색으로 표시
                     <span className="pl-1 font-semibold font-['Livvic'] text-sm leading-tight text-[#e40505]">
                       D-day
                     </span>
