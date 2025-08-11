@@ -110,3 +110,23 @@ export const acceptProjectInvite = async (credentialCode) => {
     throw err;
   }
 };
+
+// ✅ 프로젝트 문서 목록 (생성시간 기준 오름차순 정렬)
+export const fetchDocumentsByDateAsc = async (projectId) => {
+  try {
+    const res = await axiosInstanceNoHeader.get(
+      "/document/load/list/date-asc",
+      {
+        params: { projectId },
+      }
+    );
+    console.log("오름차순 정렬", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    console.error(
+      "❌ 문서 정렬 목록 조회 실패:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};

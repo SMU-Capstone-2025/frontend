@@ -8,16 +8,23 @@ import ProfilePlus from "../../../../assets/icons/Profile/ProfilePlus";
 import VectorOn from "../../../../assets/icons/Vector/VectorOn";
 import EditorToolbar from "../EditorToolbar";
 
-const EditNavbar = ({ title, onTitleChange, onBack, editor }) => {
+const EditNavbar = ({
+  title,
+  onTitleChange,
+  onBack,
+  editor,
+  onSummaryClick,
+  onCorrectClick,
+}) => {
   return (
-    <div className="w-[1920px] h-[151px] shrink-0 border-b border-gray-200 bg-white flex flex-col justify-center gap-y-4">
+    <div className="w-[1920px] h-[151px] shrink-0 border-b border-[#e5e7eb] bg-[#fff] flex flex-col justify-center gap-y-4 font-[Palaquin]">
       {/* 상단 좌우 섹션 */}
       <div className="flex items-center justify-between px-7">
         {/* 왼쪽: 뒤로가기 + 제목 + 즐겨찾기 */}
         <div className="inline-flex items-center justify-center gap-[20px]">
           <div
             onClick={onBack}
-            className="cursor-pointer flex items-center justify-center hover:opacity-30 transition"
+            className="flex items-center justify-center transition cursor-pointer hover:opacity-30"
           >
             <ArrowLeftOn />
           </div>
@@ -26,7 +33,7 @@ const EditNavbar = ({ title, onTitleChange, onBack, editor }) => {
             onChange={(e) => onTitleChange(e.target.value)}
             placeholder="새 문서 작성"
             title={title}
-            className="text-[24px] max-w-[200px] p-2 w-full font-bold leading-[120%] tracking-[-0.06em] text-gray-800 font-pretendard bg-transparent "
+            className="text-[24px] p-2 max-w-[1000px] w-full font-bold leading-[120%] tracking-[-0.06em] text-gray-800  bg-transparent "
           />
           <StarOn />
         </div>
@@ -47,7 +54,7 @@ const EditNavbar = ({ title, onTitleChange, onBack, editor }) => {
             공유하기
           </button>
           <div
-            className="flex h-6 w-6 justify-center items-center cursor-pointer"
+            className="flex items-center justify-center w-6 h-6 cursor-pointer"
             onClick={() => {
               console.log("Click 더보기");
             }}
@@ -59,7 +66,7 @@ const EditNavbar = ({ title, onTitleChange, onBack, editor }) => {
 
       {/* 에디터 툴바 */}
       <div className="flex items-center justify-between px-7">
-        <div className="inline-flex px-[35px] py-[10px] justify-center items-center rounded-[200px] bg-gray-100">
+        <div className="inline-flex px-[35px] py-[10px] justify-center items-center rounded-[200px] bg-[#F3F4F6]">
           <EditorToolbar editor={editor} />
         </div>
         <div
