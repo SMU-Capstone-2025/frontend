@@ -63,19 +63,18 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             <div className="w-6 h-6 cursor-pointer">
               <BellOn />
             </div>
-            <div className="flex items-center gap-1.5 cursor-pointer relative">
+            <div className="flex items-center gap-1.5 relative">
               <div
-                className="flex w-10 h-10 p-1.5 items-center gap-4 rounded-full border border-white bg-blue-100"
+                className="flex w-10 h-10 p-1.5 items-center gap-4 rounded-full border border-white bg-blue-100 cursor-pointer"
                 onClick={handleUserIdCardOpen}
               >
                 <PersonOn color={"#5BA7F7"} />
                 {UserIdCardOpen && (
-                  <div className="absolute bottom-[-140px] right-[10px]">
+                  <div className="absolute bottom-[-140px] right-[10px] cursor-auto">
                     <UserIdCard />
                   </div>
                 )}
               </div>
-              {/* <p className="flex w-fit h-7 items-center">독톡 님</p> */}
             </div>
           </>
         )}
