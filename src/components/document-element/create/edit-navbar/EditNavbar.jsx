@@ -17,7 +17,7 @@ const EditNavbar = ({
   onCorrectClick,
 }) => {
   return (
-    <div className="w-[1920px] h-[151px] shrink-0 border-b border-gray-200 bg-gray-100 flex flex-col justify-center gap-y-4 font-[Palaquin]">
+    <div className="w-[1920px] h-[151px] shrink-0 border-b border-[#e5e7eb] bg-[#fff] flex flex-col justify-center gap-y-4 font-[Palaquin]">
       {/* 상단 좌우 섹션 */}
       <div className="flex items-center justify-between px-7">
         {/* 왼쪽: 뒤로가기 + 제목 + 즐겨찾기 */}
@@ -33,7 +33,7 @@ const EditNavbar = ({
             onChange={(e) => onTitleChange(e.target.value)}
             placeholder="새 문서 작성"
             title={title}
-            className="text-[24px] max-w-[300px] p-2 w-full font-bold leading-[120%] tracking-[-0.06em] text-gray-800  bg-transparent "
+            className="text-[24px] p-2 max-w-[1000px] w-full font-bold leading-[120%] tracking-[-0.06em] text-gray-800  bg-transparent "
           />
           <StarOn />
         </div>
@@ -66,7 +66,7 @@ const EditNavbar = ({
 
       {/* 에디터 툴바 */}
       <div className="flex items-center justify-between px-7">
-        <div className="inline-flex px-[35px] py-[10px] justify-center items-center rounded-[200px] bg-gray-50">
+        <div className="inline-flex px-[35px] py-[10px] justify-center items-center rounded-[200px] bg-[#F3F4F6]">
           <EditorToolbar editor={editor} />
         </div>
         <div
