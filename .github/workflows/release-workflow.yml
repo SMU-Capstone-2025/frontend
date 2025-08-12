@@ -1,0 +1,56 @@
+name: Deploy Frontend to EC2
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare frontend build folder (flatten dist/)
+        run: |
+          mkdir -p frontend-build
+          cp -r dist/* frontend-build/
+
+      - name: Check frontend-build contents
+        run: ls -al frontend-build
+
+      - name: Prepare frontend build folder (flatten dist/)
+        run: |
+          rm -rf frontend-build
+          mkdir frontend-build
+          cp -r dist/. frontend-build/    # “dist/ 의 내용 모두” 복사
+
+      - name: Deploy via SCP to EC2
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_SERVER_HOST }}
+          username: ${{ secrets.DEPLOY_SERVER_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: "frontend-build/*"
+          target: "~/frontend-temp"
+
+      - name: SSH into EC2 and move files with sudo
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_SERVER_HOST }}
+          username: ${{ secrets.DEPLOY_SERVER_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            sudo rm -rf /var/www/html/*
+            sudo mv ~/frontend-temp/* /var/www/html/
+            sudo chown -R www-data:www-data /var/www/html
+            sudo chmod -R 755              /var/www/html
+            sudo systemctl reload nginx
