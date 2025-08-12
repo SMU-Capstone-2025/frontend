@@ -10,15 +10,15 @@ const CreateProjectModal = ({
 }) => {
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
-  const [memberEmail, setMemberEmail] = useState("");
+  const [memberEmail, setMemberEmail] = useState();
 
   const createProjectapi = async (projectName, description, memberEmail) => {
+    const invitedEmails = memberEmail ? [memberEmail] : [];
     try {
       const res = await axiosInstanceNoHeader.post("/project/register", {
-        projectId: "",
         projectName: projectName,
         description: description,
-        invitedEmails: [memberEmail],
+        invitedEmails: invitedEmails,
       });
       console.log("프로젝트 생성 성공~!\n", res);
       alert("프로젝트가 생성되었습니다.");
@@ -80,6 +80,7 @@ const CreateProjectModal = ({
             onBlur={() => {
               // 이메일 형식 검증 로직 추가 가능
             }}
+            required={false}
           />
         </div>
         <div className="w-full h-14">

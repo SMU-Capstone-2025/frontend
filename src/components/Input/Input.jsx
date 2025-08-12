@@ -10,6 +10,7 @@ const Input = ({
   onChange,
   onBlur,
   onSuccess,
+  required = true,
 }) => {
   return (
     <div className="w-full h-full flex flex-col justify-start items-start gap-1">
@@ -24,7 +25,7 @@ const Input = ({
           onChange={onChange}
           onBlur={onBlur}
           placeholder={placeholder}
-          required
+          required={required}
         />
         {onSuccess == true && <CircleOkOn color={"blue"} />}
         {onSuccess == false && <CancelOn color={"red"} />}
