@@ -3,7 +3,7 @@ import axios from "axios";
 // const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const axiosInstanceNoHeader = axios.create({
-  baseURL: "http://3.34.91.202:8080/",
+  baseURL: "https://docktalk.co.kr/api",
   // baseURL: BASE_URL,
 });
 
