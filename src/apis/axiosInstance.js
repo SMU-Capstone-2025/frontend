@@ -3,7 +3,7 @@ import axios from "axios";
 // const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const axiosInstanceNoHeader = axios.create({
-  baseURL: "http://52.79.128.204:8080/",
+  baseURL: "https://docktalk.co.kr/api",
   // baseURL: BASE_URL,
 });
 
@@ -57,7 +57,7 @@ axiosInstanceNoHeader.interceptors.response.use(
         }
         // refresh 요청 실행
         refreshPromise = plainAxios
-          .post("http://52.79.128.204:8080/token/refresh", null, {
+          .post("https://docktalk.co.kr/api/token/refresh", null, {
             headers: {
               Authorization: `Bearer ${refreshToken}`,
             },
