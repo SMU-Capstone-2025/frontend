@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ScheduleCard from "./ScheduleCard";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const weekdays = [
   "일요일",
@@ -29,13 +30,16 @@ const calcDday = (yyyyMmDd) => {
   today.setHours(0, 0, 0, 0);
   const due = new Date(y, m - 1, d);
   const diffDays = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
-  if (diffDays < 0) return "기한 만료";
-  if (diffDays === 0) return "day";
-  return `D-${diffDays}`;
+  if (diffDays === 0) return 0;
+  return `${diffDays}`;
 };
 
 const ScheduleListPreview = ({ projectId }) => {
   const [schedules, setSchedules] = useState([]);
+  const navigate = useNavigate();
+  const handleCardClick = (projectId) => {
+    navigate(`/project/workboard/${projectId}`);
+  };
 
   const fetchSchedules = async () => {
     if (!projectId) return;
@@ -54,23 +58,54 @@ const ScheduleListPreview = ({ projectId }) => {
 
   return (
     <div className="flex flex-col w-full max-w-[588px] flex-wrap items-start gap-[10px]">
-      {schedules.map((schedule) => {
+      {schedules.map((schedule, idx) => {
         const lastContent =
           schedule.versionHistory?.[schedule.versionHistory.length - 1]
             ?.content || "";
+        const isSameDeadline =
+          idx > 0 && schedules[idx - 1].deadline === schedule.deadline;
         return (
           <div key={schedule.id} className="w-full">
-            <div className="pb-1">
-              <span className="pl-1 font-bold font-['Livvic'] text-lg text-[#e40505]">
-                {calcDday(schedule.deadline)}
-              </span>
-              <span className="ml-2 text-base font-['Livvic'] font-semibold text-[#6d7280]">
-                {formatKoreanDate(schedule.deadline)}
-              </span>
-            </div>
+            {isSameDeadline ? ( // 같은 마감일인 경우 카드만 렌더
+              //카드에 최신 버전 content를 넘겨서 렌더
+              <ScheduleCard
+                schedule={{ ...schedule, content: lastContent }}
+                onClick={() => handleCardClick(schedule.projectId)}
+              />
+            ) : (
+              <>
+                <div className="pb-1 flex justify-start items-start">
+                  {calcDday(schedule.deadline) < 0 ? ( // D-day가 음수인 경우
+                    <span className="pl-1 font-semibold font-['Livvic'] text-base leading-tight text-[#e40505]">
+                      D+{Math.abs(calcDday(schedule.deadline))}
+                    </span>
+                  ) : // D-day가 0인 경우 빨간색으로 표시
+                  calcDday(schedule.deadline) === 0 ? ( // D-day가 0인 경우 빨간색으로 표시
+                    <span className="pl-1 font-semibold font-['Livvic'] text-sm leading-tight text-[#e40505]">
+                      D-day
+                    </span>
+                  ) : // D-day가 양수인 경우, 중첩삼항
+                  calcDday(schedule.deadline) < 10 ? ( // D-day가 10일 이하인 경우
+                    <span className="pl-1 font-semibold font-['Livvic'] text-sm leading-tight text-[Orange]">
+                      D-{calcDday(schedule.deadline)}
+                    </span>
+                  ) : (
+                    // D-day가 10일넘게 남은 경우
+                    <span className="pl-1 font-semibold font-['Livvic'] text-sm leading-tight text-[#9CA3AF]">
+                      D-{calcDday(schedule.deadline)}
+                    </span>
+                  )}
 
-            {/* 카드에 최신 버전 content를 넘겨서 렌더 */}
-            <ScheduleCard schedule={{ ...schedule, content: lastContent }} />
+                  <span className="ml-2 text-sm font-['Livvic'] font-semibold text-[#6d7280]">
+                    {formatKoreanDate(schedule.deadline)}
+                  </span>
+                </div>
+                <ScheduleCard
+                  schedule={{ ...schedule, content: lastContent }}
+                  onClick={() => handleCardClick(schedule.projectId)}
+                />
+              </>
+            )}
           </div>
         );
       })}

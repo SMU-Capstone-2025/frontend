@@ -57,7 +57,7 @@ axiosInstanceNoHeader.interceptors.response.use(
         }
         // refresh 요청 실행
         refreshPromise = plainAxios
-          .post("http://3.34.91.202:8080/token/refresh", null, {
+          .post("https://docktalk.co.kr/api/token/refresh", null, {
             headers: {
               Authorization: `Bearer ${refreshToken}`,
             },

@@ -1,8 +1,9 @@
 import React from "react";
 import PersonOn from "../../assets/icons/Person/PersonOn";
 
-const ProjectCard = ({ key, project, onClick }) => {
-  const cardThemeColor = key % 4 === 0 || key % 4 === 3 ? "blue" : "yellow";
+const ProjectCard = ({ keyNum, project, onClick }) => {
+  const cardThemeColor =
+    keyNum % 4 === 0 || keyNum % 4 === 3 ? "blue" : "yellow";
 
   // 색상 변수
   const coverBg = cardThemeColor === "blue" ? "bg-[#5ba7f7]" : "bg-[#FDE047]";
@@ -15,8 +16,7 @@ const ProjectCard = ({ key, project, onClick }) => {
 
   return (
     <div
-      className="w-[302px] h-[219px] rounded-[12px] border border-gray-200 bg-white relative z-[1]
-    "
+      className="w-[302px] h-[219px] rounded-[12px] border border-gray-200 bg-white relative z-[1] cursor-pointer"
       onClick={onClick}
     >
       <div

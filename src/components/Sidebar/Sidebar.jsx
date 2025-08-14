@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import PlusOff from "../../assets/icons/Plus/PlusOff";
 import ArrowRightOff from "../../assets/icons/ArrowRight/ArrowRightOff";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({
+  sidebarOpen,
+  setSidebarOpen,
   newProjectCreateModalOpen,
   setNewProjectCreateModalOpen,
 }) => {
@@ -12,6 +15,12 @@ const Sidebar = ({
     console.log("프로젝트생성모달", newProjectCreateModalOpen);
   };
   const [userProjectListInfo, setUserProjectListInfo] = useState([]);
+  const navigate = useNavigate();
+
+  const handleProjectClick = (projectId) => {
+    navigate(`/project/workboard/${projectId}`);
+    setSidebarOpen(false); // 사이드바 닫기
+  };
 
   const getUserProjectListInfo = async () => {
     try {
@@ -47,7 +56,8 @@ const Sidebar = ({
           {userProjectListInfo.map((proj, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-x-[12px] self-stretch"
+              className="flex items-center gap-x-[12px] self-stretch cursor-pointer"
+              onClick={() => handleProjectClick(proj.projectId)}
             >
               <div className="flex w-6 h-6 justify-center items-center rounded-full border border-white bg-[#d5e8fc] text-[#3191f2] text-center font-['Pretendard'] text-xs font-semibold leading-[1.3] tracking-[-0.56px]">
                 {proj.name[0].toUpperCase()}
