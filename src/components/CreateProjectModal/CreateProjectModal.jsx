@@ -10,10 +10,12 @@ const CreateProjectModal = ({
 }) => {
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
-  const [memberEmail, setMemberEmail] = useState();
+  const [memberEmail, setMemberEmail] = useState("");
+  const [memberEmailList, setMemberEmailList] = useState([]);
+  const [onSuccess, setOnSuccess] = useState(null);
 
   const createProjectapi = async (projectName, description, memberEmail) => {
-    const invitedEmails = memberEmail ? [memberEmail] : [];
+    const invitedEmails = memberEmailList.length > 0 ? memberEmailList : [];
     try {
       const res = await axiosInstanceNoHeader.post("/project/register", {
         projectName: projectName,
@@ -33,7 +35,11 @@ const CreateProjectModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await createProjectapi(projectName, description, memberEmail);
+      const res = await createProjectapi(
+        projectName,
+        description,
+        memberEmailList
+      );
       console.log("modal보낸 바디:", projectName, description, memberEmail);
       console.log("modal받은 응답", res);
 
@@ -41,6 +47,32 @@ const CreateProjectModal = ({
       // setNewProjectCreateModalOpen(false);
     } catch (error) {
       console.log("에러 발생", error);
+    }
+  };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const handleIsUserEmail = async (memberEmail) => {
+    const isValidEmail = validateEmail(memberEmail);
+    // 이메일 형식 검증 로직 추가 가능
+    if (!isValidEmail) {
+      console.log("유효하지 않은 이메일 형식입니다.");
+      setOnSuccess(false);
+      return;
+    } else {
+      try {
+        const res = await axiosInstanceNoHeader.get("/project/invite", {
+          params: {
+            email: memberEmail,
+          },
+        });
+        console.log("이메일 확인 성공:", res);
+        setOnSuccess(true);
+        return res;
+      } catch (e) {
+        console.log("이메일 확인 실패:", e);
+        console.log("request email:", memberEmail);
+        setOnSuccess(false);
+        return e;
+      }
     }
   };
 
@@ -56,7 +88,7 @@ const CreateProjectModal = ({
         className="w-[450px] h-[400px] flex flex-col justify-between items-center gap-7"
         onSubmit={handleSubmit}
       >
-        <div className="w-full flex flex-col justify-center items-center gap-3">
+        <div className="w-full flex flex-col justify-center items-start gap-3">
           <Input
             type={"text"}
             title={"프로젝트 이름"}
@@ -78,10 +110,37 @@ const CreateProjectModal = ({
             value={memberEmail}
             onChange={(e) => setMemberEmail(e.target.value)}
             onBlur={() => {
-              // 이메일 형식 검증 로직 추가 가능
+              handleIsUserEmail(memberEmail);
             }}
             required={false}
+            useButton={true}
+            onSuccess={onSuccess}
+            onClick={() => {
+              if (onSuccess === true) {
+                setMemberEmailList([...memberEmailList, memberEmail]);
+                setOnSuccess(null); // 성공 상태 초기화
+                setMemberEmail(""); // 입력 필드 초기화
+                console.log("초대할 이메일 list:", [...memberEmailList]);
+              }
+              setMemberEmail(memberEmail, ...[memberEmail]);
+              console.log("초대할 이메일:", memberEmail);
+            }}
           />
+          {memberEmailList.length > 0 && (
+            <div className="w-full flex flex-col justify-start items-start gap-2">
+              <div className="text-gray-800 text-base font-semibold">
+                초대할 멤버 목록
+              </div>
+              <ul className="list-disc pl-5">
+                {memberEmailList.map((email, index) => (
+                  <li key={index} className="text-gray-700">
+                    {email}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* <div className="text-red-600">경고메세지</div> */}
         </div>
         <div className="w-full h-14">
           <Button
