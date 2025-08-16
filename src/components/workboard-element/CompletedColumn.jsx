@@ -63,6 +63,7 @@ const CompletedColumn = ({
       title: taskInfo.title,
       deadline: taskInfo.deadline,
       coworkers: taskInfo.coworkers || [],
+      editors: taskInfo.editors || [],
       modifiedBy: taskInfo.modifiedBy || "",
       version: taskInfo.version || "1.0.0",
       content: taskInfo.content || "",
