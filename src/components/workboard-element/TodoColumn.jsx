@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
 import { Modal } from "../index";
 import PlusOn from "../../assets/icons/Plus/PlusOn";
@@ -11,7 +11,7 @@ const initialTask = (projectId) => ({
   title: "",
   modifiedBy: "",
   content: "",
-  editors: [],
+  coworkers: [],
   deadline: "",
   status: "PENDING",
 });
@@ -25,12 +25,18 @@ const TodoColumn = ({
   error,
   token,
   changeStatus,
+  coworkers,
 }) => {
   const [newTask, setNewTask] = useState(initialTask(projectId)); // 현재 편집 중인 작업
   const [originalTask, setOriginalTask] = useState(null); // 원본 작업(변경 감지)
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태
   const [isDeleting, setIsDeleting] = useState(false); // 삭제 여부
   const [isHovered, setIsHovered] = useState(false); // 아이콘 hover
+
+  useEffect(() => {
+    if (!newTask.taskId) return;
+    autoSaveTask(newTask);
+  }, [newTask.coworkers]);
 
   // 기존 작업 리스트에서 "PENDING" 상태만 가져옴
   const filteredTasks = useMemo(() => {
@@ -46,24 +52,23 @@ const TodoColumn = ({
   // 작업 카드 클릭 -> 작업 상세 정보 로딩 + 모달 열기
   const handleCardClick = async (taskId) => {
     const taskInfo = await loadTaskDetails(taskId);
-    if (!taskInfo) {
-      console.log("해당 taskId의 정보 없음");
-      return;
-    }
+    if (!taskInfo) return;
 
-    // 작업 정보 + 버전 정보 = mergedTask
     const mergedTask = {
       taskId: taskInfo.taskId,
       title: taskInfo.title,
       deadline: taskInfo.deadline,
-      coworkers: taskInfo.editors || [],
+      coworkers: taskInfo.coworkers || [], // ← 현재 할당된 사람
+      editors: taskInfo.coworkers || [],
       modifiedBy: taskInfo.modifiedBy || "",
       content: taskInfo.content || "",
       status: taskInfo.status || "PENDING",
       attachmentList: taskInfo.attachmentList || [],
     };
+
+    console.log(taskInfo.coworkers);
     setOriginalTask(mergedTask);
-    setNewTask(mergedTask);
+    setNewTask(mergedTask); // TaskForm으로 내려감
     setIsModalOpen(true);
   };
 
@@ -75,7 +80,9 @@ const TodoColumn = ({
       original.status !== current.status ||
       original.content !== current.content ||
       original.deadline !== current.deadline ||
-      original.attachmentList !== current.attachmentList
+      (original.coworkers || []).join() !== (current.coworkers || []).join() || // ✅ 담당자 비교 추가
+      JSON.stringify(original.attachmentList) !==
+        JSON.stringify(current.attachmentList)
     );
   };
 
@@ -114,7 +121,7 @@ const TodoColumn = ({
                 "내용 없음"
               }
               date={task.deadline || "기한 없음"}
-              editors={task.editors || []}
+              coworkers={task.coworkers || []}
               attachmentCount={attachments.length}
               onClick={() => handleCardClick(task.taskId)}
             />
@@ -159,6 +166,7 @@ const TodoColumn = ({
           token={token}
           onStatusUpdate={changeStatus}
           projectId={projectId}
+          coworkers={coworkers}
         />
       </Modal>
 

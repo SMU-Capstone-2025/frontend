@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
 import { Modal } from "../index";
 import PlusOn from "../../assets/icons/Plus/PlusOn";
@@ -10,7 +10,7 @@ const initialTask = (projectId) => ({
   title: "",
   modifiedBy: "",
   content: "",
-  editors: [],
+  coworkers: [],
   deadline: "",
   status: "COMPLETED",
 });
@@ -24,14 +24,21 @@ const CompletedColumn = ({
   error,
   token,
   changeStatus,
+  coworkers,
 }) => {
   const [newTask, setNewTask] = useState(initialTask(projectId));
   const [originalTask, setOriginalTask] = useState(null);
-  const [newFiles, setNewFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  // 담당자 변경 시 자동 저장
+  useEffect(() => {
+    if (!newTask.taskId) return;
+    autoSaveTask(newTask);
+  }, [newTask.coworkers]);
+
+  // 완료된 작업만 필터링
   const filteredTasks = useMemo(() => {
     return taskList.filter((task) => task.status === "COMPLETED");
   }, [taskList]);
@@ -41,6 +48,8 @@ const CompletedColumn = ({
     setIsModalOpen(true);
     setNewTask(initialTask(projectId));
   };
+
+  // 카드 클릭 시 상세 불러오기
   const handleCardClick = async (taskId) => {
     const taskInfo = await loadTaskDetails(taskId);
     if (!taskInfo) {
@@ -48,24 +57,25 @@ const CompletedColumn = ({
       return;
     }
 
-    // 작업 정보 + 버전 정보
     const mergedTask = {
       taskId: taskInfo.taskId,
       projectId: taskInfo.projectId,
       title: taskInfo.title,
       deadline: taskInfo.deadline,
-      editors: taskInfo.editors || taskInfo.editors || [],
-      modifiedBy: taskInfo.modifiedBy || taskInfo.modifiedBy || "",
+      coworkers: taskInfo.coworkers || [],
+      modifiedBy: taskInfo.modifiedBy || "",
       version: taskInfo.version || "1.0.0",
       content: taskInfo.content || "",
       status: taskInfo.status || "COMPLETED",
       attachmentList: taskInfo.attachmentList || [],
     };
+
     setOriginalTask(mergedTask);
     setNewTask(mergedTask);
     setIsModalOpen(true);
   };
 
+  // 변경 감지
   const hasTaskChanged = (original, current) => {
     if (!original) return false;
     return (
@@ -73,7 +83,9 @@ const CompletedColumn = ({
       original.status !== current.status ||
       original.content !== current.content ||
       original.deadline !== current.deadline ||
-      original.attachmentList !== current.attachmentList
+      (original.coworkers || []).join() !== (current.coworkers || []).join() ||
+      JSON.stringify(original.attachmentList) !==
+        JSON.stringify(current.attachmentList)
     );
   };
 
@@ -100,19 +112,15 @@ const CompletedColumn = ({
 
       <div className="flex flex-col items-start w-full gap-2">
         {filteredTasks.map((task) => {
-          const taskInfo = task.versionHistory?.at(-1);
-          const attachments = taskInfo?.attachmentList || [];
+          const latestVersion = task.versionHistory?.at(-1);
+          const attachments = latestVersion?.attachmentList || [];
           return (
             <TaskCard
               key={task.taskId}
               title={task.title || "제목 없음"}
-              content={
-                task.content ||
-                task.versionHistory?.at(-1)?.content ||
-                "내용 없음"
-              }
+              content={task.content || latestVersion?.content || "내용 없음"}
               date={task.deadline || "기한 없음"}
-              editors={task.editors || []}
+              coworkers={task.coworkers || []}
               attachmentCount={attachments.length}
               onClick={() => handleCardClick(task.taskId)}
             />
@@ -155,11 +163,10 @@ const CompletedColumn = ({
         <TaskForm
           newTask={newTask}
           setNewTask={setNewTask}
-          newFiles={newFiles}
-          setNewFiles={setNewFiles}
           token={token}
           onStatusUpdate={changeStatus}
           projectId={projectId}
+          coworkers={coworkers}
         />
       </Modal>
 

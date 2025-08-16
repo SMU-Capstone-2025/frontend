@@ -1,16 +1,16 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
 import { Modal } from "../index";
 import PlusOn from "../../assets/icons/Plus/PlusOn";
-import TaskForm from "./TaskForm";
 import PlusHover from "../../assets/icons/Plus/PlusHover";
+import TaskForm from "./TaskForm";
 
 const initialTask = (projectId) => ({
   projectId,
   title: "",
   modifiedBy: "",
   content: "",
-  editors: [],
+  coworkers: [],
   deadline: "",
   status: "PROGRESS",
 });
@@ -24,15 +24,21 @@ const InProgressColumn = ({
   error,
   token,
   changeStatus,
+  coworkers,
 }) => {
   const [newTask, setNewTask] = useState(initialTask(projectId));
   const [originalTask, setOriginalTask] = useState(null);
-  const [newFiles, setNewFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  // 기존 작업 리스트에서 "PROGRESS" 상태만 가져옴
+  // coworkers 변경 시 자동 저장
+  useEffect(() => {
+    if (!newTask.taskId) return;
+    autoSaveTask(newTask);
+  }, [newTask.coworkers]);
+
+  // 진행중 상태만 필터링
   const filteredTasks = useMemo(() => {
     return taskList.filter((task) => task.status === "PROGRESS");
   }, [taskList]);
@@ -43,30 +49,30 @@ const InProgressColumn = ({
     setNewTask(initialTask(projectId));
   };
 
+  // 카드 클릭 → 상세 조회 + 모달 열기
   const handleCardClick = async (taskId) => {
     const taskInfo = await loadTaskDetails(taskId);
-    if (!taskInfo) {
-      console.log("해당 taskId의 정보 없음");
-      return;
-    }
+    if (!taskInfo) return;
 
     const mergedTask = {
       taskId: taskInfo.taskId,
       projectId: taskInfo.projectId,
       title: taskInfo.title,
       deadline: taskInfo.deadline,
-      coworkers: taskInfo.editors || [],
+      coworkers: taskInfo.coworkers || [],
+      editors: taskInfo.coworkers || [],
       modifiedBy: taskInfo.modifiedBy || "",
       content: taskInfo.content || "",
       status: taskInfo.status || "PROGRESS",
       attachmentList: taskInfo.attachmentList || [],
     };
+
     setOriginalTask(mergedTask);
     setNewTask(mergedTask);
     setIsModalOpen(true);
   };
 
-  // 수정 여부 비교
+  // 변경 감지
   const hasTaskChanged = (original, current) => {
     if (!original) return false;
     return (
@@ -74,7 +80,9 @@ const InProgressColumn = ({
       original.status !== current.status ||
       original.content !== current.content ||
       original.deadline !== current.deadline ||
-      original.attachmentList !== current.attachmentList
+      (original.coworkers || []).join() !== (current.coworkers || []).join() ||
+      JSON.stringify(original.attachmentList) !==
+        JSON.stringify(current.attachmentList)
     );
   };
 
@@ -101,19 +109,15 @@ const InProgressColumn = ({
 
       <div className="flex flex-col items-start w-full gap-2">
         {filteredTasks.map((task) => {
-          const taskInfo = task.versionHistory?.at(-1);
-          const attachments = taskInfo?.attachmentList || [];
+          const latestVersion = task.versionHistory?.at(-1);
+          const attachments = latestVersion?.attachmentList || [];
           return (
             <TaskCard
               key={task.taskId}
               title={task.title || "제목 없음"}
-              content={
-                task.content ||
-                task.versionHistory?.at(-1)?.content ||
-                "내용 없음"
-              }
+              content={task.content || latestVersion?.content || "내용 없음"}
               date={task.deadline || "기한 없음"}
-              editors={task.editors || []}
+              coworkers={task.coworkers || []}
               attachmentCount={attachments.length}
               onClick={() => handleCardClick(task.taskId)}
             />
@@ -155,11 +159,10 @@ const InProgressColumn = ({
         <TaskForm
           newTask={newTask}
           setNewTask={setNewTask}
-          newFiles={newFiles}
-          setNewFiles={setNewFiles}
           token={token}
           onStatusUpdate={changeStatus}
           projectId={projectId}
+          coworkers={coworkers}
         />
       </Modal>
 
