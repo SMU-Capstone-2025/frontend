@@ -13,6 +13,7 @@ const CreateProjectModal = ({
   const [memberEmail, setMemberEmail] = useState("");
   const [memberEmailList, setMemberEmailList] = useState([]);
   const [onSuccess, setOnSuccess] = useState(null);
+  const [errMessage, setErrMessage] = useState("");
 
   const createProjectapi = async (projectName, description, memberEmail) => {
     const invitedEmails = memberEmailList.length > 0 ? memberEmailList : [];
@@ -56,6 +57,7 @@ const CreateProjectModal = ({
     if (!isValidEmail) {
       console.log("유효하지 않은 이메일 형식입니다.");
       setOnSuccess(false);
+      setErrMessage("유효하지 않은 이메일 형식입니다.");
       return;
     } else {
       try {
@@ -71,6 +73,7 @@ const CreateProjectModal = ({
         console.log("이메일 확인 실패:", e);
         console.log("request email:", memberEmail);
         setOnSuccess(false);
+        setErrMessage(e.response?.data?.message);
         return e;
       }
     }
@@ -125,6 +128,7 @@ const CreateProjectModal = ({
               setMemberEmail(memberEmail, ...[memberEmail]);
               console.log("초대할 이메일:", memberEmail);
             }}
+            errmsg={errMessage}
           />
           {memberEmailList.length > 0 && (
             <div className="w-full flex flex-col justify-start items-start gap-2">

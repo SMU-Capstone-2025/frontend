@@ -14,6 +14,7 @@ const Input = ({
   required = true,
   useButton = false,
   onClick,
+  errmsg,
 }) => {
   return (
     <div className="w-full h-full flex flex-col justify-start items-start gap-1">
@@ -44,6 +45,9 @@ const Input = ({
           />
         )}
       </div>
+      {onSuccess === false && (
+        <div className="text-red-600 text-sm font-['Palanquin']">{errmsg}</div>
+      )}
     </div>
   );
 };
