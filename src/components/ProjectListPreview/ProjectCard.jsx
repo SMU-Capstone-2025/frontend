@@ -20,7 +20,7 @@ const ProjectCard = ({ keyNum, project, onClick }) => {
 
   return (
     <div
-      className="w-[302px] h-[219px] rounded-[12px] border border-gray-200 bg-white relative z-[1]"
+      className="cursor-pointer w-[302px] h-[219px] rounded-[12px] border border-gray-200 bg-white relative z-[1] transition-shadow duration-200 hover:shadow-md"
       onClick={onClick}
     >
       <div className={`w-[302px] h-[59px] rounded-t-[12px] ${coverBg} z-[2]`} />
@@ -47,7 +47,10 @@ const ProjectCard = ({ keyNum, project, onClick }) => {
         </div>
 
         {/* 멤버 아이콘 */}
-        <div className="flex justify-start h-6 items-center relative">
+        <div
+          title={project?.coworkers?.map((c) => c.name).join(", ")}
+          className="flex justify-start h-6 items-center relative"
+        >
           {coworkerCount >= 1 && (
             <div className="flex w-6 h-6 p-1 items-center rounded-full border border-white bg-[#D5E8FC] absolute left-0">
               <PersonOn color="#5BA7F7" />
