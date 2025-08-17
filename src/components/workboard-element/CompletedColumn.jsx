@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import TaskCard from "./TaskCard";
 import { Modal } from "../index";
 import PlusOn from "../../assets/icons/Plus/PlusOn";
-import TaskForm from "./TaskForm";
 import PlusHover from "../../assets/icons/Plus/PlusHover";
+import TaskForm from "./TaskForm";
+import { Droppable, Draggable } from "@hello-pangea/dnd"; // ✅ 추가
 
 const initialTask = (projectId) => ({
   projectId,
@@ -49,13 +50,10 @@ const CompletedColumn = ({
     setNewTask(initialTask(projectId));
   };
 
-  // 카드 클릭 시 상세 불러오기
+  // 카드 클릭 → 상세 불러오기
   const handleCardClick = async (taskId) => {
     const taskInfo = await loadTaskDetails(taskId);
-    if (!taskInfo) {
-      console.log("해당 taskId의 정보 없음");
-      return;
-    }
+    if (!taskInfo) return;
 
     const mergedTask = {
       taskId: taskInfo.taskId,
@@ -65,7 +63,6 @@ const CompletedColumn = ({
       coworkers: taskInfo.coworkers || [],
       editors: taskInfo.coworkers || [],
       modifiedBy: taskInfo.modifiedBy || "",
-      version: taskInfo.version || "1.0.0",
       content: taskInfo.content || "",
       status: taskInfo.status || "COMPLETED",
       attachmentList: taskInfo.attachmentList || [],
@@ -92,6 +89,7 @@ const CompletedColumn = ({
 
   return (
     <div className="flex flex-col w-full max-w-[410px] sm:flex-1 sm:min-w-[280px] p-4 justify-center items-center gap-3 rounded-[12px] border border-[var(--gray-200,#E5E7EB)] bg-[var(--blue-50,#EDF6FC)]">
+      {/* 헤더 */}
       <div className="flex h-[30px] justify-between items-center w-full">
         <div className="flex items-center gap-2.5 font-[Livvic]">
           <div className="flex h-[31.72px] px-3 py-2 justify-center items-center gap-2.5 rounded-md bg-[var(--blue-100,#D5E8FC)] text-[var(--blue-800,#064488)] text-sm font-semibold">
@@ -111,30 +109,57 @@ const CompletedColumn = ({
         </button>
       </div>
 
-      <div className="flex flex-col items-start w-full gap-2">
-        {filteredTasks.map((task) => {
-          const latestVersion = task.versionHistory?.at(-1);
-          const attachments = latestVersion?.attachmentList || [];
-          return (
-            <TaskCard
-              key={task.taskId}
-              title={task.title || "제목 없음"}
-              content={task.content || latestVersion?.content || "내용 없음"}
-              date={task.deadline || "기한 없음"}
-              coworkers={task.coworkers || []}
-              attachmentCount={attachments.length}
-              onClick={() => handleCardClick(task.taskId)}
-            />
-          );
-        })}
+      {/* Droppable 영역 */}
+      <Droppable droppableId="COMPLETED">
+        {(provided) => (
+          <div
+            className="flex flex-col items-start w-full gap-2"
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+          >
+            {filteredTasks.map((task, index) => {
+              const latestVersion = task.versionHistory?.at(-1);
+              const attachments = latestVersion?.attachmentList || [];
+              return (
+                <Draggable
+                  key={task.taskId}
+                  draggableId={task.taskId}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="w-full"
+                    >
+                      <TaskCard
+                        title={task.title || "제목 없음"}
+                        content={
+                          task.content || latestVersion?.content || "내용 없음"
+                        }
+                        date={task.deadline || "기한 없음"}
+                        coworkers={task.coworkers || []}
+                        attachmentCount={attachments.length}
+                        onClick={() => handleCardClick(task.taskId)}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              );
+            })}
+            {provided.placeholder}
 
-        <button
-          onClick={handleOpenModal}
-          className="font-[Liviic] flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold hover:bg-white"
-        >
-          + 작업 만들기
-        </button>
-      </div>
+            {/* 추가 버튼 */}
+            <button
+              onClick={handleOpenModal}
+              className="font-[Livvic] flex w-full p-3 flex-col items-start gap-[10px] rounded-[10px] shadow-[0px_1.866px_9.05px_rgba(0,0,0,0.06)] self-stretch text-[var(--gray-500,#6D7280)] text-base font-semibold hover:bg-white"
+            >
+              + 작업 만들기
+            </button>
+          </div>
+        )}
+      </Droppable>
 
       {/* 모달 */}
       <Modal
@@ -143,10 +168,7 @@ const CompletedColumn = ({
           const isChanged = hasTaskChanged(originalTask, newTask);
           if (!isDeleting && (!originalTask || isChanged)) {
             await autoSaveTask(newTask);
-          } else {
-            console.log("🛑 저장하지 않음");
           }
-
           setIsModalOpen(false);
           setNewTask(initialTask(projectId));
           setOriginalTask(null);
