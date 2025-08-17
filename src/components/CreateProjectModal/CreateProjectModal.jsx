@@ -131,10 +131,23 @@ const CreateProjectModal = ({
               <div className="text-gray-800 text-base font-semibold">
                 초대할 멤버 목록
               </div>
-              <ul className="list-disc pl-5">
+              <ul className="w-full max-h-24 list-disc pl-5 overflow-y-auto">
                 {memberEmailList.map((email, index) => (
-                  <li key={index} className="text-gray-700">
+                  <li
+                    key={index}
+                    className="text-gray-700 w-full h-6 flex justify-between"
+                  >
                     {email}
+                    <span
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setMemberEmailList(
+                          memberEmailList.filter((e) => e !== email)
+                        );
+                      }}
+                    >
+                      <CloseOn />
+                    </span>
                   </li>
                 ))}
               </ul>
