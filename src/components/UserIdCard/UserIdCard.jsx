@@ -14,7 +14,7 @@ const UserIdCard = () => {
       });
       console.log("유저 정보 가져오기 성공~!", res.data.result);
       setUserInfo(res.data.result);
-      localStorage.setItem("userName", userInfo.name);
+      localStorage.setItem("userName", userInfo);
       return res;
     } catch (error) {
       console.log("유저 정보 가져오기 실패~!\n", error);
@@ -25,7 +25,7 @@ const UserIdCard = () => {
   useEffect(() => {
     getUserIdInfo();
   }, []);
-  console.log("유저 정보:", userInfo);
+
   return (
     <div className="w-60 h-[100] p-3.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-200 flex flex-col justify-start items-center gap-2.5 overflow-hidden">
       <div className=" w-full flex justify-start items-center gap-2">
@@ -36,7 +36,9 @@ const UserIdCard = () => {
             alt="프로필 이미지"
           />
         ) : (
-          <PersonOn color={"#5BA7F7"} />
+          <div className="flex w-10 h-10 p-1.5 items-center gap-4 rounded-full border border-white bg-blue-100">
+            <PersonOn color={"#5BA7F7"} />
+          </div>
         )}
         {/* Default profile image if no profileImage is available */}
 

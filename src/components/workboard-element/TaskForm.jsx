@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ProfileBlue from "../../assets/icons/Profile/ProfileBlue";
 import StatusSelect from "../Status/StatusSelect";
 import {
@@ -20,9 +20,42 @@ const TaskForm = ({
   onStatusUpdate,
   error,
   projectId,
+  coworkers = [],
 }) => {
-  const { loadTaskDetails, saveTaskAfterFileDelete, saveTaskWithFile } =
-    useTaskColumn(projectId);
+  const {
+    loadTaskDetails,
+    saveTaskAfterFileDelete,
+    saveTaskWithFile,
+    autoSaveTask,
+  } = useTaskColumn(projectId);
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const handleToggleCoworker = (email) => {
+    setNewTask((prev) => {
+      const ids = prev.coworkers || [];
+      const next = ids.includes(email)
+        ? ids.filter((e) => e !== email)
+        : [...ids, email];
+
+      const updatedTask = {
+        ...prev,
+        coworkers: next, // UI 표시용
+        editors: next, // 저장용
+      };
+
+      // UI 반영
+      if (updatedTask.taskId) {
+        setTimeout(() => autoSaveTask(updatedTask), 0);
+      }
+
+      return updatedTask;
+    });
+  };
+
+  // ediotrs 표시(최대 2명 + +N)
+  const selected = (newTask.coworkers || [])
+    .map((mail) => coworkers.find((c) => c.email === mail))
+    .filter(Boolean);
 
   // input 값 변경 핸들러(제목, 마감일, 내용 사용)
   const handleInputChange = (field) => (e) => {
@@ -51,7 +84,7 @@ const TaskForm = ({
 
     try {
       for (const file of selectedFiles) {
-        await saveTaskWithFile(newTask, file); // ✅ 파일 업로드용 함수로 변경
+        await saveTaskWithFile(newTask, file);
       }
 
       const updatedDetails = await loadTaskDetails(newTask.taskId);
@@ -142,16 +175,42 @@ const TaskForm = ({
             />
           </div>
 
-          {/* 담당자 아이콘 -> 동적 처리 예정 */}
-          <div className="flex items-center gap-[17px] font-[Livvic]">
-            <p className="text-[#4B5563] text-[16px] font-semibold leading-[140%] tracking-[-0.32px] opacity-50">
-              담당자
-            </p>
-            <div className="flex items-center gap-2">
-              <ProfileBlue />
-              <ProfileBlue />
-              <ProfileBlue />
+          {/* 담당자 */}
+          <div className="relative">
+            <div
+              className="flex items-center gap-[17px] font-[Livvic] cursor-pointer"
+              onClick={() => setPickerOpen((prev) => !prev)}
+            >
+              <p className="text-[#4B5563] text-[16px] font-semibold leading-[140%] tracking-[-0.32px] opacity-50">
+                담당자
+              </p>
+              <div className="flex items-center gap-2">
+                {selected.slice(0, 10).map((c) => (
+                  <ProfileBlue key={c.email} />
+                ))}
+              </div>
             </div>
+
+            {/* 드롭다운 */}
+            {pickerOpen && (
+              <div className="absolute left-14 mt-1 w-40 bg-white border rounded shadow-lg z-50">
+                {coworkers.map((c) => {
+                  const isSelected = newTask.coworkers?.includes(c.email);
+                  return (
+                    <button
+                      key={c.email}
+                      onClick={() => handleToggleCoworker(c.email)}
+                      className={`font-[Palanquin] w-full gap-3 px-4 py-2 hover:bg-gray-100 flex items-center ${
+                        isSelected ? "bg-blue-100" : ""
+                      }`}
+                    >
+                      <ProfileBlue />
+                      <span>{c.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* 작업 설명 */}

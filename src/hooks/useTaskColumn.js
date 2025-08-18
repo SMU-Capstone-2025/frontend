@@ -1,4 +1,3 @@
-// useTaskColumn.js
 import { useState, useEffect } from "react";
 import {
   createTask,
@@ -19,13 +18,6 @@ const useTaskColumn = (projectId) => {
   const [error, setError] = useState(null);
   const token = localStorage.getItem("accessToken");
   const userEmail = localStorage.getItem("email");
-  // editors를 항상 string[]으로 보장
-  const getDefaultEditors = (inputEditors) => {
-    if (Array.isArray(inputEditors) && inputEditors.length > 0) {
-      return inputEditors.filter((e) => typeof e === "string" && e.trim());
-    }
-    return userEmail ? [userEmail] : [];
-  };
 
   useEffect(() => {
     if (!projectId) return;
@@ -45,26 +37,23 @@ const useTaskColumn = (projectId) => {
     }
   };
 
-  // ✅새 작업 추가
   const createNewTask = async (data, fileId = null) => {
-    if (!token) return;
-
     const status = ["PENDING", "PROGRESS", "COMPLETED"].includes(data.status)
       ? data.status
       : "PENDING";
 
-    try {
-      const taskPayload = {
-        title: data.title,
-        projectId,
-        status,
-        modifiedBy: userEmail,
-        content: data.content || "기본 내용",
-        editors: getDefaultEditors(data.editors),
-        deadline: data.deadline || "2025-07-11",
-      };
-      console.log("📤 taskPayload →", taskPayload);
+    const taskPayload = {
+      title: data.title,
+      projectId,
+      status,
+      modifiedBy: userEmail,
+      version: "1.0.0",
+      content: data.content || "기본 내용",
+      editors: data.editors || [],
+      deadline: data.deadline || "2025-07-11",
+    };
 
+    try {
       const createdTask = await createTask(taskPayload);
       await fetchVersionList(createdTask.id);
 
@@ -75,7 +64,7 @@ const useTaskColumn = (projectId) => {
         version: "1.0.0",
         modifiedBy: data.modifiedBy || userEmail,
         content: data.content || "내용 공백",
-        editors: getDefaultEditors(data.editors),
+        editors: data.editors || [],
         deadline: data.deadline || null,
         projectId,
       };
@@ -87,22 +76,22 @@ const useTaskColumn = (projectId) => {
         ...createdTask,
         taskId: createdTask.id,
         status,
+        editors: createdTask.editors,
+        coworkers: createdTask.editors,
         versionHistory,
         currentVersion: versionHistory.at(-1)?.version,
       };
 
-      if (status === "PENDING") {
-        setTodoList((prev) => [...prev, newTask]);
-      } else if (status === "PROGRESS") {
+      if (status === "PENDING") setTodoList((prev) => [...prev, newTask]);
+      else if (status === "PROGRESS")
         setInProgressList((prev) => [...prev, newTask]);
-      } else if (status === "COMPLETED") {
+      else if (status === "COMPLETED")
         setCompletedList((prev) => [...prev, newTask]);
-      }
 
       return newTask;
     } catch (err) {
       setError("작업 생성 실패");
-      console.error("작업 생성 실패:", err);
+      console.error("❌ 작업 생성 실패:", err);
       throw err;
     }
   };
@@ -111,7 +100,7 @@ const useTaskColumn = (projectId) => {
   const handleDelete = async (taskId) => {
     try {
       await deleteTask(taskId);
-      await loadTaskList(projectId); // 삭제 후 목록 새로고침
+      await loadTaskList(projectId);
       console.log("작업 삭제 O:", taskId);
     } catch (err) {
       console.error("작업 삭제 X:", err.message);
@@ -174,7 +163,7 @@ const useTaskColumn = (projectId) => {
           version: nextVersion,
           modifiedBy: data.modifiedBy || userEmail,
           content: data.content,
-          editors: getDefaultEditors(data.editors),
+          editors: data.editors || [],
           deadline: data.deadline || null,
           projectId,
           status: data.status || "PENDING",
@@ -210,7 +199,7 @@ const useTaskColumn = (projectId) => {
         version: nextVersion,
         modifiedBy: data.modifiedBy || userEmail,
         content: data.content,
-        editors: getDefaultEditors(data.editors),
+        editors: data.editors || [],
         deadline: data.deadline,
         projectId,
         status: data.status || "PENDING",
@@ -221,7 +210,7 @@ const useTaskColumn = (projectId) => {
         console.error("❌ fileId 또는 fileName 누락됨");
         return;
       }
-      console.log("작업버전ㅇㅁㄴㅇ", projectId);
+
       await createVersion(versionData, { fileId, fileName });
       await loadTaskList(projectId);
     } catch (err) {
@@ -242,7 +231,7 @@ const useTaskColumn = (projectId) => {
         version: nextVersion,
         modifiedBy: data.modifiedBy || userEmail,
         content: data.content,
-        editors: getDefaultEditors(data.editors),
+        editors: data.editors || [],
         deadline: data.deadline,
         projectId,
         status: data.status || "PENDING",
@@ -255,14 +244,35 @@ const useTaskColumn = (projectId) => {
     }
   };
 
-  // ✅ 작업 상태 변경
+  // 작업 상태 변경 (UI 먼저 반영 -> 서버에 요청 -> 실패 시 롤백)
   const changeStatus = async (taskId, newStatus) => {
+    // task 찾기
+    let task =
+      todoList.find((t) => t.taskId === taskId) ||
+      inProgressList.find((t) => t.taskId === taskId) ||
+      completedList.find((t) => t.taskId === taskId);
+
+    if (!task) return;
+
+    const updatedTask = { ...task, status: newStatus };
+
+    // UI 먼저 반영
+    setTodoList((prev) => prev.filter((t) => t.taskId !== taskId));
+    setInProgressList((prev) => prev.filter((t) => t.taskId !== taskId));
+    setCompletedList((prev) => prev.filter((t) => t.taskId !== taskId));
+
+    if (newStatus === "PENDING") setTodoList((prev) => [...prev, updatedTask]);
+    if (newStatus === "PROGRESS")
+      setInProgressList((prev) => [...prev, updatedTask]);
+    if (newStatus === "COMPLETED")
+      setCompletedList((prev) => [...prev, updatedTask]);
+
+    // 후 서버 반영
     try {
       await changeTaskStatus(taskId, newStatus);
-      await loadTaskList(projectId);
-      console.log(`상태 변경 완료: ${taskId} → ${newStatus}`);
     } catch (err) {
       console.error("작업 상태 변경 실패", err);
+      await loadTaskList(projectId); // 실패 시 다시 동기화
     }
   };
 

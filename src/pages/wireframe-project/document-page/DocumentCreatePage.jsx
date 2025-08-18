@@ -152,7 +152,7 @@ const DocumentCreatePage = () => {
     if (!isEditMode) return; // 새 문서 작성이면 소켓 열지 않음
     connect();
     return () => disconnect();
-  }, [isEditMode, connect, disconnect]);
+  }, [isEditMode, documentId]);
 
   return (
     <div className="bg-gray-50 h-screen flex flex-col relative">
