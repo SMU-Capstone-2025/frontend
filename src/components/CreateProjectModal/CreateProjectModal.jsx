@@ -120,6 +120,12 @@ const CreateProjectModal = ({
             onSuccess={onSuccess}
             onClick={() => {
               if (onSuccess === true) {
+                if (memberEmailList.includes(memberEmail)) {
+                  setErrMessage("이미 초대목록에 추가된 이메일입니다.");
+                  setOnSuccess(false);
+                  return;
+                }
+                setErrMessage("");
                 setMemberEmailList([...memberEmailList, memberEmail]);
                 setOnSuccess(null); // 성공 상태 초기화
                 setMemberEmail(""); // 입력 필드 초기화
