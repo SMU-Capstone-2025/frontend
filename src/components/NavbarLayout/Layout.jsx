@@ -30,12 +30,12 @@ const Layout = ({ children }) => {
           </div>
         </div>
       )}
-      <div className="relative w-full min-h-screen bg-gray-50">
+      <div className="relative flex flex-col w-full h-screen bg-gray-50">
         <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         {sidebarOpen && (
           <>
-            <div className="fixed top-16 left-0 z-50">
+            <div className="flex flex-row flex-1 fixed top-16 left-0 z-50">
               <Sidebar
                 sidebarOpen={sidebarOpen}
                 setSidebarOpen={setSidebarOpen}

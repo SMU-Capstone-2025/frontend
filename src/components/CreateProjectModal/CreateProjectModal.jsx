@@ -13,6 +13,7 @@ const CreateProjectModal = ({
   const [memberEmail, setMemberEmail] = useState("");
   const [memberEmailList, setMemberEmailList] = useState([]);
   const [onSuccess, setOnSuccess] = useState(null);
+  const [errMessage, setErrMessage] = useState("");
 
   const createProjectapi = async (projectName, description, memberEmail) => {
     const invitedEmails = memberEmailList.length > 0 ? memberEmailList : [];
@@ -56,6 +57,7 @@ const CreateProjectModal = ({
     if (!isValidEmail) {
       console.log("유효하지 않은 이메일 형식입니다.");
       setOnSuccess(false);
+      setErrMessage("유효하지 않은 이메일 형식입니다.");
       return;
     } else {
       try {
@@ -71,6 +73,7 @@ const CreateProjectModal = ({
         console.log("이메일 확인 실패:", e);
         console.log("request email:", memberEmail);
         setOnSuccess(false);
+        setErrMessage(e.response?.data?.message);
         return e;
       }
     }
@@ -117,6 +120,12 @@ const CreateProjectModal = ({
             onSuccess={onSuccess}
             onClick={() => {
               if (onSuccess === true) {
+                if (memberEmailList.includes(memberEmail)) {
+                  setErrMessage("이미 초대목록에 추가된 이메일입니다.");
+                  setOnSuccess(false);
+                  return;
+                }
+                setErrMessage("");
                 setMemberEmailList([...memberEmailList, memberEmail]);
                 setOnSuccess(null); // 성공 상태 초기화
                 setMemberEmail(""); // 입력 필드 초기화
@@ -125,16 +134,30 @@ const CreateProjectModal = ({
               setMemberEmail(memberEmail, ...[memberEmail]);
               console.log("초대할 이메일:", memberEmail);
             }}
+            errmsg={errMessage}
           />
           {memberEmailList.length > 0 && (
             <div className="w-full flex flex-col justify-start items-start gap-2">
               <div className="text-gray-800 text-base font-semibold">
                 초대할 멤버 목록
               </div>
-              <ul className="list-disc pl-5">
+              <ul className="w-full max-h-24 list-disc pl-5 overflow-y-auto">
                 {memberEmailList.map((email, index) => (
-                  <li key={index} className="text-gray-700">
+                  <li
+                    key={index}
+                    className="text-gray-700 w-full h-6 flex justify-between"
+                  >
                     {email}
+                    <span
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setMemberEmailList(
+                          memberEmailList.filter((e) => e !== email)
+                        );
+                      }}
+                    >
+                      <CloseOn />
+                    </span>
                   </li>
                 ))}
               </ul>
