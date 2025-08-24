@@ -24,6 +24,7 @@
     "@tiptap/starter-kit": "^2.11.7",
     "axios": "^1.8.4",
     "dayjs": "^1.11.13",
+    "lucide-react": "^0.536.0",
     "peerjs": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

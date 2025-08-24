@@ -8,6 +8,7 @@ import Mypage from "../pages/Mypage/Mypage";
 import DocumentCreatePage from "../pages/wireframe-project/document-page/DocumentCreatePage";
 import PasswordReset from "../pages/PasswordReset/PasswordReset";
 import ProjectRouter from "../pages/wireframe-project/ProjectRouter";
+import VideoConference from "../components/VideoConference";
 
 const Router = [
   {
@@ -19,6 +20,7 @@ const Router = [
       { path: "signup", element: <Signup /> },
       { path: "mypage", element: <Mypage /> },
       { path: "password-reset", element: <PasswordReset /> },
+      { path: "video-call", element: <VideoConference /> },
 
       {
         path: "project/:section/:projectId",
