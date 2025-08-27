@@ -41,6 +41,7 @@ const VideoConference = () => {
   const screenStreamRef = useRef(null);
   const originalStreamRef = useRef(null);
   const peersRef = useRef({});
+  const videoSendersRef = useRef({});
   const isScreenSharingRef = useRef(false); // 화면공유 상태 추적
 
   // WebSocket 연결
@@ -407,20 +408,35 @@ const VideoConference = () => {
       console.log(`ICE connection state with ${peerId}: ${pc.iceConnectionState}`);
     };
     
-    // 현재 localStream의 모든 트랙 추가
+    // 기존 localStream / originalStreamRef 처리 부분 교체
     if (localStream) {
       localStream.getTracks().forEach(track => {
+        const sender = pc.addTrack(track, localStream);
+        if (track.kind === 'video') {
+          videoSendersRef.current[peerId] = sender;
+        }
         console.log(`Adding ${track.kind} track to peer ${peerId}:`, track.enabled);
-        pc.addTrack(track, localStream);
       });
     } else if (originalStreamRef.current) {
-      // localStream이 아직 설정되지 않았다면 originalStream 사용
       originalStreamRef.current.getTracks().forEach(track => {
+        const sender = pc.addTrack(track, originalStreamRef.current);
+        if (track.kind === 'video') {
+          videoSendersRef.current[peerId] = sender;
+        }
         console.log(`Adding original ${track.kind} track to peer ${peerId}:`, track.enabled);
-        pc.addTrack(track, originalStreamRef.current);
       });
     }
+
     
+    // createPeerConnection 끝 부분에 추가
+    if (isScreenSharingRef.current && screenStreamRef.current) {
+      const screenTrack = screenStreamRef.current.getVideoTracks()[0];
+      const sender = videoSendersRef.current[peerId];
+      if (sender && screenTrack) {
+        sender.replaceTrack(screenTrack);
+      }
+    }
+
     peersRef.current[peerId] = pc;
     setPeers(prev => ({ ...prev, [peerId]: pc }));
     
@@ -714,40 +730,37 @@ const VideoConference = () => {
           audio: false
         });
         
+        // 화면공유 시작 부분: screenStream 얻은 직후에 아래 로직으로 교체
+        const screenVideoTrack = screenStream.getVideoTracks()[0];
         screenStreamRef.current = screenStream;
         isScreenSharingRef.current = true;
-        const screenVideoTrack = screenStream.getVideoTracks()[0];
-        
-        // ② 모든 PeerConnection에 화면 트랙 추가
-        console.log('Adding screen track to all peers');
-        Object.values(peersRef.current).forEach(pc => {
-          screenStream.getTracks().forEach(track => {
-            pc.addTrack(track, screenStream);
-          });
-        });
 
-        // ② renegotiation 요청: 새 offer 생성해서 상대에 전송
-        Object.entries(peersRef.current).forEach(async ([peerId, pc]) => {
-          try {
-            const offer = await pc.createOffer({ iceRestart: true });
-            await pc.setLocalDescription(offer);
-            wsRef.current.send(JSON.stringify({
-              type: 'renegotiate',
-              to: peerId,
-              offer,
-              isScreenShare: true
-            }));
-          } catch (e) {
-            console.error('Failed renegotiation for', peerId, e);
+        // **기존에 했던 addTrack 루프 제거하고 대신 replaceTrack 사용**
+        Object.entries(peersRef.current).forEach(([peerId, pc]) => {
+          const sender = videoSendersRef.current[peerId];
+          if (sender) {
+            try {
+              sender.replaceTrack(screenVideoTrack);
+              console.log(`Replaced video track with screen track for ${peerId}`);
+            } catch (e) {
+              // 브라우저 호환성 등으로 실패하면 fallback: addTrack 하고 sender 저장
+              console.warn(`replaceTrack failed for ${peerId}, fallback to addTrack`, e);
+              const newSender = pc.addTrack(screenVideoTrack, screenStream);
+              videoSendersRef.current[peerId] = newSender;
+            }
+          } else {
+            // 기존 카메라 sender가 없으면 addTrack (새로 만든 sender를 저장)
+            const newSender = pc.addTrack(screenVideoTrack, screenStream);
+            videoSendersRef.current[peerId] = newSender;
           }
         });
-        
+
         // 화면공유 종료 이벤트
-        screenVideoTrack.onended = () => {
-          stopScreenShare();
-        };
-        
+        screenVideoTrack.onended = () => stopScreenShare();
+
+        // (기존에서 데이터채널로 status 전송하는 부분은 유지)
         setIsScreenSharing(true);
+
         
         // 로컬 비디오는 원본 유지 (PIP에서 보여줄 용도)
         // 화면공유 상태만 UI로 표시
@@ -777,67 +790,66 @@ const VideoConference = () => {
     }
   };
 
-  const stopScreenShare = () => {
-    if (screenStreamRef.current) {
-      screenStreamRef.current.getTracks().forEach(track => track.stop());
-      isScreenSharingRef.current = false;
+const stopScreenShare = () => {
+  if (!screenStreamRef.current) return;
 
-      Object.values(peersRef.current).forEach(pc => {
-        pc.getSenders().forEach(sender => {
-          if (sender.track && sender.track.kind === 'video' && sender.track !== originalStreamRef.current.getVideoTracks()[0]) {
-            pc.removeTrack(sender);
-          }
-        });
-      });
-      
-      // 원래 비디오 트랙으로 복원
-      if (originalStreamRef.current) {
-        const videoTrack = originalStreamRef.current.getVideoTracks()[0];
-        if (videoTrack) {
-          console.log('Restoring original video track for all peers');
-          
-          Object.entries(peersRef.current).forEach(([peerId, pc]) => {
-            const sender = pc.getSenders().find(s => 
-              s.track && s.track.kind === 'video'
-            );
-            if (sender) {
-              console.log(`Restoring video track for peer ${peerId}`);
-              sender.replaceTrack(videoTrack);
-            }
-          });
+  // 1) 화면 스트림 트랙 정지 (stop)
+  try {
+    screenStreamRef.current.getTracks().forEach(t => t.stop());
+  } catch (e) {
+    console.warn('Error stopping screen stream tracks', e);
+  }
+
+  // 2) 원래 카메라 트랙 가져오기
+  const cameraTrack = originalStreamRef.current?.getVideoTracks()[0];
+
+  // 3) 모든 peer의 sender를 찾아서 replaceTrack(camera) 또는 sender 제거
+  Object.entries(peersRef.current).forEach(([peerId, pc]) => {
+    const sender = videoSendersRef.current[peerId];
+    if (sender) {
+      if (cameraTrack) {
+        try {
+          sender.replaceTrack(cameraTrack);
+          console.log(`Restored camera track for ${peerId}`);
+        } catch (e) {
+          console.warn(`Failed to replace back to camera for ${peerId}`, e);
+        }
+      } else {
+        // 카메라가 없다면 sender를 제거
+        try {
+          pc.removeTrack(sender);
+          delete videoSendersRef.current[peerId];
+        } catch (e) {
+          console.warn('Failed to remove sender for', peerId, e);
         }
       }
-      
-      // 화면공유 종료 알림
-      console.log('Sending screen share stop status');
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        wsRef.current.send(JSON.stringify({
-          type: 'screen-share-status',
-          isSharing: false,
-          userId,
-          roomId
-        }));
-        console.log('Screen share stop status sent');
-      }
-      
-      screenStreamRef.current = null;
-      setIsScreenSharing(false);
-              // Data Channel로도 종료 상태 전송
-        console.log('Sending screen share stop via data channels');
-        Object.entries(peersRef.current).forEach(([peerId, pc]) => {
-          if (pc.dataChannel && pc.dataChannel.readyState === 'open') {
-            const message = JSON.stringify({
-              type: 'screen-share-status',
-              isSharing: false
-            });
-            pc.dataChannel.send(message);
-            console.log(`Sent screen share stop to ${peerId} via data channel`);
-          }
-        });
-        
-        console.log('Screen sharing stopped');
+    } else {
+      console.log(`No stored video sender for ${peerId}`);
     }
-  };
+  });
+
+  // 4) 시그널링/데이터채널로 상태 전송 (네 기존 로직 유지)
+  if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+    wsRef.current.send(JSON.stringify({
+      type: 'screen-share-status',
+      isSharing: false,
+      userId,
+      roomId
+    }));
+  }
+
+  Object.entries(peersRef.current).forEach(([peerId, pc]) => {
+    if (pc.dataChannel && pc.dataChannel.readyState === 'open') {
+      pc.dataChannel.send(JSON.stringify({ type: 'screen-share-status', isSharing: false }));
+    }
+  });
+
+  screenStreamRef.current = null;
+  isScreenSharingRef.current = false;
+  setIsScreenSharing(false);
+  console.log('Screen sharing stopped');
+};
+
 
   // 채팅 메시지 전송
   const sendMessage = () => {
