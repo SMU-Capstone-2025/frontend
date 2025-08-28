@@ -15,7 +15,7 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
   const connect = async () => {
     if (!documentId) return console.warn("documentId 없음, 소켓 연결 중단");
     if (isConnectedRef.current || clientRef.current) {
-      console.log("⚠️ 이미 연결된 상태, connect 스킵");
+      console.log("이미 연결된 상태, connect 스킵");
       return;
     }
 
@@ -25,7 +25,7 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
 
       const client = new Client({
         webSocketFactory: () => socket,
-        reconnectDelay: 5000,
+        reconnectDelay: 5000, // 5초후 재연결시도
         debug: () => {},
 
         connectHeaders: {
@@ -53,7 +53,7 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
 
         onStompError: (frame) => {
           // 불필요한 콘솔 제거
-          console.error("🔥 STOMP 오류:", frame.headers["message"]);
+          console.error("STOMP 오류:", frame.headers["message"]);
         },
       });
 
