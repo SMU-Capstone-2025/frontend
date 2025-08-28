@@ -42,19 +42,38 @@ const DocumentItem = ({
             {document.title}
           </span>
           <span className="text-gray-400 font-[Palanquin] font-normal text-[12px] leading-[140%]">
-            어쩌구 저쩌구
+            최근 수정: {formatDate(document.updatedAt)}
           </span>
         </div>
 
         <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-[15px] sm:gap-11">
+          {/* editors */}
           <div className="flex items-center -space-x-2">
-            <ProfileBlue />
-            <ProfileYellow />
-            <ProfileBlue />
+            {document.editors && document.editors.length > 0 ? (
+              <>
+                {document.editors.slice(0, 2).map((editor, idx) => (
+                  <div key={idx} title={editor}>
+                    {idx % 2 === 0 ? <ProfileBlue /> : <ProfileYellow />}
+                  </div>
+                ))}
+
+                {document.editors.length > 2 && (
+                  <div
+                    className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold text-gray-700"
+                    title={document.editors.slice(2).join(", ")}
+                  >
+                    +{document.editors.length - 2}
+                  </div>
+                )}
+              </>
+            ) : (
+              <ProfileBlue />
+            )}
           </div>
+
           <Status name={document.status} />
           <span className="text-gray-600 text-lg font-normal tracking-tight ">
-            {formatDate(document.updatedAt)}
+            {formatDate(document.createdAt)}
           </span>
 
           {/* 메뉴 버튼 */}
