@@ -44,7 +44,6 @@ const useDocState = ({
 
     if (!documentId) {
       try {
-        console.log("문서 생성시 프로젝트 id", projectId);
         setIsLoading(true);
         await createDocument({
           projectId,

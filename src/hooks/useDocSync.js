@@ -23,7 +23,8 @@ const useDocSync = (editor, { title, status, documentId, sendMessage }) => {
 
   // title이 변경될 때 debounce로 전송
   useEffect(() => {
-    if (!editor || !documentId || isComposingRef.current) return;
+    if (!editor || !documentId) return;
+    if (isComposingRef.current) return;
     debouncedTitleSend(title);
   }, [title]);
 
@@ -61,7 +62,7 @@ const useDocSync = (editor, { title, status, documentId, sendMessage }) => {
     };
   }, [editor, documentId, title, status, sendMessage]);
 
-  return { isTypingRef };
+  return { isTypingRef, isComposingRef };
 };
 
 export default useDocSync;

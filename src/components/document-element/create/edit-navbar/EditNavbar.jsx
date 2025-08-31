@@ -17,7 +17,7 @@ const EditNavbar = ({
   onCorrectClick,
 }) => {
   return (
-    <div className="w-[1920px] h-[151px] shrink-0 border-b border-[#e5e7eb] bg-[#fff] flex flex-col justify-center gap-y-4 font-[Palaquin]">
+    <div className="w-full h-[151px] shrink-0 border-b border-[#e5e7eb] bg-[#fff] flex flex-col justify-center gap-y-4 font-[Palaquin]">
       {/* 상단 좌우 섹션 */}
       <div className="flex items-center justify-between px-7">
         {/* 왼쪽: 뒤로가기 + 제목 + 즐겨찾기 */}
@@ -35,7 +35,6 @@ const EditNavbar = ({
             title={title}
             className="text-[24px] p-2 max-w-[1000px] w-full font-bold leading-[120%] tracking-[-0.06em] text-gray-800  bg-transparent "
           />
-          <StarOn />
         </div>
 
         {/* 오른쪽: 프로필 + 공유 버튼 + 옵션 */}
