@@ -1,4 +1,4 @@
-import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DrawerIcon } from "../../../assets/icons/index";
 import ProfileBlue from "../../../assets/icons/Profile/ProfileBlue";
 import ProfileYellow from "../../../assets/icons/Profile/ProfileYellow";
