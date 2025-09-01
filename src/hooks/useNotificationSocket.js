@@ -20,25 +20,30 @@ const useNotificationSocket = ({ userEmail, onMessage }) => {
         webSocketFactory: () => socket,
         connectHeaders: { Authorization: `Bearer ${token}` },
         reconnectDelay: 5000, // 소켓 자동 재연결
-        debug: (msg) => console.log("알림", msg),
         onConnect: () => {
-          console.log("알림 소켓 연결 성공");
+          console.log("✅ 알림 소켓 연결 성공");
           client.subscribe(
             SUB_PATH(userEmail),
             (msg) => {
               try {
                 console.log("알림 메시지:", msg.body);
+                // 1차 파싱
+                const data = JSON.parse(msg.body);
 
-                // 문자열 파싱
+                // message 파싱
                 const raw = msg.body;
                 const titleMatch = raw.match(/제목:\s*([^,]+)/);
                 const editorMatch = raw.match(/최근 편집자:\s*(.+)$/);
 
+                const clean = (str) => str.trim().replace(/[}"]/g, "");
+
+                // 2차 파싱
                 const parsed = {
                   message: "문서에 변동사항이 있습니다.",
-                  title: titleMatch ? titleMatch[1].trim() : "",
-                  editor: editorMatch ? editorMatch[1].trim() : "",
-                  receivedAt: new Date(), // 수신 시간 기록
+                  title: titleMatch ? clean(titleMatch[1]) : "",
+                  editor: editorMatch ? clean(editorMatch[1]) : "",
+                  redirectionUrl: data.redirectionUrl,
+                  receivedAt: new Date(),
                 };
 
                 onMessage?.(parsed); // UI용 객체 전달
