@@ -58,7 +58,7 @@ const TaskCard = ({
               )}
             {extraCount > 0 && (
               <div
-                className="font-[Palanquin] w-6 h-6 rounded-full font-[400] bg-black/50 text-white text-[10px] flex items-center justify-center leading-[140%]"
+                className="font-[Palanquin] w-6 h-6 rounded-full font-[500] bg-black/50 text-white text-[11px] flex items-center justify-center leading-[140%]"
                 title={`외 ${extraCount}명`}
               >
                 +{extraCount}
