@@ -36,17 +36,17 @@ const UserIdCard = () => {
             alt="프로필 이미지"
           />
         ) : (
-          <div className="flex w-10 h-10 p-1.5 items-center gap-4 rounded-full border border-white bg-blue-100">
+          <div className="flex w-10 h-10 p-2 items-center gap-4 rounded-full border border-white bg-blue-100">
             <PersonOn color={"#5BA7F7"} />
           </div>
         )}
         {/* Default profile image if no profileImage is available */}
 
-        <div className="flex flex-col justify-start items-start gap-1">
-          <div className="flex-row text-gray-900 text-base font-bold font-['Livvic']">
+        <div className="flex flex-col justify-start items-start gap-[2px] max-h-full">
+          <div className="flex-row text-gray-900 text-[16px] font-bold font-['Livvic']">
             {userInfo ? userInfo.name : "이름"}
           </div>
-          <div className="flex-row text-gray-500 text-sm font-normal font-['Palanquin']">
+          <div className="flex-row text-gray-500 text-[12px] font-normal font-['Palanquin']">
             {userInfo ? userInfo.email : "이메일"}
           </div>
         </div>

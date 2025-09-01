@@ -13,6 +13,7 @@ const useDocState = ({
   const [isLoading, setIsLoading] = useState(false);
   const [projectId, setProjectId] = useState(initialProjectId);
   const [updateTime, setUpdateTime] = useState("");
+  const [editors, setEditors] = useState([]);
 
   useEffect(() => {
     if (!documentId || !editor) return;
@@ -24,6 +25,7 @@ const useDocState = ({
         setStatus(data.status);
         setProjectId(data.projectId); // 수정 시에도 projectId 확보
         setUpdateTime(data.updateTime);
+        setEditors(data.editors || []);
         editor.commands.setContent(data.content);
       } catch (err) {
         alert("문서 불러오기 실패");
@@ -71,6 +73,8 @@ const useDocState = ({
     isLoading,
     autoSaveAndBack,
     updateTime,
+    editors,
+    setEditors,
   };
 };
 
