@@ -6,11 +6,7 @@ import useDocumentEditor from "../../../hooks/useDocumentEditor";
 import useDocumentSocket from "../../../hooks/useDocumentSocket";
 import useDocSync from "../../../hooks/useDocSync";
 import useDocState from "../../../hooks/useDocState";
-import {
-  correctText,
-  reviseSummary,
-  summarizeText,
-} from "../../../api/documentApi";
+import { correctText, summarizeText } from "../../../api/documentApi";
 import SummaryFloatingButton from "../../../components/document-element/common/SummaryFloatingButton";
 import ProfileBlue from "../../../assets/icons/Profile/ProfileBlue";
 import AiSummaryPanel from "../../../components/document-element/common/AiSummaryPanel";
@@ -36,7 +32,14 @@ const DocumentCreatePage = () => {
     isLoading,
     autoSaveAndBack,
     updateTime,
-  } = useDocState({ editor, documentId, projectId, navigate, isEditMode });
+    editors,
+  } = useDocState({
+    editor,
+    documentId,
+    projectId,
+    navigate,
+    isEditMode,
+  });
 
   // 날짜 포맷 함수
   const formatDateTime = (isoString) => {
@@ -99,22 +102,6 @@ const DocumentCreatePage = () => {
     }
   };
 
-  // const handleRevise = async () => {
-  //   const originSummary = summary;
-  //   const reviseRequest = prompt("수정 방향을 입력해주세요 (예: 더 간결하게)");
-  //   if (!reviseRequest) return;
-  //   try {
-  //     const result = await reviseSummary({
-  //       request: originSummary,
-  //       reviseRequest,
-  //     });
-  //     const plain = stripHtml(result.response);
-  //     setSummary(plain);
-  //   } catch {
-  //     alert("요약 재수정 요청 중 오류가 발생했습니다.");
-  //   }
-  // };
-
   // 실시간 협업 소켓
   const { connect, disconnect, sendMessage } = useDocumentSocket({
     token,
@@ -165,6 +152,7 @@ const DocumentCreatePage = () => {
         onStatusChange={setStatus}
         onSummaryClick={handleSummary}
         onCorrectClick={handleCorrect}
+        editors={editors}
       />
 
       {/* 문서 본문 영역 */}
@@ -183,7 +171,7 @@ const DocumentCreatePage = () => {
           </div>
 
           <input
-            className="text-gray-800 font-bold text-[28px]"
+            className="w-full text-gray-800 font-bold p-2 text-[28px] border border-transparent rounded-md focus:outline-none focus:border-gray-300 transition"
             placeholder="제목 없음"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -192,10 +180,12 @@ const DocumentCreatePage = () => {
           {isLoading ? (
             <div className="text-gray-400 text-[20px] p-6">문서 저장 중...</div>
           ) : (
-            <EditorContent
-              editor={editor}
-              className="text-gray-800 text-[14px]"
-            />
+            <div className="w-full border border-transparent rounded-md focus-within:border-gray-300 transition">
+              <EditorContent
+                editor={editor}
+                className="text-gray-800 text-[14px] p-2 focus:outline-none focus:ring-0"
+              />
+            </div>
           )}
         </div>
       </div>
