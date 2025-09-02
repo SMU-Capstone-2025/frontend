@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as S from "./ProjectListPreview.styled";
 import ProjectCard from "./ProjectCard";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
@@ -29,20 +28,25 @@ const ProjectListPreview = ({ onFirstProjectId }) => {
     }
   };
 
+  // idx 배열을 컴포넌트 함수 내에서 선언
+  const idx = Array.from({ length: projects.length }, (_, i) => i);
+
   useEffect(() => {
     projectPreview();
   }, []);
+  // console.log("프로젝트 리스트:", idx);
 
   return (
-    <S.Container>
+    <div className="grid grid-cols-2 gap-6 self-stretch ">
       {projects.map((project, idx) => (
         <ProjectCard
-          key={idx}
+          key={project.projectId || idx}
+          keyNum={idx}
           project={project}
           onClick={() => handleCardClick(project.projectId)}
         />
       ))}
-    </S.Container>
+    </div>
   );
 };
 

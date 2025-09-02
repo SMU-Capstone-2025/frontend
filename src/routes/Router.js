@@ -5,10 +5,10 @@ import DoctalkMain from "../pages/doctalkMain/DoctalkMain";
 import Login from "../pages/login/Login";
 import Signup from "../pages/Signup/Signup";
 import Mypage from "../pages/Mypage/Mypage";
-import DocumentCreatePage from "../pages/wireframe-project/document-page/DocumentCreatePage";
 import PasswordReset from "../pages/PasswordReset/PasswordReset";
 import ProjectRouter from "../pages/wireframe-project/ProjectRouter";
 import VideoConference from "../components/VideoConference";
+import DocumentCreatePage from "../pages/wireframe-project/document-page/DocumentCreatePage";
 
 const Router = [
   {
@@ -23,19 +23,28 @@ const Router = [
       { path: "video-call", element: <VideoConference /> },
 
       {
-        path: "project/:section/:projectId",
+        path: "project/:section/:projectId/*",
         element: <Project />,
         children: [
           {
-            path: "",
+            path: "*",
             element: <ProjectRouter />,
           },
         ],
       },
 
-      { path: "project/document/new", element: <DocumentCreatePage /> },
-
       { path: "video", element: <VideoRoom /> },
+      // 문서 생성
+      {
+        path: "/document/new/:projectId",
+        element: <DocumentCreatePage />,
+      },
+
+      // 문서 상세
+      {
+        path: "/document/:documentId",
+        element: <DocumentCreatePage />,
+      },
     ],
   },
 ];

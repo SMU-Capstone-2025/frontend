@@ -1,11 +1,20 @@
 import React from "react";
-import * as S from "./Button.styled";
 
-const Button = ({ width, height, text, color }) => {
+const Button = ({ type, width, height, text, color, onClick, disabled }) => {
   return (
-    <S.Container width={width} height={height} color={color}>
-      <S.Text>{text}</S.Text>
-    </S.Container>
+    <button
+      type={type || "button"}
+      className={`flex justify-center items-center gap-2 rounded px-4 py-2 font-semibold font-['Livvic'] text-white bg-blue-500 cursor-pointer`}
+      style={{
+        width: width || "auto",
+        height: height || "auto",
+        backgroundColor: color,
+      }}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {text}
+    </button>
   );
 };
 

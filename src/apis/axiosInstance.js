@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+// const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const axiosInstanceNoHeader = axios.create({
-  baseURL: "http://35.202.85.190:8080",
+  baseURL: "https://docktalk.co.kr/api",
   // baseURL: BASE_URL,
 });
 
@@ -14,6 +14,7 @@ let refreshPromise = null;
 axiosInstanceNoHeader.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");
+
     if (accessToken && accessToken !== "undefined") {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -46,8 +47,9 @@ axiosInstanceNoHeader.interceptors.response.use(
       if (!refreshPromise) {
         const refreshToken = localStorage.getItem("refreshToken");
         console.log("refreshTokenasdfasdf", refreshToken);
-        // 여기에 추가해보셈
+
         if (!refreshToken || refreshToken === "undefined") {
+          console.log("refreshToken이 없습니다.");
           console.warn("refreshToken이 유효하지 않음:", refreshToken);
           localStorage.clear();
           window.location.href = "/login";
@@ -55,7 +57,7 @@ axiosInstanceNoHeader.interceptors.response.use(
         }
         // refresh 요청 실행
         refreshPromise = plainAxios
-          .post("http://35.202.85.190:8080/token/refresh", null, {
+          .post("https://docktalk.co.kr/api/token/refresh", null, {
             headers: {
               Authorization: `Bearer ${refreshToken}`,
             },

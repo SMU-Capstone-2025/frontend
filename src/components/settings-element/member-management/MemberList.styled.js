@@ -86,4 +86,6 @@ export const RemoveButton = styled.button`
   border: none;
   background: transparent;
   cursor: pointer;
+  width: 16px;
+  height: 16px;
 `;
