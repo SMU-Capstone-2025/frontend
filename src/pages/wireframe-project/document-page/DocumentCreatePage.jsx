@@ -127,10 +127,14 @@ const DocumentCreatePage = () => {
     status,
     documentId,
     sendMessage: (payload) => {
-      // 디바운스된 전송 함수 내부에서 항상 최신 제목으로 관리
+      const selection = editor.state.selection;
       sendMessage({
         ...payload,
         title: titleRef.current,
+        cursor: {
+          from: selection.from,
+          to: selection.to,
+        },
       });
     },
   });

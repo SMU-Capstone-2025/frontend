@@ -27,7 +27,6 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
         webSocketFactory: () => socket,
         reconnectDelay: 5000, // 5초후 재연결시도
         debug: () => {},
-
         connectHeaders: {
           Authorization: `Bearer ${token}`,
         },
@@ -77,7 +76,7 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
   };
 
   // 메세지 전송 로직
-  const sendMessage = async ({ title, content, status }) => {
+  const sendMessage = async ({ title, content, status, cursor }) => {
     if (!clientRef.current?.connected || !documentId) {
       console.warn("메시지 전송 실패: 소켓 미연결 or documentId 없음");
       return;
@@ -85,6 +84,9 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
 
     try {
       const token = await getValidAccessToken(); // 최신 토큰 확보
+      const userName = localStorage.getItem("userName");
+      const userEmail = localStorage.getItem("email");
+
       const payload = {
         documentId,
         message: JSON.stringify({
@@ -92,8 +94,16 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
           title,
           content,
           status,
-          logs: [],
           attachments: [],
+          logs: [],
+          user: {
+            userName: userName,
+            userEmail: userEmail,
+          },
+          cursor: {
+            from: cursor?.from ?? 0,
+            to: cursor?.to ?? 0,
+          },
         }),
       };
 
@@ -103,7 +113,7 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
         body: JSON.stringify(payload),
       });
 
-      console.log("📤 전송 메시지:", payload.message); // 전송 로그 확인
+      console.log("📤 전송 메시지:", payload.message);
     } catch (err) {
       console.error("메시지 전송 중 오류 발생", err);
     }
