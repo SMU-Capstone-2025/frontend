@@ -64,11 +64,20 @@ const EditNavbar = ({
           <button
             className="text-white text-center text-sm font-semibold leading-[140%] tracking-[-0.14px] flex h-10 px-4 py-2 justify-center items-center gap-[10px] rounded bg-[#3191f2] hover:opacity-30 transition"
             onClick={() => {
-              console.log("Click 공유하기!");
+              const link = window.location.href; // 현재 페이지 URL 복사
+              navigator.clipboard
+                .writeText(link)
+                .then(() => {
+                  alert("문서 링크가 복사되었습니다!");
+                })
+                .catch(() => {
+                  alert("링크 복사에 실패했습니다.");
+                });
             }}
           >
             공유하기
           </button>
+
           <div
             className="flex items-center justify-center w-6 h-6 cursor-pointer"
             onClick={() => {
