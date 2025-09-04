@@ -15,7 +15,7 @@ const ScheduleCard = ({ schedule, onClick }) => {
 
   return (
     <div
-      className="flex p-5 justify-between items-start self-stretch rounded-lg outline outline-1 outline-gray-200  bg-white cursor-pointer"
+      className="flex p-5 justify-between items-start self-stretch rounded-lg outline outline-1 outline-gray-200  bg-white cursor-pointer hover:shadow-lg transition-shadow"
       onClick={onClick}
     >
       <div className="flex flex-col items-start w-[300px] gap-1">

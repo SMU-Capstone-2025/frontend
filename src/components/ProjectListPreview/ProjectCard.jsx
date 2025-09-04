@@ -20,7 +20,7 @@ const ProjectCard = ({ keyNum, project, onClick }) => {
 
   return (
     <div
-      className="cursor-pointer w-[302px] h-[219px] rounded-[12px] border border-gray-200 bg-white relative z-[1] transition-shadow duration-200 hover:shadow-md"
+      className="cursor-pointer w-[302px] h-[219px] rounded-[12px] border border-gray-200 bg-white relative z-[1] transition-shadow duration-200 hover:shadow-lg"
       onClick={onClick}
     >
       <div className={`w-[302px] h-[59px] rounded-t-[12px] ${coverBg} z-[2]`} />
