@@ -39,9 +39,9 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
             SUB_PATH(documentId),
             (msg) => {
               try {
-                const parsed = JSON.parse(msg.body);
-                const data = JSON.parse(parsed.message); // 파싱을 두번하는 구조
-                onMessage?.(data);
+                const parsed = JSON.parse(msg.body); // 한번만 파싱
+                onMessage?.(parsed.message || parsed);
+                console.log("서버 수신:", parsed.message || parsed);
               } catch (err) {
                 console.error("메시지 파싱 오류", err, msg.body);
               }
@@ -51,12 +51,11 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
         },
 
         onStompError: (frame) => {
-          // 불필요한 콘솔 제거
           console.error("STOMP 오류:", frame.headers["message"]);
         },
       });
 
-      client.activate(); // 연결 시작 및 인스턴스 저장
+      client.activate();
       clientRef.current = client;
     } catch (err) {
       console.error("소켓 연결 중 예외 발생.", err);
@@ -66,8 +65,8 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
   const disconnect = () => {
     if (!isConnectedRef.current) return;
     try {
-      subRef.current?.unsubscribe(); // 채널 구독 해제
-      clientRef.current?.deactivate(); // STOMP 연결 종료
+      subRef.current?.unsubscribe();
+      clientRef.current?.deactivate();
       isConnectedRef.current = false;
       console.log("소켓 정상 종료");
     } catch (err) {
@@ -75,7 +74,7 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
     }
   };
 
-  // 메세지 전송 로직
+  // 메시지 전송
   const sendMessage = async ({ title, content, status, cursor }) => {
     if (!clientRef.current?.connected || !documentId) {
       console.warn("메시지 전송 실패: 소켓 미연결 or documentId 없음");
@@ -83,13 +82,12 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
     }
 
     try {
-      const token = await getValidAccessToken(); // 최신 토큰 확보
+      const token = await getValidAccessToken();
       const userName = localStorage.getItem("userName");
       const userEmail = localStorage.getItem("email");
-
       const payload = {
         documentId,
-        message: JSON.stringify({
+        message: {
           documentId,
           title,
           content,
@@ -97,14 +95,15 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
           attachments: [],
           logs: [],
           user: {
-            userName: userName,
-            userEmail: userEmail,
+            userId: null,
+            userName,
+            userEmail,
           },
           cursor: {
             from: cursor?.from ?? 0,
             to: cursor?.to ?? 0,
           },
-        }),
+        },
       };
 
       clientRef.current.publish({
