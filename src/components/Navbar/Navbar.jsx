@@ -150,22 +150,37 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 </div>
               )}
             </div>
-            {/* 사용자 아이콘 */}
-            <div className="flex items-center gap-1.5 relative">
-              <div
-                className="flex w-10 h-10 p-2 items-center gap-4 rounded-full border border-white bg-blue-100 cursor-pointer"
-                onClick={handleUserIdCardOpen}
-              >
-                <PersonOn color={"#5BA7F7"} />
-                {UserIdCardOpen && (
-                  <div className="absolute bottom-[-140px] right-[10px] cursor-auto">
-                    <UserIdCard />
-                  </div>
-                )}
-              </div>
-            </div>
           </>
         )}
+        {/* 로그인이 안 되어 있을 때만 로그인 버튼 노출 */}
+        {localStorage.getItem("accessToken") &&
+        localStorage.getItem("accessToken") !== "undefined" ? null : (
+          <Button
+            type={"button"}
+            width={"auto"}
+            height={"fit-content"}
+            text={"Log in / Sign up"}
+            onClick={() => navigate("/login")}
+          />
+        )}
+        {/* 로그인이 되어 있을 때만 유저 버튼 노출 */}
+        {localStorage.getItem("accessToken") &&
+        localStorage.getItem("accessToken") !== "undefined" ? (
+          // 사용자 아이콘
+          <div className="flex items-center gap-1.5 relative">
+            <div
+              className="flex w-10 h-10 p-2 items-center gap-4 rounded-full border border-white bg-blue-100 cursor-pointer"
+              onClick={handleUserIdCardOpen}
+            >
+              <PersonOn color={"#5BA7F7"} />
+              {UserIdCardOpen && (
+                <div className="absolute bottom-[-140px] right-[10px] cursor-auto">
+                  <UserIdCard />
+                </div>
+              )}
+            </div>
+          </div>
+        ) : null}
         {/* 로그인이 되어 있을 때만 로그아웃 버튼 노출 */}
         {localStorage.getItem("accessToken") &&
         localStorage.getItem("accessToken") !== "undefined" ? (
@@ -176,7 +191,15 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             onClick={handleLogout}
           />
         ) : null}
-        <Button width={"fit-content"} height={"40px"} text={"화상 회의 시작"} />
+        {/* 로그인이 되어 있을 때만 화상회의 버튼 노출 */}
+        {localStorage.getItem("accessToken") &&
+        localStorage.getItem("accessToken") !== "undefined" ? (
+          <Button
+            width={"fit-content"}
+            height={"40px"}
+            text={"화상 회의 시작"}
+          />
+        ) : null}
       </div>
     </div>
   );
