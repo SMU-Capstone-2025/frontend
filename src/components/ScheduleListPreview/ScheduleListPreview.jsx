@@ -57,7 +57,7 @@ const ScheduleListPreview = ({ projectId }) => {
   }, [projectId]);
 
   return (
-    <div className="flex flex-col w-full max-w-[588px] flex-wrap items-start gap-[10px]">
+    <div className="flex flex-col w-full max-w-[588px] flex-wrap items-start gap-y-3">
       {schedules.map((schedule, idx) => {
         const lastContent =
           schedule.versionHistory?.[schedule.versionHistory.length - 1]
@@ -66,7 +66,7 @@ const ScheduleListPreview = ({ projectId }) => {
           idx > 0 && schedules[idx - 1].deadline === schedule.deadline;
         return (
           <div key={schedule.id} className="w-full">
-            {isSameDeadline ? ( // 같은 마감일인 경우 카드만 렌더
+            {schedule.status === "COMPLETED" ? null : isSameDeadline ? ( // 같은 마감일인 경우 카드만 렌더
               //카드에 최신 버전 content를 넘겨서 렌더
               <ScheduleCard
                 schedule={{ ...schedule, content: lastContent }}
@@ -74,7 +74,7 @@ const ScheduleListPreview = ({ projectId }) => {
               />
             ) : (
               <>
-                <div className="pb-1 flex justify-start items-start">
+                <div className="pb-1 flex justify-start items-start mt-8">
                   {calcDday(schedule.deadline) < 0 ? ( // D-day가 음수인 경우
                     <span className="pl-1 font-semibold font-['Livvic'] text-base leading-tight text-[#e40505]">
                       D+{Math.abs(calcDday(schedule.deadline))}
