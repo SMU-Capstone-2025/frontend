@@ -97,3 +97,23 @@ export const reviseSummary = async ({ request, reviseRequest }) => {
     throw error;
   }
 };
+
+// 문서 변경 로그 조회 API
+export const fetchDocumentLogs = async (documentId, page = 1, size = 5) => {
+  try {
+    const res = await axiosInstanceNoHeader.get(
+      `/document/logs/${documentId}`,
+      {
+        params: { page, size },
+      }
+    );
+    console.log("문서 히스토리:", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    console.error(
+      "히스토리 불러오기 실패:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
