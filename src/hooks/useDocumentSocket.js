@@ -95,7 +95,6 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
           attachments: [],
           logs: [],
           user: {
-            userId: null,
             userName,
             userEmail,
           },

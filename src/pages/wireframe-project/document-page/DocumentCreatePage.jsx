@@ -21,8 +21,12 @@ const DocumentCreatePage = () => {
   const [showSummary, setShowSummary] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [summaryType, setSummaryType] = useState("summary");
-
-  const editor = useDocumentEditor(); // tiptap 에디터 생성
+  const [cursors, setCursors] = useState([]);
+  const cursorsRef = useRef([]);
+  useEffect(() => {
+    cursorsRef.current = cursors;
+  }, [cursors]);
+  const editor = useDocumentEditor(cursorsRef); // tiptap 에디터 생성
 
   const {
     title,
@@ -107,16 +111,34 @@ const DocumentCreatePage = () => {
     token,
     documentId,
     onMessage: (data) => {
+      console.log("서버 수신 data:", data);
+      console.log("cursor:", data.cursor);
+
+      const myEmail = localStorage.getItem("email");
+
       if (!editor || !data?.content) return;
+
       if (data.title && data.title !== titleRef.current) {
         setTitle(data.title);
       }
-      // 제목 동기화
+
       const current = editor.getHTML().trim();
       const incoming = data.content.trim();
-      // 본문 동기화(내가 타이핑 중 아닐 때만 덮어 씌움)
       if (current !== incoming && !isTypingRef.current) {
         editor.commands.setContent(incoming, false);
+      }
+
+      if (data.user?.userEmail !== myEmail) {
+        setCursors((prev) => {
+          const newState = [
+            ...prev.filter((c) => c.user.userEmail !== data.user.userEmail),
+            { user: data.user, cursor: data.cursor },
+          ];
+          console.log("setCursors:", newState);
+          return newState;
+        });
+      } else {
+        console.log("본인 커서 무시");
       }
     },
   });
@@ -127,6 +149,7 @@ const DocumentCreatePage = () => {
     status,
     documentId,
     sendMessage: (payload) => {
+      // 디바운스된 전송 함수 내부에서 항상 최신 제목으로 관리
       const selection = editor.state.selection;
       sendMessage({
         ...payload,
