@@ -6,11 +6,7 @@ import useDocumentEditor from "../../../hooks/useDocumentEditor";
 import useDocumentSocket from "../../../hooks/useDocumentSocket";
 import useDocSync from "../../../hooks/useDocSync";
 import useDocState from "../../../hooks/useDocState";
-import {
-  correctText,
-  reviseSummary,
-  summarizeText,
-} from "../../../api/documentApi";
+import { correctText, summarizeText } from "../../../api/documentApi";
 import SummaryFloatingButton from "../../../components/document-element/common/SummaryFloatingButton";
 import ProfileBlue from "../../../assets/icons/Profile/ProfileBlue";
 import AiSummaryPanel from "../../../components/document-element/common/AiSummaryPanel";
@@ -25,8 +21,12 @@ const DocumentCreatePage = () => {
   const [showSummary, setShowSummary] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [summaryType, setSummaryType] = useState("summary");
-
-  const editor = useDocumentEditor(); // tiptap 에디터 생성
+  const [cursors, setCursors] = useState([]);
+  const cursorsRef = useRef([]);
+  useEffect(() => {
+    cursorsRef.current = cursors;
+  }, [cursors]);
+  const editor = useDocumentEditor(cursorsRef); // tiptap 에디터 생성
 
   const {
     title,
@@ -36,7 +36,14 @@ const DocumentCreatePage = () => {
     isLoading,
     autoSaveAndBack,
     updateTime,
-  } = useDocState({ editor, documentId, projectId, navigate, isEditMode });
+    editors,
+  } = useDocState({
+    editor,
+    documentId,
+    projectId,
+    navigate,
+    isEditMode,
+  });
 
   // 날짜 포맷 함수
   const formatDateTime = (isoString) => {
@@ -99,37 +106,39 @@ const DocumentCreatePage = () => {
     }
   };
 
-  // const handleRevise = async () => {
-  //   const originSummary = summary;
-  //   const reviseRequest = prompt("수정 방향을 입력해주세요 (예: 더 간결하게)");
-  //   if (!reviseRequest) return;
-  //   try {
-  //     const result = await reviseSummary({
-  //       request: originSummary,
-  //       reviseRequest,
-  //     });
-  //     const plain = stripHtml(result.response);
-  //     setSummary(plain);
-  //   } catch {
-  //     alert("요약 재수정 요청 중 오류가 발생했습니다.");
-  //   }
-  // };
-
   // 실시간 협업 소켓
   const { connect, disconnect, sendMessage } = useDocumentSocket({
     token,
     documentId,
     onMessage: (data) => {
+      console.log("서버 수신 data:", data);
+      console.log("cursor:", data.cursor);
+
+      const myEmail = localStorage.getItem("email");
+
       if (!editor || !data?.content) return;
+
       if (data.title && data.title !== titleRef.current) {
         setTitle(data.title);
       }
-      // 제목 동기화
+
       const current = editor.getHTML().trim();
       const incoming = data.content.trim();
-      // 본문 동기화(내가 타이핑 중 아닐 때만 덮어 씌움)
       if (current !== incoming && !isTypingRef.current) {
         editor.commands.setContent(incoming, false);
+      }
+
+      if (data.user?.userEmail !== myEmail) {
+        setCursors((prev) => {
+          const newState = [
+            ...prev.filter((c) => c.user.userEmail !== data.user.userEmail),
+            { user: data.user, cursor: data.cursor },
+          ];
+          console.log("setCursors:", newState);
+          return newState;
+        });
+      } else {
+        console.log("본인 커서 무시");
       }
     },
   });
@@ -141,9 +150,14 @@ const DocumentCreatePage = () => {
     documentId,
     sendMessage: (payload) => {
       // 디바운스된 전송 함수 내부에서 항상 최신 제목으로 관리
+      const selection = editor.state.selection;
       sendMessage({
         ...payload,
         title: titleRef.current,
+        cursor: {
+          from: selection.from,
+          to: selection.to,
+        },
       });
     },
   });
@@ -165,6 +179,7 @@ const DocumentCreatePage = () => {
         onStatusChange={setStatus}
         onSummaryClick={handleSummary}
         onCorrectClick={handleCorrect}
+        editors={editors}
       />
 
       {/* 문서 본문 영역 */}
@@ -183,7 +198,7 @@ const DocumentCreatePage = () => {
           </div>
 
           <input
-            className="text-gray-800 font-bold text-[28px]"
+            className="w-full text-gray-800 font-bold p-2 text-[28px] border border-transparent rounded-md focus:outline-none focus:border-gray-300 transition"
             placeholder="제목 없음"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -192,10 +207,12 @@ const DocumentCreatePage = () => {
           {isLoading ? (
             <div className="text-gray-400 text-[20px] p-6">문서 저장 중...</div>
           ) : (
-            <EditorContent
-              editor={editor}
-              className="text-gray-800 text-[14px]"
-            />
+            <div className="w-full border border-transparent rounded-md focus-within:border-gray-300 transition">
+              <EditorContent
+                editor={editor}
+                className="text-gray-800 text-[14px] p-2 focus:outline-none focus:ring-0"
+              />
+            </div>
           )}
         </div>
       </div>
