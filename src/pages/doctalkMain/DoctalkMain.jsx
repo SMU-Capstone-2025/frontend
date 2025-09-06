@@ -43,7 +43,7 @@ const DoctalkMain = () => {
             <p className="text-gray-400 font-['Livvic'] text-sm font-semibold leading-[19.6px] tracking-[-0.14px]">
               예정된 이벤트
             </p>
-            <div className="flex flex-col justify-center items-start gap-14 w-full p-5 rounded-lg border border-gray-200 bg-white">
+            <div className="flex flex-col justify-center items-start gap-14 w-full px-5 pb-8 rounded-lg border border-gray-200 bg-white">
               <ScheduleListPreview projectId={selectedProjectId} />
             </div>
           </div>

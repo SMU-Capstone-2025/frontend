@@ -23,7 +23,6 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   useNotificationSocket({
     userEmail,
     onMessage: (message) => {
-      console.log("새 알림:", message);
       setNotifications((prev) => [message, ...prev]); // 최근 알림 위에 추가
     },
   });
@@ -89,38 +88,61 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 </span>
               )}
               {showDropdown && (
-                <div className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-[10px] border border-gray-200 z-50">
-                  <div className="py-3 px-6 font-semibold border-b">알림</div>
-                  <ul className="max-h-72 overflow-y-auto">
+                <div className="absolute right-0 mt-2 w-[400px] border-none bg-white shadow-md rounded-xl border border-gray-100 z-50">
+                  {/* 헤더 */}
+                  <div className="px-6 py-3 font-semibold text-gray-800 text-[18px] border-b border-gray-150 rounded-t-xl">
+                    알림
+                  </div>
+
+                  {/* 알림 리스트 */}
+                  <ul className="max-h-96 overflow-y-auto flex flex-col gap-4 p-4 bg-white rounded-xl">
                     {notifications.length > 0 ? (
                       notifications.map((n, i) => (
                         <li
                           key={i}
-                          className="px-4 py-3 text-sm flex flex-col gap-1 border-l-8 border-l-transparent cursor-pointer hover:border-l-blue-400"
+                          onClick={() => {
+                            if (n.redirectionUrl) {
+                              const url = new URL(n.redirectionUrl);
+                              navigate(url.pathname);
+                            }
+                          }}
+                          className="bg-white border border-gray-150 rounded-xl shadow-sm p-5 cursor-pointer
+             hover:border-sky-100 hover:bg-sky-100 
+             transition duration-200 ease-in-out transform hover:-translate-y-0.5"
                         >
-                          {/* 메인 메시지 */}
-                          <span className="font-medium text-gray-900">
-                            {n.message}
-                          </span>
-                          {/* 문서 제목 */}
-                          <span className="text-gray-600 text-xs">
-                            제목: {n.title}
-                          </span>
-                          {/* 편집자 */}
-                          <span className="text-gray-500 text-xs">
-                            편집자: {n.editor}
-                          </span>
-                          {/* 수신 시간 */}
-                          <span className="text-gray-400 text-xs">
-                            {n.receivedAt.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
+                          <div className="flex justify-between items-start">
+                            {/* 메인 메시지 */}
+                            <span className="text-[15px] font-semibold text-gray-900">
+                              {n.message}
+                            </span>
+                            {/* 수신 시간 */}
+                            <span className="text-gray-400 text-xs">
+                              {n.receivedAt.toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                          <div className="mt-3 space-y-1 text-sm leading-relaxed">
+                            {/* 문서 제목 */}
+                            <div className="text-gray-700">
+                              <span className="font-medium text-gray-600">
+                                제목:
+                              </span>{" "}
+                              {n.title}
+                            </div>
+                            {/* 편집자 */}
+                            <div className="text-gray-500">
+                              <span className="font-medium text-gray-600">
+                                편집자:
+                              </span>{" "}
+                              {n.editor}
+                            </div>
+                          </div>
                         </li>
                       ))
                     ) : (
-                      <li className="px-3 py-6 text-sm text-gray-400 text-center">
+                      <li className="px-3 py-12 text-sm text-gray-400 text-center">
                         새 알림이 없습니다.
                       </li>
                     )}
@@ -128,22 +150,37 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 </div>
               )}
             </div>
-            {/* 사용자 아이콘 */}
-            <div className="flex items-center gap-1.5 relative">
-              <div
-                className="flex w-10 h-10 p-1.5 items-center gap-4 rounded-full border border-white bg-blue-100 cursor-pointer"
-                onClick={handleUserIdCardOpen}
-              >
-                <PersonOn color={"#5BA7F7"} />
-                {UserIdCardOpen && (
-                  <div className="absolute bottom-[-140px] right-[10px] cursor-auto">
-                    <UserIdCard />
-                  </div>
-                )}
-              </div>
-            </div>
           </>
         )}
+        {/* 로그인이 안 되어 있을 때만 로그인 버튼 노출 */}
+        {localStorage.getItem("accessToken") &&
+        localStorage.getItem("accessToken") !== "undefined" ? null : (
+          <Button
+            type={"button"}
+            width={"auto"}
+            height={"fit-content"}
+            text={"Log in / Sign up"}
+            onClick={() => navigate("/login")}
+          />
+        )}
+        {/* 로그인이 되어 있을 때만 유저 버튼 노출 */}
+        {localStorage.getItem("accessToken") &&
+        localStorage.getItem("accessToken") !== "undefined" ? (
+          // 사용자 아이콘
+          <div className="flex items-center gap-1.5 relative">
+            <div
+              className="flex w-10 h-10 p-2 items-center gap-4 rounded-full border border-white bg-blue-100 cursor-pointer"
+              onClick={handleUserIdCardOpen}
+            >
+              <PersonOn color={"#5BA7F7"} />
+              {UserIdCardOpen && (
+                <div className="absolute bottom-[-140px] right-[10px] cursor-auto">
+                  <UserIdCard />
+                </div>
+              )}
+            </div>
+          </div>
+        ) : null}
         {/* 로그인이 되어 있을 때만 로그아웃 버튼 노출 */}
         {localStorage.getItem("accessToken") &&
         localStorage.getItem("accessToken") !== "undefined" ? (
@@ -154,7 +191,15 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
             onClick={handleLogout}
           />
         ) : null}
-        <Button width={"fit-content"} height={"40px"} text={"화상 회의 시작"} />
+        {/* 로그인이 되어 있을 때만 화상회의 버튼 노출 */}
+        {localStorage.getItem("accessToken") &&
+        localStorage.getItem("accessToken") !== "undefined" ? (
+          <Button
+            width={"fit-content"}
+            height={"40px"}
+            text={"화상 회의 시작"}
+          />
+        ) : null}
       </div>
     </div>
   );

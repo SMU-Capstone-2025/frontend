@@ -13,12 +13,28 @@ const DocumentItem = ({
 }) => {
   const navigate = useNavigate();
   const isMenuOpen = openMenuId === document.id;
+
+  // 문서 생성 일자 변환
   const formatDate = (isoDateString) => {
     const date = new Date(isoDateString);
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, "0");
     const dd = String(date.getDate()).padStart(2, "0");
     return `${yyyy}.${mm}.${dd}`;
+  };
+
+  // 문서 수정 시간 변환
+  const formatDateTime = (isoDateString) => {
+    if (!isoDateString) return "";
+    const date = new Date(isoDateString);
+    // 서버시간에 9시간 추가
+    date.setHours(date.getHours() + 9);
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const hh = String(date.getHours()).padStart(2, "0");
+    const min = String(date.getMinutes()).padStart(2, "0");
+    return `${yyyy}.${mm}.${dd} ${hh}:${min}`;
   };
 
   const handleToggleMenu = (e) => {
@@ -28,7 +44,7 @@ const DocumentItem = ({
 
   return (
     <div className="flex w-full flex-col gap-3 relative font-[Livvic]">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center w-full border-b pb-3 border-gray-200 gap-4 hover:bg-gray-100">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center w-full border-b pb-3 border-gray-200 gap-4 hover:bg-gray-50">
         <div
           className="flex flex-col justify-center items-start gap-[6px] w-full max-w-3xl cursor-pointer"
           onClick={() => {
@@ -42,7 +58,7 @@ const DocumentItem = ({
             {document.title}
           </span>
           <span className="text-gray-400 font-[Palanquin] font-normal text-[12px] leading-[140%]">
-            최근 수정: {formatDate(document.updatedAt)}
+            최근 수정: {formatDateTime(document.updatedAt)}
           </span>
         </div>
 
@@ -59,7 +75,7 @@ const DocumentItem = ({
 
                 {document.editors.length > 2 && (
                   <div
-                    className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs font-semibold text-gray-700"
+                    className="flex w-6 h-6 items-center justify-center rounded-full border-none bg-black/50 text-white text-[11px] font-[500]"
                     title={document.editors.slice(2).join(", ")}
                   >
                     +{document.editors.length - 2}
@@ -72,7 +88,10 @@ const DocumentItem = ({
           </div>
 
           <Status name={document.status} />
-          <span className="text-gray-600 text-lg font-normal tracking-tight ">
+          <span
+            title="문서 생성 시간"
+            className="text-gray-600 text-lg font-normal tracking-tight"
+          >
             {formatDate(document.createdAt)}
           </span>
 
