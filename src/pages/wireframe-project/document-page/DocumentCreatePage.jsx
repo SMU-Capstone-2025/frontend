@@ -10,6 +10,7 @@ import { correctText, summarizeText } from "../../../api/documentApi";
 import SummaryFloatingButton from "../../../components/document-element/common/SummaryFloatingButton";
 import ProfileBlue from "../../../assets/icons/Profile/ProfileBlue";
 import AiSummaryPanel from "../../../components/document-element/common/AiSummaryPanel";
+import DocumentHistoryPanel from "../../../components/document-element/common/DocumentHistoryPannel";
 
 const DocumentCreatePage = () => {
   const userName = localStorage.getItem("userName");
@@ -17,8 +18,10 @@ const DocumentCreatePage = () => {
   const { documentId, projectId } = useParams();
   const token = localStorage.getItem("token");
   const isEditMode = !!documentId;
+
+  // 오른쪽 패널 상태 (요약 or 히스토리) 동시에 두 패널이 열리는 구조 방지
+  const [rightPanel, setRightPanel] = useState(null);
   const [summary, setSummary] = useState("");
-  const [showSummary, setShowSummary] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [summaryType, setSummaryType] = useState("summary");
   const [cursors, setCursors] = useState([]);
@@ -74,7 +77,7 @@ const DocumentCreatePage = () => {
   const handleSummary = async () => {
     if (!editor) return;
     setSummaryType("summary");
-    setShowSummary(true);
+    setRightPanel("summary"); // 요약 패널 열기
     setIsSummarizing(true);
     try {
       const content = editor.getHTML();
@@ -92,7 +95,7 @@ const DocumentCreatePage = () => {
   const handleCorrect = async () => {
     if (!editor) return;
     setSummaryType("correction");
-    setShowSummary(true);
+    setRightPanel("summary"); // 문법 수정 패널 열기
     setIsSummarizing(true);
     try {
       const content = editor.getHTML();
@@ -175,11 +178,9 @@ const DocumentCreatePage = () => {
         onTitleChange={setTitle}
         onBack={autoSaveAndBack}
         editor={editor}
-        status={status}
-        onStatusChange={setStatus}
-        onSummaryClick={handleSummary}
-        onCorrectClick={handleCorrect}
         editors={editors}
+        documentId={documentId}
+        onHistoryClick={() => setRightPanel("history")}
       />
 
       {/* 문서 본문 영역 */}
@@ -218,7 +219,7 @@ const DocumentCreatePage = () => {
       </div>
 
       {/* 오른쪽 패널 */}
-      {showSummary && (
+      {rightPanel === "summary" && (
         <div
           className="absolute top-[151px] right-0 w-[520px] h-[calc(100%-151px)]
               border-l border-gray-200 bg-white 
@@ -228,22 +229,30 @@ const DocumentCreatePage = () => {
             type={summaryType}
             loading={isSummarizing}
             content={summary}
-            onClose={() => setShowSummary(false)}
-            // onCopy={() => {
-            //   navigator.clipboard.writeText(summary);
-            //   alert("복사되었습니다!");
-            // }}
-            // onRevise={handleRevise}
+            onClose={() => setRightPanel(null)}
             onApplyCorrection={() => {
               editor?.commands.setContent(summary);
-              setShowSummary(false);
+              setRightPanel(null);
             }}
           />
         </div>
       )}
 
+      {rightPanel === "history" && (
+        <div
+          className="absolute top-[151px] right-0 w-[520px] h-[calc(100%-151px)]
+            border-l border-gray-200 bg-white 
+            flex flex-col overflow-y-auto z-50"
+        >
+          <DocumentHistoryPanel
+            documentId={documentId}
+            onClose={() => setRightPanel(null)}
+          />
+        </div>
+      )}
+
       <SummaryFloatingButton
-        visible={!showSummary}
+        visible={rightPanel === null} // 패널이 없을 경우 -> 플로팅 버튼 추가
         onSummaryClick={handleSummary}
         onCorrectClick={handleCorrect}
       />
