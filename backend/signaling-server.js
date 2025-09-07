@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 
 // WebSocket 서버 생성
 const wss = new WebSocket.Server({ 
-  port: 8080,
+  port: 8081,
   perMessageDeflate: false
 });
 
@@ -10,7 +10,7 @@ const wss = new WebSocket.Server({
 const rooms = new Map(); // roomId -> Set of users
 const users = new Map(); // userId -> { ws, roomId, userName }
 
-console.log('🚀 WebRTC Signaling Server started on port 8080');
+console.log('🚀 WebRTC Signaling Server started on port 8081');
 
 // WebSocket 연결 처리
 wss.on('connection', (ws) => {

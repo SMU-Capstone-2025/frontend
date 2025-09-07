@@ -24,7 +24,11 @@ const configuration = {
 };
 
 // 시그널링 서버 URL
-const SIGNALING_SERVER = "ws://localhost:8080";
+const SIGNALING_SERVER =
+  (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
+  + window.location.host
+  + '/ws';
+
 
 const VideoConference = () => {
   // URL에서 방 ID 가져오기
