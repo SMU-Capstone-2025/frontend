@@ -2,9 +2,7 @@ name: CI / CD (Backend only)
 
 on:
   push:
-    branches: [develop]
-    paths:
-      - 'backend/**'        
+    branches: [develop]      
 
 jobs:
   CI:
@@ -70,8 +68,6 @@ jobs:
           host: ${{ secrets.DEPLOY_SERVER_HOST }}
           username: ${{ secrets.DEPLOY_SERVER_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          source: ".env.production"
-          target: "~"
 
       - name: SSH into EC2 & run container
         uses: appleboy/ssh-action@v1.0.3
