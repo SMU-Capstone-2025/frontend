@@ -117,7 +117,10 @@ const PasswordReset = () => {
     <Layout>
       <div className="w-full max-w-[1280px] flex flex-col justify-center items-center gap-12 pt-16 px-4 z-10">
         <div className="flex w-[700.92px] h-fit relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 py-[105px] px-24">
-          <div className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer">
+          <div
+            className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer"
+            onClick={() => (window.location.href = "/login")}
+          >
             <CloseOn />
           </div>
           <div className="w-full h-full flex flex-col justify-start items-center gap-7">
