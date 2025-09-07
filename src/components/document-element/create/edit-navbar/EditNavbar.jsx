@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ArrowLeftOn from "../../../../assets/icons/ArrowLeft/ArrowLeftOn";
 import EllypsisVerticalOn from "../../../../assets/icons/EllypsisVertical/EllypsisVerticalOn";
 import PersonOn from "../../../../assets/icons/Person/PersonOn";
@@ -10,12 +10,12 @@ const EditNavbar = ({
   onTitleChange,
   onBack,
   editor,
-  onSummaryClick,
-  onCorrectClick,
+  documentId,
   editors = [],
+  onHistoryClick,
 }) => {
   return (
-    <div className="w-full h-[151px] shrink-0 border-b border-[#e5e7eb] bg-[#fff] flex flex-col justify-center gap-y-4 font-[Palaquin]">
+    <div className="relative w-full h-[151px] shrink-0 border-b border-[#e5e7eb] bg-[#fff] flex flex-col justify-center gap-y-4 font-[Palaquin]">
       {/* 상단 좌우 섹션 */}
       <div className="flex items-center justify-between px-7">
         {/* 왼쪽: 뒤로가기 + 제목 */}
@@ -67,12 +67,8 @@ const EditNavbar = ({
               const link = window.location.href; // 현재 페이지 URL 복사
               navigator.clipboard
                 .writeText(link)
-                .then(() => {
-                  alert("문서 링크가 복사되었습니다!");
-                })
-                .catch(() => {
-                  alert("링크 복사에 실패했습니다.");
-                });
+                .then(() => alert("문서 링크가 복사되었습니다!"))
+                .catch(() => alert("링크 복사에 실패했습니다."));
             }}
           >
             공유하기
@@ -80,9 +76,7 @@ const EditNavbar = ({
 
           <div
             className="flex items-center justify-center w-6 h-6 cursor-pointer"
-            onClick={() => {
-              console.log("Click 더보기");
-            }}
+            onClick={() => console.log("Click 더보기")}
           >
             <EllypsisVerticalOn />
           </div>
@@ -96,9 +90,7 @@ const EditNavbar = ({
         </div>
         <div
           className="flex w-6 h-6 items-center justify-center p-[3px] opacity-30 cursor-pointer hover:opacity-100 transition"
-          onClick={() => {
-            console.log("Click history!");
-          }}
+          onClick={onHistoryClick}
         >
           <VectorOn />
         </div>
