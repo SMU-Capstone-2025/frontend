@@ -48,7 +48,11 @@ const VideoConference = () => {
   const [newMessage, setNewMessage] = useState("");
   const [participants, setParticipants] = useState([]);
   const [userId] = useState(() => Math.random().toString(36).substr(2, 9));
-  const [userName] = useState(`User_${Math.floor(Math.random() * 1000)}`);
+const [userName, setUserName] = useState("");
+useEffect(() => {
+  const name = prompt("이름을 입력해주세요", `User_${Math.floor(Math.random() * 1000)}`);
+  setUserName(name || `User_${Math.floor(Math.random() * 1000)}`);
+}, []);
   const [connectionStatus, setConnectionStatus] = useState("connecting");
   const [showShareLink, setShowShareLink] = useState(false);
   const [focusedStream, setFocusedStream] = useState(null); // 포커스된 화면
@@ -1054,7 +1058,7 @@ const VideoConference = () => {
             </span>
             <button
               onClick={() => {
-                const link = `${window.location.origin}/video-call?room=${roomId}`;
+                const link = window.location.href;
                 navigator.clipboard.writeText(link);
                 setShowShareLink(true);
                 setTimeout(() => setShowShareLink(false), 3000);
