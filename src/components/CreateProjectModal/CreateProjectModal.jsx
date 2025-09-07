@@ -25,6 +25,7 @@ const CreateProjectModal = ({
       });
       console.log("프로젝트 생성 성공~!\n", res);
       alert("프로젝트가 생성되었습니다.");
+      window.location.reload(); // 프로젝트 생성 후 페이지 새로고침
 
       return res;
     } catch (error) {
