@@ -23,17 +23,29 @@ const configuration = {
   ],
 };
 
+// 시그널링 서버 URL (로컬 테스트용)
+//const SIGNALING_SERVER = 'ws://localhost:8081';
+
 // 시그널링 서버 URL
 const SIGNALING_SERVER =
   (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
   + window.location.host
   + '/ws';
 
-
 const VideoConference = () => {
-  // URL에서 방 ID 가져오기
+  // URL에서 방 ID 가져오기 - call 파라미터도 확인
   const urlParams = new URLSearchParams(window.location.search);
-  const [roomId] = useState(urlParams.get("room") || "test-room");
+  const [roomId] = useState(() => {
+    // call 파라미터 우선, 없으면 room 파라미터, 둘 다 없으면 기본값
+    const callParam = urlParams.get("call");
+    const roomParam = urlParams.get("room");
+    const finalRoomId = callParam || roomParam || "test-room";
+    
+    console.log("🏠 Room ID initialized:", finalRoomId);
+    console.log("URL params:", { call: callParam, room: roomParam });
+    
+    return finalRoomId;
+  });
 
   const [localStream, setLocalStream] = useState(null);
   const [remoteStreams, setRemoteStreams] = useState({});
@@ -41,21 +53,23 @@ const VideoConference = () => {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [screenSharingUsers, setScreenSharingUsers] = useState(new Set()); // 화면공유 중인 사용자들
+  const [screenSharingUsers, setScreenSharingUsers] = useState(new Set());
   const [showChat, setShowChat] = useState(false);
   const [showParticipants, setShowParticipants] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [participants, setParticipants] = useState([]);
   const [userId] = useState(() => Math.random().toString(36).substr(2, 9));
-const [userName, setUserName] = useState("");
-useEffect(() => {
-  const name = prompt("이름을 입력해주세요", `User_${Math.floor(Math.random() * 1000)}`);
-  setUserName(name || `User_${Math.floor(Math.random() * 1000)}`);
-}, []);
+  
+  const [userName, setUserName] = useState("");
+  useEffect(() => {
+    const name = prompt("이름을 입력해주세요", `User_${Math.floor(Math.random() * 1000)}`);
+    setUserName(name || `User_${Math.floor(Math.random() * 1000)}`);
+  }, []);
+  
   const [connectionStatus, setConnectionStatus] = useState("connecting");
   const [showShareLink, setShowShareLink] = useState(false);
-  const [focusedStream, setFocusedStream] = useState(null); // 포커스된 화면
+  const [focusedStream, setFocusedStream] = useState(null);
 
   const localVideoRef = useRef(null);
   const remoteVideoRefs = useRef({});
@@ -64,28 +78,34 @@ useEffect(() => {
   const originalStreamRef = useRef(null);
   const peersRef = useRef({});
   const videoSendersRef = useRef({});
-  const isScreenSharingRef = useRef(false); // 화면공유 상태 추적
+  const isScreenSharingRef = useRef(false);
 
   // WebSocket 연결
   useEffect(() => {
+    console.log("🔌 Connecting to WebSocket with roomId:", roomId);
+    
     try {
       wsRef.current = new WebSocket(SIGNALING_SERVER);
 
       wsRef.current.onopen = () => {
-        console.log("Connected to signaling server");
+        console.log("✅ Connected to signaling server");
         setConnectionStatus("connected");
-        wsRef.current.send(
-          JSON.stringify({
-            type: "join",
-            roomId,
-            userId,
-            userName,
-          })
-        );
+        
+        // 방 참가 메시지 전송
+        const joinMessage = {
+          type: "join",
+          roomId,
+          userId,
+          userName,
+        };
+        
+        console.log("📤 Sending join message:", joinMessage);
+        wsRef.current.send(JSON.stringify(joinMessage));
       };
 
       wsRef.current.onmessage = async (event) => {
         const data = JSON.parse(event.data);
+        console.log("📨 Received message:", data.type, data);
 
         switch (data.type) {
           case "user-joined":
@@ -107,6 +127,7 @@ useEffect(() => {
             handleChatMessage(data);
             break;
           case "participants-update":
+            console.log("👥 Participants update:", data.participants);
             setParticipants(data.participants);
             break;
           case "screen-share-status":
@@ -118,23 +139,28 @@ useEffect(() => {
           case "renegotiate-answer":
             handleRenegotiateAnswer(data);
             break;
+          case "room-info":
+            console.log("🏠 Room info:", data);
+            break;
+          case "error":
+            console.error("❌ Server error:", data.message);
+            alert(`서버 오류: ${data.message}`);
+            break;
         }
       };
 
-      wsRef.current.onclose = () => {
-        console.log("Disconnected from signaling server");
+      wsRef.current.onclose = (event) => {
+        console.log("🔌 Disconnected from signaling server", event.code, event.reason);
         setConnectionStatus("disconnected");
       };
 
       wsRef.current.onerror = (error) => {
-        console.error("WebSocket connection error:", error);
-        console.log(
-          "시그널링 서버에 연결할 수 없습니다. 로컬에서 서버를 실행하거나 AWS에 배포해주세요."
-        );
+        console.error("❌ WebSocket connection error:", error);
+        console.log("시그널링 서버에 연결할 수 없습니다. 로컬에서 서버를 실행하거나 AWS에 배포해주세요.");
         setConnectionStatus("disconnected");
       };
     } catch (error) {
-      console.error("Failed to create WebSocket connection:", error);
+      console.error("❌ Failed to create WebSocket connection:", error);
       console.log("WebSocket URL을 확인해주세요:", SIGNALING_SERVER);
     }
 
@@ -356,7 +382,7 @@ useEffect(() => {
         localStream.getTracks().forEach((track) => track.stop());
       }
     };
-  }, [userName]); // userName 의존성 추가
+  }, [userName]);
 
   // Remote streams 변경 감지
   useEffect(() => {
@@ -436,6 +462,7 @@ useEffect(() => {
             type: "ice-candidate",
             to: peerId,
             candidate: event.candidate,
+            roomId, // 방 ID 추가
           })
         );
       }
@@ -539,7 +566,13 @@ useEffect(() => {
 
   // 새 사용자 참가 처리
   const handleUserJoined = async (data) => {
-    console.log(`User ${data.userName} joined, creating peer connection`);
+    console.log(`User ${data.userName} joined room ${data.roomId || 'unknown'}, creating peer connection`);
+
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring user from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
 
     // localStream이 준비될 때까지 잠시 대기
     let retries = 0;
@@ -565,10 +598,11 @@ useEffect(() => {
           type: "offer",
           to: data.userId,
           offer,
+          roomId, // 방 ID 추가
         })
       );
 
-      console.log(`Sent offer to ${data.userId}`);
+      console.log(`Sent offer to ${data.userId} in room ${roomId}`);
     } catch (error) {
       console.error(`Error creating offer for ${data.userId}:`, error);
     }
@@ -576,7 +610,13 @@ useEffect(() => {
 
   // Offer 처리
   const handleOffer = async (data) => {
-    console.log(`Received offer from ${data.from}`);
+    console.log(`Received offer from ${data.from} in room ${data.roomId || 'unknown'}`);
+
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring offer from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
 
     // localStream이 준비될 때까지 대기
     let retries = 0;
@@ -614,10 +654,11 @@ useEffect(() => {
           type: "answer",
           to: data.from,
           answer,
+          roomId, // 방 ID 추가
         })
       );
 
-      console.log(`Sent answer to ${data.from}`);
+      console.log(`Sent answer to ${data.from} in room ${roomId}`);
     } catch (error) {
       console.error(`Error handling offer from ${data.from}:`, error);
     }
@@ -625,6 +666,14 @@ useEffect(() => {
 
   // Answer 처리
   const handleAnswer = async (data) => {
+    console.log(`Received answer from ${data.from} in room ${data.roomId || 'unknown'}`);
+    
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring answer from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
+
     const pc = peersRef.current[data.from];
     if (pc) {
       try {
@@ -651,6 +700,14 @@ useEffect(() => {
 
   // ICE Candidate 처리
   const handleIceCandidate = async (data) => {
+    console.log(`Received ICE candidate from ${data.from} in room ${data.roomId || 'unknown'}`);
+    
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring ICE candidate from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
+
     const pc = peersRef.current[data.from];
     if (pc) {
       try {
@@ -676,6 +733,14 @@ useEffect(() => {
 
   // 사용자 퇴장 처리
   const handleUserLeft = (data) => {
+    console.log(`User ${data.userId} left room ${data.roomId || 'unknown'}`);
+    
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring user leave from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
+
     if (peersRef.current[data.userId]) {
       peersRef.current[data.userId].close();
       delete peersRef.current[data.userId];
@@ -707,6 +772,12 @@ useEffect(() => {
 
   // 채팅 메시지 처리
   const handleChatMessage = (data) => {
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring chat message from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
+
     setMessages((prev) => [
       ...prev,
       {
@@ -723,9 +794,16 @@ useEffect(() => {
     console.log(`🖥️ Screen share status update:`, {
       userId: data.userId,
       isSharing: data.isSharing,
+      roomId: data.roomId,
       currentUsers: Array.from(screenSharingUsers),
       willUpdate: data.isSharing ? "ADD" : "REMOVE",
     });
+
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring screen share status from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
 
     setScreenSharingUsers((prev) => {
       const newSet = new Set(prev);
@@ -741,7 +819,14 @@ useEffect(() => {
 
   // Renegotiation 처리 (화면공유용)
   const handleRenegotiate = async (data) => {
-    console.log(`Received renegotiation offer from ${data.from}`);
+    console.log(`Received renegotiation offer from ${data.from} in room ${data.roomId || 'unknown'}`);
+    
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring renegotiation from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
+
     const pc = peersRef.current[data.from];
 
     if (pc) {
@@ -755,6 +840,7 @@ useEffect(() => {
             type: "renegotiate-answer",
             to: data.from,
             answer,
+            roomId, // 방 ID 추가
           })
         );
 
@@ -762,12 +848,14 @@ useEffect(() => {
           handleScreenShareStatus({
             userId: data.from,
             isSharing: true,
+            roomId: data.roomId,
           });
         } else {
           // 화면공유 종료
           handleScreenShareStatus({
             userId: data.from,
             isSharing: false,
+            roomId: data.roomId,
           });
         }
 
@@ -780,7 +868,14 @@ useEffect(() => {
 
   // Renegotiation answer 처리
   const handleRenegotiateAnswer = async (data) => {
-    console.log(`Received renegotiation answer from ${data.from}`);
+    console.log(`Received renegotiation answer from ${data.from} in room ${data.roomId || 'unknown'}`);
+    
+    // 방 ID가 다르면 무시
+    if (data.roomId && data.roomId !== roomId) {
+      console.log(`Ignoring renegotiation answer from different room: ${data.roomId} vs ${roomId}`);
+      return;
+    }
+
     const pc = peersRef.current[data.from];
 
     if (pc) {
@@ -878,6 +973,18 @@ useEffect(() => {
 
         // 로컬 비디오는 원본 유지 (PIP에서 보여줄 용도)
         // 화면공유 상태만 UI로 표시
+
+        // 서버로 화면공유 상태 전송
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.send(
+            JSON.stringify({
+              type: "screen-share-status",
+              isSharing: true,
+              userId,
+              roomId,
+            })
+          );
+        }
 
         // Data Channel로 직접 전송
         console.log("Sending screen share status via data channels");
@@ -978,6 +1085,7 @@ useEffect(() => {
           type: "chat-message",
           message: newMessage,
           userName,
+          roomId, // 방 ID 추가
         })
       );
 
@@ -1004,6 +1112,14 @@ useEffect(() => {
     Object.values(peersRef.current).forEach((pc) => pc.close());
 
     if (wsRef.current) {
+      // 방 떠나기 메시지 전송
+      wsRef.current.send(
+        JSON.stringify({
+          type: "leave",
+          roomId,
+          userId,
+        })
+      );
       wsRef.current.close();
     }
 
@@ -1026,6 +1142,7 @@ useEffect(() => {
 
   // 디버깅 정보
   console.log("Render:", {
+    roomId,
     remoteStreamsCount: remoteStreamCount,
     remoteStreamIds: Object.keys(remoteStreams),
     isScreenSharing,
@@ -1289,7 +1406,7 @@ useEffect(() => {
 
         {/* 디버그 정보 (개발용) */}
         <div className="text-xs text-gray-500 text-center mt-2">
-          Peers: {Object.keys(peers).length} | Streams:{" "}
+          Room: {roomId} | Peers: {Object.keys(peers).length} | Streams:{" "}
           {Object.keys(remoteStreams).length}
         </div>
       </div>
@@ -1388,6 +1505,8 @@ useEffect(() => {
       <button
         onClick={() => {
           console.log("=== Debug Info ===");
+          console.log("Room ID:", roomId);
+          console.log("User ID:", userId);
           console.log("Remote Streams:", remoteStreams);
           console.log("Peers:", peers);
           console.log("Local Stream:", localStream);
@@ -1395,8 +1514,8 @@ useEffect(() => {
           console.log("Screen Stream:", screenStreamRef.current);
           console.log("Is Screen Sharing:", isScreenSharing);
           console.log("Screen Sharing Users:", Array.from(screenSharingUsers));
-          console.log("Room ID:", roomId);
-          console.log("User ID:", userId);
+          console.log("Participants:", participants);
+          console.log("Connection Status:", connectionStatus);
           console.log("Data Channels:");
           Object.entries(peersRef.current).forEach(([peerId, pc]) => {
             console.log(
