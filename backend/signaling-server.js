@@ -1,5 +1,7 @@
 const WebSocket = require('ws');
 
+// 테스트용 내용 추가 
+
 // WebSocket 서버 생성
 const wss = new WebSocket.Server({ 
   port: 8081,
