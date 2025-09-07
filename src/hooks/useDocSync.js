@@ -1,46 +1,78 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { debounce } from "lodash";
 
-// 문서 동기화(실시간 협업 편집)
-const useDocSync = (editor, { title, status, documentId, sendMessage }) => {
-  const isComposingRef = useRef(false); // 한글 조합 중 상태값
-  const isTypingRef = useRef(false); // 지금 입력중인지 체크하는 상태값
+const useDocSync = (
+  editor,
+  { title, status, documentId, sendMessage, titleInputRef }
+) => {
+  const isComposingRef = useRef(false); // 한글 조합 중 (제목+본문 공용)
+  const isTypingRef = useRef(false); // 본문 입력 감지
 
-  // title 디바운스
-  const debouncedTitleSend = useRef(
-    debounce((titleText) => {
-      const html = editor.getHTML();
-      sendMessage({ documentId, title: titleText, content: html, status });
-    }, 150)
-  ).current;
+  // stale closure란? 리액트에서 함수가 옛날 값을 계속 캡처해 쓰는 현상
+  // 최신 값들을 ref에 보관해 디바운스 클로저의 stale 문제 방지
+  const latest = useRef({ editor, status, documentId, title, sendMessage });
+  latest.current = { editor, status, documentId, title, sendMessage };
 
-  // content 디바운스
-  const debouncedSend = useRef(
-    debounce((html) => {
-      sendMessage({ documentId, title, content: html, status });
-    }, 150)
-  ).current;
+  // 디바운스: 제목
+  const debouncedTitleSend = useMemo(
+    () =>
+      debounce((titleText) => {
+        const {
+          editor: ed,
+          status: st,
+          documentId: id,
+          sendMessage: send,
+        } = latest.current;
+        if (!ed || !id) return;
+        if (isComposingRef.current) return; // 조합 중이면 전송 X
+        const html = ed.getHTML();
+        send({ documentId: id, title: titleText, content: html, status: st });
+      }, 500),
+    []
+  );
 
-  // title이 변경될 때 debounce로 전송
+  // 디바운스: 본문
+  const debouncedSend = useMemo(
+    () =>
+      debounce((html) => {
+        const {
+          title: tt,
+          status: st,
+          documentId: id,
+          sendMessage: send,
+        } = latest.current;
+        if (!id) return;
+        if (isComposingRef.current) return; // 조합 중이면 전송 X
+        send({ documentId: id, title: tt, content: html, status: st });
+      }, 300),
+    []
+  );
+
+  // 제목 변경 시 전송 (조합 중이면 skip)
   useEffect(() => {
-    if (!editor || !documentId) return;
+    if (!documentId) return;
     if (isComposingRef.current) return;
     debouncedTitleSend(title);
-  }, [title]);
+  }, [title, documentId, debouncedTitleSend]);
 
+  // 본문/조합 이벤트 바인딩
   useEffect(() => {
     if (!editor || !documentId) return;
-    // 한글 조합 중인지 아닌지 체크 -> 조합 중에는 메시지 전송 방지
-    const handleCompositionStart = () => {
-      isComposingRef.current = true;
-    };
-    const handleCompositionEnd = () => {
-      isComposingRef.current = false;
-    };
 
     const dom = editor.view.dom;
-    dom.addEventListener("compositionstart", handleCompositionStart);
-    dom.addEventListener("compositionend", handleCompositionEnd);
+
+    const handleCompStart = () => (isComposingRef.current = true);
+    const handleCompEnd = () => (isComposingRef.current = false);
+
+    dom.addEventListener("compositionstart", handleCompStart);
+    dom.addEventListener("compositionend", handleCompEnd);
+
+    // 제목 input에도 조합 이벤트 연결
+    const titleEl = titleInputRef?.current;
+    if (titleEl) {
+      titleEl.addEventListener("compositionstart", handleCompStart);
+      titleEl.addEventListener("compositionend", handleCompEnd);
+    }
 
     editor.on("transaction", () => {
       isTypingRef.current = true;
@@ -57,10 +89,16 @@ const useDocSync = (editor, { title, status, documentId, sendMessage }) => {
     });
 
     return () => {
-      dom.removeEventListener("compositionstart", handleCompositionStart);
-      dom.removeEventListener("compositionend", handleCompositionEnd);
+      dom.removeEventListener("compositionstart", handleCompStart);
+      dom.removeEventListener("compositionend", handleCompEnd);
+      if (titleEl) {
+        titleEl.removeEventListener("compositionstart", handleCompStart);
+        titleEl.removeEventListener("compositionend", handleCompEnd);
+      }
+      debouncedSend.cancel();
+      debouncedTitleSend.cancel();
     };
-  }, [editor, documentId, title, status, sendMessage]);
+  }, [editor, documentId, titleInputRef, debouncedSend, debouncedTitleSend]);
 
   return { isTypingRef, isComposingRef };
 };

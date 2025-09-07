@@ -21,6 +21,21 @@ export default function DocumentHistoryPanel({ documentId, onClose }) {
     loadLogs();
   }, [documentId]);
 
+  // 날짜 포맷 함수
+  const formatDateTime = (isoString) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    date.setHours(date.getHours() + 9); // 9시간 추가
+
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const hh = String(date.getHours()).padStart(2, "0");
+    const min = String(date.getMinutes()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+  };
+
   // 문단 단위로 split
   const splitParagraphs = (html) => {
     const doc = new DOMParser().parseFromString(html || "", "text/html");
@@ -110,12 +125,12 @@ export default function DocumentHistoryPanel({ documentId, onClose }) {
         {/* 본문 */}
         <div className="flex-1 overflow-y-auto space-y-[24px]">
           {loading ? (
-            <p className="text-gray-400 text-sm">불러오는 중...</p>
+            <p className="text-sm text-gray-400">불러오는 중...</p>
           ) : logs.length === 0 ? (
-            <p className="text-gray-500 text-sm">히스토리 없음</p>
+            <p className="text-sm text-gray-500">히스토리 없음</p>
           ) : (
             logs.map((log, idx) => (
-              <div key={idx} className="flex gap-3 items-start pr-2">
+              <div key={idx} className="flex items-start gap-3 pr-2">
                 {/* 사용자 아이콘 */}
                 <div className="w-6 h-6 rounded-full bg-[#D5E8FC] flex items-center justify-center text-[13px] font-semibold text-blue-400">
                   {log.email?.charAt(0).toUpperCase() || "?"}
@@ -126,10 +141,10 @@ export default function DocumentHistoryPanel({ documentId, onClose }) {
                   {/* 상단: 이메일 + 시간 */}
                   <div className="flex flex-col gap-1">
                     <span className="text-[14px] font-semibold text-gray-800">
-                      {log.email}
+                      {log.userName}
                     </span>
                     <span className="text-[12px] text-[#9CA3AF]">
-                      {log.createdAt}
+                      {formatDateTime(log.createdAt)}
                     </span>
                   </div>
 
