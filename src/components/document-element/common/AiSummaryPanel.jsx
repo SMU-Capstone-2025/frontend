@@ -4,12 +4,12 @@ import InfoIcon from "../../../assets/icons/DocIcons/Info.svg";
 
 // AI 기능 사용 시 로딩 처리
 const Skeleton = () => (
-  <div className="animate-pulse space-y-3 w-full">
-    <div className="h-4 bg-gray-200 rounded w-full" />
-    <div className="h-4 bg-gray-300 rounded w-5/6" />
-    <div className="h-4 bg-gray-200 rounded w-4/6" />
-    <div className="h-4 bg-gray-300 rounded w-4/5" />
-    <div className="h-4 bg-gray-200 rounded w-2/3" />
+  <div className="w-full space-y-3 animate-pulse">
+    <div className="w-full h-4 bg-gray-200 rounded" />
+    <div className="w-5/6 h-4 bg-gray-300 rounded" />
+    <div className="w-4/6 h-4 bg-gray-200 rounded" />
+    <div className="w-4/5 h-4 bg-gray-300 rounded" />
+    <div className="w-2/3 h-4 bg-gray-200 rounded" />
   </div>
 );
 
@@ -35,7 +35,7 @@ export default function AiSummaryPanel({
       <div className="inline-flex flex-col items-stretch border-[#D9D9D9] bg-white h-full">
         {/* 헤더 */}
 
-        <div className="flex flex-col items-start gap-[30px]">
+        <div className="flex flex-col items-start gap-[20px]">
           <button
             className="text-gray-500 hover:text-gray-700"
             title="닫기"
@@ -56,14 +56,14 @@ export default function AiSummaryPanel({
         </div>
 
         {/* 본문 */}
-        <div className="flex-1 overflow-y-auto pt-4 mt-4 w-full">
+        <div className="flex-1 w-full pt-4 mt-4 overflow-y-auto">
           {loading ? (
             <Skeleton />
           ) : sections.length > 1 ? (
             <ol className="space-y-4">
               {sections.map((sec, i) => (
                 <li key={i} className="flex gap-2">
-                  <span className="min-w-5 h-5 inline-flex items-center justify-center text-xs font-bold rounded-full border border-gray-300">
+                  <span className="inline-flex items-center justify-center h-5 text-xs font-bold border border-gray-300 rounded-full min-w-5">
                     {i + 1}
                   </span>
                   <div className="text-sm leading-6 text-gray-800">{sec}</div>
