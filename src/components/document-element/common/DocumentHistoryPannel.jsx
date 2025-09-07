@@ -106,7 +106,7 @@ export default function DocumentHistoryPanel({ documentId, onClose }) {
     <div className="h-full min-h-[240px] bg-white border-gray-200 flex flex-col font-[Livvic] p-[26px]">
       <div className="inline-flex flex-col items-stretch border-[#D9D9D9] bg-white h-full">
         {/* 헤더 */}
-        <div className="flex flex-col items-start gap-[30px]">
+        <div className="flex flex-col items-start gap-[20px]">
           <button
             className="text-gray-500 hover:text-gray-700"
             title="닫기"
