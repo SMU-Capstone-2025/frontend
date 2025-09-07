@@ -18,7 +18,7 @@ const DocumentCreatePage = () => {
   const { documentId, projectId } = useParams();
   const token = localStorage.getItem("token");
   const isEditMode = !!documentId;
-
+  const titleInputRef = useRef(null);
   // 오른쪽 패널 상태 (요약 or 히스토리) 동시에 두 패널이 열리는 구조 방지
   const [rightPanel, setRightPanel] = useState(null);
   const [summary, setSummary] = useState("");
@@ -147,7 +147,7 @@ const DocumentCreatePage = () => {
   });
 
   // 타이핑 중인지 체크
-  const { isTypingRef } = useDocSync(editor, {
+  const { isTypingRef, isComposingRef } = useDocSync(editor, {
     title,
     status,
     documentId,
@@ -163,6 +163,7 @@ const DocumentCreatePage = () => {
         },
       });
     },
+    titleInputRef,
   });
 
   useEffect(() => {
@@ -172,7 +173,7 @@ const DocumentCreatePage = () => {
   }, [isEditMode, documentId]);
 
   return (
-    <div className="bg-gray-50 h-screen flex flex-col relative">
+    <div className="relative flex flex-col h-screen bg-gray-50">
       <EditNavbar
         title={title}
         onTitleChange={setTitle}
@@ -208,7 +209,7 @@ const DocumentCreatePage = () => {
           {isLoading ? (
             <div className="text-gray-400 text-[20px] p-6">문서 저장 중...</div>
           ) : (
-            <div className="w-full border border-transparent rounded-md focus-within:border-gray-300 transition">
+            <div className="w-full transition border border-transparent rounded-md focus-within:border-gray-300">
               <EditorContent
                 editor={editor}
                 className="text-gray-800 text-[14px] p-2 focus:outline-none focus:ring-0"
@@ -221,7 +222,7 @@ const DocumentCreatePage = () => {
       {/* 오른쪽 패널 */}
       {rightPanel === "summary" && (
         <div
-          className="absolute top-[151px] right-0 w-[520px] h-[calc(100%-151px)]
+          className="absolute top-[151px] right-0 max-w-[380px] w-full h-[calc(100%-151px)]
               border-l border-gray-200 bg-white 
               flex flex-col p-[26px] overflow-y-auto z-50"
         >
@@ -240,7 +241,7 @@ const DocumentCreatePage = () => {
 
       {rightPanel === "history" && (
         <div
-          className="absolute top-[151px] right-0 w-[520px] h-[calc(100%-151px)]
+          className="absolute top-[151px] right-0 max-w-[380px] w-full h-[calc(100%-151px)]
             border-l border-gray-200 bg-white 
             flex flex-col overflow-y-auto z-50"
         >
