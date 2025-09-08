@@ -11,12 +11,14 @@ const ProjectInfo = ({
   projectDescription,
   setProjectDescription,
   onSave,
+  projectId,
 }) => {
   return (
     <S.InfoSection>
       <ProjectCoverUploader
         coverImage={coverImage}
         setCoverImage={setCoverImage}
+        projectId={projectId}
       />
       <ProjectMetaForm
         projectName={projectName}
