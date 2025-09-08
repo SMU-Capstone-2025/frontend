@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as S from "./ProjectCover.styled";
 import defaultCover from "../../../assets/image/defaultCover.png";
-import { fetchFileImage } from "../../../api/projectApi"; // ⬅️ 파일 가져오는 함수
+import { fetchFileImage } from "../../../api/projectApi";
+import { uploadFile } from "../../../api/taskApi";
 
 const ProjectCoverUploader = ({ coverImage, setCoverImage }) => {
   const fileInputRef = useRef();
   const [previewUrl, setPreviewUrl] = useState(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
-  // imageId일 경우
   useEffect(() => {
     const loadImage = async () => {
       if (typeof coverImage === "string" && coverImage.length === 24) {
@@ -20,7 +20,6 @@ const ProjectCoverUploader = ({ coverImage, setCoverImage }) => {
           setPreviewUrl(defaultCover);
         }
       } else {
-        // coverImage가 local preview URL일 경우
         setPreviewUrl(coverImage || defaultCover);
       }
     };
@@ -28,12 +27,26 @@ const ProjectCoverUploader = ({ coverImage, setCoverImage }) => {
     loadImage();
   }, [coverImage]);
 
-  // 파일 업로드 시 미리보기
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setCoverImage(imageUrl); // 실제로는 서버 업로드 후 imageId를 set해야 함
+    if (!file) return;
+
+    try {
+      // 파일 업로드
+      const uploadedFile = await uploadFile(file);
+      console.log("업로드된 파일 응답:", uploadedFile);
+
+      const fileId = uploadedFile.fileId || uploadedFile.id;
+      if (!fileId) {
+        throw new Error("파일 업로드 결과에 fileId 없음");
+      }
+      // 프리뷰 적용
+      setCoverImage(fileId);
+      const preview = URL.createObjectURL(file);
+      setPreviewUrl(preview);
+    } catch (err) {
+      console.error("❌ 커버 업로드 실패", err);
+      alert("커버 업로드에 실패했습니다.");
     }
   };
 
@@ -48,10 +61,7 @@ const ProjectCoverUploader = ({ coverImage, setCoverImage }) => {
       />
       {isPreviewOpen && (
         <S.ModalBackdrop onClick={() => setIsPreviewOpen(false)}>
-          <S.ModalImage
-            src={previewUrl}
-            onClick={(e) => e.stopPropagation()} // 이미지 클릭 시 닫히지 않도록
-          />
+          <S.ModalImage src={previewUrl} onClick={(e) => e.stopPropagation()} />
         </S.ModalBackdrop>
       )}
       <S.HiddenFileInput

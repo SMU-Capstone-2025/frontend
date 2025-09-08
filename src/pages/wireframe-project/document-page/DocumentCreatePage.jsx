@@ -6,7 +6,11 @@ import useDocumentEditor from "../../../hooks/useDocumentEditor";
 import useDocumentSocket from "../../../hooks/useDocumentSocket";
 import useDocSync from "../../../hooks/useDocSync";
 import useDocState from "../../../hooks/useDocState";
-import { correctText, summarizeText } from "../../../api/documentApi";
+import {
+  correctText,
+  summarizeText,
+  updateDocumentStatus,
+} from "../../../api/documentApi";
 import SummaryFloatingButton from "../../../components/document-element/common/SummaryFloatingButton";
 import ProfileBlue from "../../../assets/icons/Profile/ProfileBlue";
 import AiSummaryPanel from "../../../components/document-element/common/AiSummaryPanel";
@@ -60,6 +64,16 @@ const DocumentCreatePage = () => {
     const hh = String(date.getHours()).padStart(2, "0");
     const min = String(date.getMinutes()).padStart(2, "0");
     return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+  };
+
+  // 상태 변경 핸들러
+  const handleStatusChange = async (newStatus) => {
+    try {
+      await updateDocumentStatus(documentId, newStatus);
+      setStatus(newStatus);
+    } catch (err) {
+      alert("상태 변경 실패! 다시 시도해주세요.");
+    }
   };
 
   // 소켓 전송 시 최신 제목
@@ -182,6 +196,8 @@ const DocumentCreatePage = () => {
         editors={editors}
         documentId={documentId}
         onHistoryClick={() => setRightPanel("history")}
+        status={status}
+        onStatusChange={handleStatusChange}
       />
 
       {/* 문서 본문 영역 */}

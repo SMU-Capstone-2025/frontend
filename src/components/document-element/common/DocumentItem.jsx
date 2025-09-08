@@ -87,7 +87,10 @@ const DocumentItem = ({
             )}
           </div>
 
-          <Status name={document.status} />
+          <div className="w-[80px] flex justify-end">
+            <Status name={document.status} />
+          </div>
+
           <span
             title="문서 생성 시간"
             className="text-gray-600 text-lg font-normal tracking-tight"

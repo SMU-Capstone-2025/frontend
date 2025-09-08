@@ -69,6 +69,7 @@ const Settings = () => {
   return (
     <S.Container>
       <ProjectInfo
+        projectId={projectId}
         projectName={projectName}
         setProjectName={setProjectName}
         coverImage={coverImage}

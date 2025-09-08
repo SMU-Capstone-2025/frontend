@@ -130,3 +130,17 @@ export const fetchDocumentsByDateAsc = async (projectId) => {
     throw error;
   }
 };
+
+// ✅ 프로젝트에서 특정 유저 강퇴
+export const removeProjectUser = async (projectId, email) => {
+  try {
+    const res = await axiosInstanceNoHeader.delete(
+      `/project/${projectId}/user/${email}`
+    );
+    console.log("유저 강퇴 성공:", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    console.error("유저 강퇴 실패:", error.response?.data || error.message);
+    throw error;
+  }
+};

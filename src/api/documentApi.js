@@ -117,3 +117,20 @@ export const fetchDocumentLogs = async (documentId, page = 1, size = 5) => {
     throw error;
   }
 };
+
+// 문서 상태 변경 API
+export const updateDocumentStatus = async (documentId, status) => {
+  try {
+    const res = await axiosInstanceNoHeader.put("/document/status", null, {
+      params: { documentId, status },
+    });
+    console.log("문서 상태 변경:", res.data.result);
+    return res.data.result;
+  } catch (error) {
+    console.error(
+      "문서 상태 변경 실패:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
