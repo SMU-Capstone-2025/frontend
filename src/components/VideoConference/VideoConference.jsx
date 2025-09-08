@@ -24,7 +24,7 @@ const configuration = {
 };
 
 // 시그널링 서버 URL (로컬 테스트용)
-//const SIGNALING_SERVER = 'ws://localhost:8081';
+// const SIGNALING_SERVER = 'ws://localhost:8081';
 
 // 시그널링 서버 URL
 const SIGNALING_SERVER =
@@ -82,6 +82,10 @@ const VideoConference = () => {
 
   // WebSocket 연결
   useEffect(() => {
+    if (!userName) {
+    console.log('Waiting for userName before opening WebSocket');
+    return;
+  }
     console.log("🔌 Connecting to WebSocket with roomId:", roomId);
     
     try {
@@ -167,6 +171,38 @@ const VideoConference = () => {
     return () => {
       if (wsRef.current) {
         wsRef.current.close();
+        return () => {
+          // Close all peer connections
+          try {
+            Object.values(peersRef.current).forEach(pc => {
+              try { pc.close(); } catch(e) {}
+            });
+            peersRef.current = {};
+            setPeers({});
+          } catch (e) {
+            console.warn('Error closing peers on cleanup', e);
+          }
+
+          // Stop local tracks
+          try {
+            if (localStream) {
+              localStream.getTracks().forEach(t => {
+                try { t.stop(); } catch(e) {}
+              });
+            }
+            if (originalStreamRef.current) {
+              originalStreamRef.current.getTracks().forEach(t => {
+                try { t.stop(); } catch(e){}
+              });
+            }
+          } catch (e) {
+            console.warn('Error stopping local tracks on cleanup', e);
+          }
+
+          if (wsRef.current) {
+            try { wsRef.current.close(); } catch(e) {}
+          }
+        };
       }
     };
   }, [roomId, userId, userName]);
@@ -477,35 +513,61 @@ const VideoConference = () => {
         muted: event.track.muted,
       });
 
-      if (event.streams && event.streams[0]) {
-        console.log(
-          `Setting remote stream for ${peerId}, stream active:`,
-          event.streams[0].active
-        );
-
-        // 스트림을 즉시 설정
-        setRemoteStreams((prev) => {
-          const updated = {
-            ...prev,
-            [peerId]: event.streams[0],
-          };
-          console.log("Updated remote streams:", Object.keys(updated));
-          return updated;
-        });
-
-        // 비디오 엘리먼트에 직접 설정 (백업)
-        const setupVideo = () => {
-          if (remoteVideoRefs.current[peerId]) {
-            remoteVideoRefs.current[peerId].srcObject = event.streams[0];
-            console.log(`Video element updated for ${peerId}`);
-          } else {
-            // 비디오 엘리먼트가 아직 없으면 재시도
-            setTimeout(setupVideo, 100);
-          }
-        };
-        setupVideo();
+      const stream = event.streams?.[0];
+      if (!stream) {
+        console.log(`No stream delivered yet for ${peerId}`);
+        return;
       }
+
+      // 상태에 저장
+      setRemoteStreams((prev) => {
+        const updated = { ...prev, [peerId]: stream };
+        console.log("Updated remote streams:", Object.keys(updated));
+        return updated;
+      });
+
+      // 비디오 엘리먼트에 연결하고 강제로 play 시도
+      const setupVideo = () => {
+        const videoEl = remoteVideoRefs.current[peerId];
+        if (!videoEl) {
+          // 엘리먼트가 아직 없으면 재시도
+          setTimeout(setupVideo, 100);
+          return;
+        }
+
+        if (videoEl.srcObject !== stream) {
+          videoEl.srcObject = stream;
+        }
+
+        // autoplay 정책 때문에 직접 play 시도
+        const tryPlay = () => {
+          videoEl.play().then(() => {
+            console.log(`Playback started for ${peerId}`);
+          }).catch((err) => {
+            // play 실패하면 mute/재시도 고려 (그러나 remote는 mute하면 안됨)
+            console.warn(`Video play failed for ${peerId}:`, err);
+          });
+        };
+
+        // 트랙이 unmute 될 때 재생 시도 (일부 브라우저에서 필요)
+        const tracks = stream.getVideoTracks();
+        if (tracks && tracks.length > 0) {
+          tracks.forEach((t) => {
+            if (t.readyState === 'live' && !t.muted) {
+              tryPlay();
+            }
+            t.onunmute = () => {
+              tryPlay();
+            };
+          });
+        } else {
+          tryPlay();
+        }
+      };
+
+      setupVideo();
     };
+
 
     pc.onconnectionstatechange = () => {
       console.log(`Connection state with ${peerId}: ${pc.connectionState}`);
