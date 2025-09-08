@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import ArrowLeftOn from "../../../../assets/icons/ArrowLeft/ArrowLeftOn";
-import EllypsisVerticalOn from "../../../../assets/icons/EllypsisVertical/EllypsisVerticalOn";
 import PersonOn from "../../../../assets/icons/Person/PersonOn";
 import VectorOn from "../../../../assets/icons/Vector/VectorOn";
 import EditorToolbar from "../EditorToolbar";
+import Status from "../../../Status/Status";
 
 const EditNavbar = ({
   title,
@@ -13,7 +13,13 @@ const EditNavbar = ({
   documentId,
   editors = [],
   onHistoryClick,
+  status,
+  onStatusChange,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const statusOptions = ["PENDING", "PROGRESS", "COMPLETED", "ETC"];
+
   return (
     <div className="relative w-full h-[151px] shrink-0 border-b border-[#e5e7eb] bg-[#fff] flex flex-col justify-center gap-y-4 font-[Palaquin]">
       {/* 상단 좌우 섹션 */}
@@ -35,8 +41,35 @@ const EditNavbar = ({
           />
         </div>
 
-        {/* 오른쪽: 프로필 + 공유 버튼 + 옵션 */}
+        {/* 오른쪽: 상태 드롭다운 + 프로필 + 공유 버튼 + 옵션 */}
         <div className="flex items-center gap-[30px]">
+          {/* 상태 드롭다운 */}
+          <div className="relative">
+            <div
+              className="cursor-pointer"
+              onClick={() => setIsOpen((prev) => !prev)}
+            >
+              <Status name={status} />
+            </div>
+            {isOpen && (
+              <div className="absolute right-0 mt-2 w-[120px] bg-white border border-gray-200 rounded-md shadow-lg z-50">
+                {statusOptions.map((opt) => (
+                  <div
+                    key={opt}
+                    className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100"
+                    onClick={() => {
+                      onStatusChange(opt);
+                      setIsOpen(false);
+                    }}
+                  >
+                    <Status name={opt} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 프로필 아이콘 */}
           <div className="flex h-10 items-center gap-[6px] -space-x-[16.667px]">
             {editors.slice(0, 2).map((email, i) => (
               <div
@@ -46,7 +79,7 @@ const EditNavbar = ({
                 title={email}
               >
                 <PersonOn
-                  color={i % 2 === 0 ? "#5BA7F7" : "#FACC15"} // Blue / Yellow 아이콘 색
+                  color={i % 2 === 0 ? "#5BA7F7" : "#FACC15"}
                   size={22}
                 />
               </div>
@@ -61,10 +94,11 @@ const EditNavbar = ({
             )}
           </div>
 
+          {/* 공유 버튼 */}
           <button
             className="text-white text-center text-sm font-semibold leading-[140%] tracking-[-0.14px] flex h-10 px-4 py-2 justify-center items-center gap-[10px] rounded bg-[#3191f2] hover:opacity-30 transition"
             onClick={() => {
-              const link = window.location.href; // 현재 페이지 URL 복사
+              const link = window.location.href;
               navigator.clipboard
                 .writeText(link)
                 .then(() => alert("문서 링크가 복사되었습니다!"))
@@ -73,13 +107,6 @@ const EditNavbar = ({
           >
             공유하기
           </button>
-
-          <div
-            className="flex items-center justify-center w-6 h-6 cursor-pointer"
-            onClick={() => console.log("Click 더보기")}
-          >
-            <EllypsisVerticalOn />
-          </div>
         </div>
       </div>
 
