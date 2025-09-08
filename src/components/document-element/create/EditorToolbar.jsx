@@ -111,42 +111,12 @@ const EditorToolbar = ({ editor }) => {
 
       <Divider />
 
-      {/* 본문/헤딩 드롭다운 */}
-      <select
-        className="bg-white border border-gray-200 text-sm rounded px-2 py-1"
-        value={
-          editor.isActive("heading", { level: 1 })
-            ? "h1"
-            : editor.isActive("heading", { level: 2 })
-              ? "h2"
-              : editor.isActive("heading", { level: 3 })
-                ? "h3"
-                : "p"
-        }
-        onChange={(e) => {
-          const v = e.target.value;
-          const ch = editor.chain().focus();
-          if (v === "p") ch.setParagraph().run();
-          if (v === "h1") ch.toggleHeading({ level: 1 }).run();
-          if (v === "h2") ch.toggleHeading({ level: 2 }).run();
-          if (v === "h3") ch.toggleHeading({ level: 3 }).run();
-        }}
-        title="본문/제목"
-      >
-        <option value="p">본문</option>
-        <option value="h1">제목 1</option>
-        <option value="h2">제목 2</option>
-        <option value="h3">제목 3</option>
-      </select>
-
-      <Divider />
-
       {/* 폰트 크기 */}
       <div className="flex items-center gap-4">
         <button
           type="button"
           onClick={dec}
-          className=" rounded p-2 bg-gray-100 hover:bg-gray-200"
+          className="p-2 bg-gray-100 rounded hover:bg-gray-200"
           title="작게"
         >
           <img src={DocMinus} alt="작게" />
@@ -157,7 +127,7 @@ const EditorToolbar = ({ editor }) => {
         <button
           type="button"
           onClick={inc}
-          className=" rounded p-2 bg-gray-100 hover:bg-gray-200"
+          className="p-2 bg-gray-100 rounded hover:bg-gray-200"
           title="크게"
         >
           <img src={DocPlus} alt="크게" />
