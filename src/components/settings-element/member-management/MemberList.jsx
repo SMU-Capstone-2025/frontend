@@ -5,12 +5,40 @@ import PersonOn from "../../../assets/icons/Person/PersonOn";
 import {
   fetchProject,
   updateProjectAuthorities,
+  removeProjectUser,
 } from "../../../api/projectApi";
+
 const MemberList = ({ projectId, members, setMembers }) => {
-  const handleRemove = (id) => {
-    setMembers(members.filter((member) => member.id !== id));
+  // 강퇴
+  const handleRemove = async (email) => {
+    const confirmDelete = window.confirm(
+      `${email} 님을 정말 프로젝트에서 강퇴하시겠습니까?`
+    );
+    if (!confirmDelete) return; // 취소하면 종료
+
+    try {
+      await removeProjectUser(projectId, email);
+      console.log("유저 강퇴 성공");
+
+      // 최신 멤버 목록 갱신
+      const res = await fetchProject(projectId);
+      const { coworkers } = res.result;
+
+      setMembers(
+        coworkers.map((user, idx) => ({
+          id: idx + 1,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        }))
+      );
+    } catch (err) {
+      alert("강퇴 실패");
+      console.error(err);
+    }
   };
 
+  // 권한 변경
   const handleRoleChange = async (id, newRole) => {
     const target = members.find((m) => m.id === id);
     if (!target) return;
@@ -48,6 +76,7 @@ const MemberList = ({ projectId, members, setMembers }) => {
           email = "user00@example.com",
           role = "ROLE_MEMBER",
         } = member;
+
         return (
           <S.MemberWrapper key={id}>
             <S.MemberSection>
@@ -59,6 +88,7 @@ const MemberList = ({ projectId, members, setMembers }) => {
                 <S.MemberEmail>{email}</S.MemberEmail>
               </S.MemberInfo>
             </S.MemberSection>
+
             <S.MemberEditBlock>
               <S.SelectRole
                 value={role}
@@ -67,7 +97,8 @@ const MemberList = ({ projectId, members, setMembers }) => {
                 <option value="ROLE_MANAGER">Owner</option>
                 <option value="ROLE_MEMBER">Member</option>
               </S.SelectRole>
-              <S.RemoveButton onClick={() => handleRemove(id)}>
+              {/* 강퇴 버튼 */}
+              <S.RemoveButton onClick={() => handleRemove(email)}>
                 <CloseOn />
               </S.RemoveButton>
             </S.MemberEditBlock>
