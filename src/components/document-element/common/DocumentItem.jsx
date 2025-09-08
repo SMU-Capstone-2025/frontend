@@ -87,7 +87,7 @@ const DocumentItem = ({
             )}
           </div>
 
-          <div className="w-[80px] flex justify-center">
+          <div className="w-[80px] flex justify-end">
             <Status name={document.status} />
           </div>
 
