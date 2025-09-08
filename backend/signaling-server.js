@@ -1,7 +1,5 @@
 const WebSocket = require('ws');
 
-// 테스트용 내용 추가 
-
 // WebSocket 서버 생성
 const wss = new WebSocket.Server({ 
   port: 8081,
@@ -171,7 +169,7 @@ function handleJoin(ws, data) {
   
   const room = rooms.get(roomId);
   
-  // 기존 참가자들에게 새 사용자 알림 (같은 방의 사용자들에게만)
+  // 기존 참가자들에게 새 사용자 알림
   room.forEach(existingUserId => {
     if (existingUserId !== userId) {
       const existingUser = users.get(existingUserId);
@@ -197,11 +195,103 @@ function handleJoin(ws, data) {
     participantCount: room.size
   }));
   
-  // 참가자 목록 업데이트 (같은 방에만)
+  // 참가자 목록 업데이트
   broadcastParticipants(roomId);
   
   console.log(`✅ Room ${roomId} now has ${room.size} users:`, Array.from(room));
   return { success: true };
+}
+
+// Offer 전달 - 수정: 방 검증 완화
+function handleOffer(ws, data, fromUserId, currentRoomId) {
+  const { to, offer, roomId } = data;
+  const targetRoomId = roomId || currentRoomId;
+  const toUser = users.get(to);
+  
+  console.log(`📤 Forwarding offer from ${fromUserId} to ${to} in room ${targetRoomId}`);
+  
+  // 발신자가 방에 있는지 확인
+  if (!targetRoomId || !fromUserId) {
+    console.log('❌ Missing room ID or user ID for offer');
+    ws.send(JSON.stringify({
+      type: 'error',
+      message: 'Missing room or user information'
+    }));
+    return;
+  }
+  
+  // 수신자 존재 및 연결 상태만 확인 (같은 방 검증은 완화)
+  if (toUser && toUser.ws.readyState === WebSocket.OPEN) {
+    // 수신자가 다른 방에 있다면 경고만 출력하고 계속 진행
+    if (toUser.roomId !== targetRoomId) {
+      console.log(`⚠️ Room mismatch: sender in ${targetRoomId}, receiver in ${toUser.roomId}, but forwarding anyway`);
+    }
+    
+    toUser.ws.send(JSON.stringify({
+      type: 'offer',
+      from: fromUserId,
+      offer,
+      roomId: targetRoomId
+    }));
+    console.log(`✅ Offer forwarded successfully`);
+  } else {
+    console.log(`❌ User ${to} not found or disconnected`);
+    ws.send(JSON.stringify({
+      type: 'error',
+      message: `User ${to} is not available`
+    }));
+  }
+}
+
+// Answer 전달 - 수정: 방 검증 완화
+function handleAnswer(ws, data, fromUserId, currentRoomId) {
+  const { to, answer, roomId } = data;
+  const targetRoomId = roomId || currentRoomId;
+  const toUser = users.get(to);
+  
+  console.log(`📤 Forwarding answer from ${fromUserId} to ${to} in room ${targetRoomId}`);
+  
+  if (!targetRoomId || !fromUserId) {
+    console.log('❌ Missing room ID or user ID for answer');
+    return;
+  }
+  
+  // 수신자 존재 및 연결 상태만 확인
+  if (toUser && toUser.ws.readyState === WebSocket.OPEN) {
+    if (toUser.roomId !== targetRoomId) {
+      console.log(`⚠️ Room mismatch for answer, but forwarding anyway`);
+    }
+    
+    toUser.ws.send(JSON.stringify({
+      type: 'answer',
+      from: fromUserId,
+      answer,
+      roomId: targetRoomId
+    }));
+    console.log(`✅ Answer forwarded successfully`);
+  } else {
+    console.log(`❌ User ${to} not found or disconnected`);
+  }
+}
+
+// ICE Candidate 전달 - 수정: 방 검증 완화 (가장 중요!)
+function handleIceCandidate(ws, data, fromUserId, currentRoomId) {
+  const { to, candidate, roomId } = data;
+  const targetRoomId = roomId || currentRoomId;
+  const toUser = users.get(to);
+  
+  // ICE candidate는 연결에 매우 중요하므로 엄격한 검증 없이 전달
+  if (toUser && toUser.ws.readyState === WebSocket.OPEN) {
+    toUser.ws.send(JSON.stringify({
+      type: 'ice-candidate',
+      from: fromUserId,
+      candidate,
+      roomId: targetRoomId
+    }));
+    console.log(`🧊 ICE candidate forwarded from ${fromUserId} to ${to}`);
+  } else {
+    console.log(`❌ Cannot forward ICE candidate: User ${to} not available`);
+  }
 }
 
 // 화면공유 상태 처리
@@ -219,11 +309,11 @@ function handleScreenShareStatus(ws, data, userId, currentRoomId) {
   console.log(`📺 ${userId} ${isSharing ? 'started' : 'stopped'} screen sharing in room ${targetRoomId}`);
   
   if (room) {
-    // 같은 방의 다른 사용자들에게만 전송
+    // 같은 방의 다른 사용자들에게 전송
     room.forEach(existingUserId => {
       if (existingUserId !== userId) {
         const existingUser = users.get(existingUserId);
-        if (existingUser && existingUser.roomId === targetRoomId && existingUser.ws.readyState === WebSocket.OPEN) {
+        if (existingUser && existingUser.ws.readyState === WebSocket.OPEN) {
           existingUser.ws.send(JSON.stringify({
             type: 'screen-share-status',
             userId,
@@ -236,86 +326,7 @@ function handleScreenShareStatus(ws, data, userId, currentRoomId) {
   }
 }
 
-// Offer 전달 (방 검증 추가)
-function handleOffer(ws, data, fromUserId, currentRoomId) {
-  const { to, offer, roomId } = data;
-  const targetRoomId = roomId || currentRoomId;
-  const toUser = users.get(to);
-  
-  console.log(`📤 Forwarding offer from ${fromUserId} to ${to} in room ${targetRoomId}`);
-  
-  if (!targetRoomId) {
-    console.log('❌ No room ID for offer');
-    return;
-  }
-  
-  // 수신자가 같은 방에 있는지 확인
-  if (toUser && toUser.roomId === targetRoomId && toUser.ws.readyState === WebSocket.OPEN) {
-    toUser.ws.send(JSON.stringify({
-      type: 'offer',
-      from: fromUserId,
-      offer,
-      roomId: targetRoomId
-    }));
-  } else {
-    console.log(`❌ User ${to} not found, disconnected, or in different room`);
-    // 발신자에게 오류 알림
-    ws.send(JSON.stringify({
-      type: 'error',
-      message: `User ${to} is not available`
-    }));
-  }
-}
-
-// Answer 전달 (방 검증 추가)
-function handleAnswer(ws, data, fromUserId, currentRoomId) {
-  const { to, answer, roomId } = data;
-  const targetRoomId = roomId || currentRoomId;
-  const toUser = users.get(to);
-  
-  console.log(`📤 Forwarding answer from ${fromUserId} to ${to} in room ${targetRoomId}`);
-  
-  if (!targetRoomId) {
-    console.log('❌ No room ID for answer');
-    return;
-  }
-  
-  // 수신자가 같은 방에 있는지 확인
-  if (toUser && toUser.roomId === targetRoomId && toUser.ws.readyState === WebSocket.OPEN) {
-    toUser.ws.send(JSON.stringify({
-      type: 'answer',
-      from: fromUserId,
-      answer,
-      roomId: targetRoomId
-    }));
-  } else {
-    console.log(`❌ User ${to} not found, disconnected, or in different room`);
-  }
-}
-
-// ICE Candidate 전달 (방 검증 추가)
-function handleIceCandidate(ws, data, fromUserId, currentRoomId) {
-  const { to, candidate, roomId } = data;
-  const targetRoomId = roomId || currentRoomId;
-  const toUser = users.get(to);
-  
-  if (!targetRoomId) {
-    console.log('❌ No room ID for ICE candidate');
-    return;
-  }
-  
-  // 수신자가 같은 방에 있는지 확인
-  if (toUser && toUser.roomId === targetRoomId && toUser.ws.readyState === WebSocket.OPEN) {
-    toUser.ws.send(JSON.stringify({
-      type: 'ice-candidate',
-      from: fromUserId,
-      candidate,
-      roomId: targetRoomId
-    }));
-  }
-}
-
-// 채팅 메시지 전달 (방 검증 추가)
+// 채팅 메시지 전달
 function handleChatMessage(ws, data, roomId, senderId) {
   const { message, userName, roomId: dataRoomId } = data;
   const targetRoomId = dataRoomId || roomId;
@@ -330,11 +341,10 @@ function handleChatMessage(ws, data, roomId, senderId) {
   console.log(`💬 Chat message in room ${targetRoomId}: ${message}`);
   
   if (room) {
-    // 같은 방의 다른 사용자들에게만 전송
     room.forEach(userId => {
       if (userId !== senderId) {
         const user = users.get(userId);
-        if (user && user.roomId === targetRoomId && user.ws.readyState === WebSocket.OPEN) {
+        if (user && user.ws.readyState === WebSocket.OPEN) {
           user.ws.send(JSON.stringify({
             type: 'chat-message',
             message,
@@ -360,10 +370,10 @@ function handleLeave(userId, roomId) {
       rooms.delete(roomId);
       console.log(`🗑️ Empty room ${roomId} deleted`);
     } else {
-      // 같은 방의 다른 참가자들에게만 퇴장 알림
+      // 다른 참가자들에게 퇴장 알림
       room.forEach(existingUserId => {
         const existingUser = users.get(existingUserId);
-        if (existingUser && existingUser.roomId === roomId && existingUser.ws.readyState === WebSocket.OPEN) {
+        if (existingUser && existingUser.ws.readyState === WebSocket.OPEN) {
           existingUser.ws.send(JSON.stringify({
             type: 'user-left',
             userId,
@@ -380,7 +390,50 @@ function handleLeave(userId, roomId) {
   users.delete(userId);
 }
 
-// 참가자 목록 브로드캐스트 (특정 방에만)
+// renegotiate offer 중계 - 수정: 방 검증 완화
+function handleRenegotiate(ws, data, fromUserId, currentRoomId) {
+  const { to, offer, isScreenShare, roomId } = data;
+  const targetRoomId = roomId || currentRoomId;
+  const toUser = users.get(to);
+  
+  console.log(`🔄 Renegotiate from ${fromUserId} to ${to} in room ${targetRoomId}`);
+  
+  if (toUser && toUser.ws.readyState === WebSocket.OPEN) {
+    toUser.ws.send(JSON.stringify({
+      type: 'renegotiate',
+      from: fromUserId,
+      offer,
+      isScreenShare,
+      roomId: targetRoomId
+    }));
+    console.log(`✅ Renegotiate forwarded successfully`);
+  } else {
+    console.log(`❌ Cannot forward renegotiate: User ${to} not available`);
+  }
+}
+
+// renegotiate-answer 중계 - 수정: 방 검증 완화
+function handleRenegotiateAnswer(ws, data, fromUserId, currentRoomId) {
+  const { to, answer, roomId } = data;
+  const targetRoomId = roomId || currentRoomId;
+  const toUser = users.get(to);
+  
+  console.log(`🔄 Renegotiate-answer from ${fromUserId} to ${to} in room ${targetRoomId}`);
+  
+  if (toUser && toUser.ws.readyState === WebSocket.OPEN) {
+    toUser.ws.send(JSON.stringify({
+      type: 'renegotiate-answer',
+      from: fromUserId,
+      answer,
+      roomId: targetRoomId
+    }));
+    console.log(`✅ Renegotiate-answer forwarded successfully`);
+  } else {
+    console.log(`❌ Cannot forward renegotiate-answer: User ${to} not available`);
+  }
+}
+
+// 참가자 목록 브로드캐스트
 function broadcastParticipants(roomId) {
   const room = rooms.get(roomId);
   if (!room) return;
@@ -388,7 +441,7 @@ function broadcastParticipants(roomId) {
   const participants = [];
   room.forEach(userId => {
     const user = users.get(userId);
-    if (user && user.roomId === roomId) {
+    if (user) {
       participants.push({
         id: user.userId,
         name: user.userName
@@ -398,10 +451,9 @@ function broadcastParticipants(roomId) {
   
   console.log(`👥 Broadcasting participants for room ${roomId}:`, participants.map(p => p.name));
   
-  // 같은 방의 사용자들에게만 전송
   room.forEach(userId => {
     const user = users.get(userId);
-    if (user && user.roomId === roomId && user.ws.readyState === WebSocket.OPEN) {
+    if (user && user.ws.readyState === WebSocket.OPEN) {
       user.ws.send(JSON.stringify({
         type: 'participants-update',
         participants,
@@ -409,55 +461,6 @@ function broadcastParticipants(roomId) {
       }));
     }
   });
-}
-
-// renegotiate offer 중계 (방 검증 추가)
-function handleRenegotiate(ws, data, fromUserId, currentRoomId) {
-  const { to, offer, isScreenShare, roomId } = data;
-  const targetRoomId = roomId || currentRoomId;
-  const toUser = users.get(to);
-  
-  console.log(`🔄 Renegotiate from ${fromUserId} to ${to} in room ${targetRoomId}`);
-  
-  if (!targetRoomId) {
-    console.log('❌ No room ID for renegotiate');
-    return;
-  }
-  
-  // 수신자가 같은 방에 있는지 확인
-  if (toUser && toUser.roomId === targetRoomId && toUser.ws.readyState === WebSocket.OPEN) {
-    toUser.ws.send(JSON.stringify({
-      type: 'renegotiate',
-      from: fromUserId,
-      offer,
-      isScreenShare,
-      roomId: targetRoomId
-    }));
-  }
-}
-
-// renegotiate-answer 중계 (방 검증 추가)
-function handleRenegotiateAnswer(ws, data, fromUserId, currentRoomId) {
-  const { to, answer, roomId } = data;
-  const targetRoomId = roomId || currentRoomId;
-  const toUser = users.get(to);
-  
-  console.log(`🔄 Renegotiate-answer from ${fromUserId} to ${to} in room ${targetRoomId}`);
-  
-  if (!targetRoomId) {
-    console.log('❌ No room ID for renegotiate-answer');
-    return;
-  }
-  
-  // 수신자가 같은 방에 있는지 확인
-  if (toUser && toUser.roomId === targetRoomId && toUser.ws.readyState === WebSocket.OPEN) {
-    toUser.ws.send(JSON.stringify({
-      type: 'renegotiate-answer',
-      from: fromUserId,
-      answer,
-      roomId: targetRoomId
-    }));
-  }
 }
 
 // 서버 종료 처리
@@ -469,21 +472,64 @@ process.on('SIGTERM', () => {
   });
 });
 
-// 현재 상태 출력 (디버깅용)
+// 현재 상태 출력 (디버깅용) - 더 자세한 정보 포함
 setInterval(() => {
   console.log(`📊 Status - Rooms: ${rooms.size}, Users: ${users.size}, Connections: ${wss.clients.size}`);
   
-  // 각 방의 상태 출력
   if (rooms.size > 0) {
     console.log('🏠 Room details:');
     rooms.forEach((userSet, roomId) => {
       const userNames = Array.from(userSet).map(userId => {
         const user = users.get(userId);
-        return user ? user.userName : userId;
+        return user ? `${user.userName}(${userId.substring(0,4)})` : userId;
       });
       console.log(`  ${roomId}: ${userSet.size} users [${userNames.join(', ')}]`);
     });
   }
-}, 60000); // 1분마다
+  
+  // 연결되지 않은 WebSocket 정리
+  let disconnectedCount = 0;
+  wss.clients.forEach(ws => {
+    if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+      disconnectedCount++;
+    }
+  });
+  
+  if (disconnectedCount > 0) {
+    console.log(`🧹 Found ${disconnectedCount} disconnected WebSocket connections`);
+  }
+}, 30000); // 30초마다로 변경 (더 자주 체크)
+
+// 좀비 연결 정리 함수 추가
+function cleanupZombieConnections() {
+  const now = Date.now();
+  let cleanedUsers = 0;
+  let cleanedRooms = 0;
+  
+  // 연결이 끊어진 사용자 정리
+  users.forEach((user, userId) => {
+    if (user.ws.readyState === WebSocket.CLOSED || user.ws.readyState === WebSocket.CLOSING) {
+      console.log(`🧹 Cleaning up zombie user: ${userId}`);
+      handleLeave(userId, user.roomId);
+      cleanedUsers++;
+    }
+  });
+  
+  // 빈 방 정리
+  rooms.forEach((userSet, roomId) => {
+    if (userSet.size === 0) {
+      console.log(`🧹 Cleaning up empty room: ${roomId}`);
+      rooms.delete(roomId);
+      cleanedRooms++;
+    }
+  });
+  
+  if (cleanedUsers > 0 || cleanedRooms > 0) {
+    console.log(`🧹 Cleanup completed: ${cleanedUsers} users, ${cleanedRooms} rooms`);
+  }
+}
+
+// 5분마다 좀비 연결 정리
+setInterval(cleanupZombieConnections, 5 * 60 * 1000);
 
 console.log('✨ Server is ready for connections!');
