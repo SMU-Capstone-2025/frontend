@@ -117,20 +117,16 @@ export const fetchLogList = async (taskId) => {
 };
 
 // ✅ 파일 업로드
-export const uploadFile = async (file, taskId) => {
+export const uploadFile = async (file) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await axiosInstanceNoHeader.post(
-      `/file/upload/${taskId}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data", // FormData는 이거 따로 설정 필요
-        },
-      }
-    );
+    const res = await axiosInstanceNoHeader.post(`/file/upload`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // FormData는 이거 따로 설정 필요
+      },
+    });
     console.log("파일 업로드 성공:", res.data.result);
     return res.data.result;
   } catch (error) {
