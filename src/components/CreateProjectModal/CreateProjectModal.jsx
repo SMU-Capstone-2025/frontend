@@ -3,6 +3,7 @@ import CloseOn from "../../assets/icons/Close/CloseOn";
 import Input from "../Input/Input";
 import Button from "../Button/Button";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const CreateProjectModal = ({
   setNewProjectCreateModalOpen,
@@ -14,6 +15,7 @@ const CreateProjectModal = ({
   const [memberEmailList, setMemberEmailList] = useState([]);
   const [onSuccess, setOnSuccess] = useState(null);
   const [errMessage, setErrMessage] = useState("");
+  const navigate = useNavigate();
 
   const createProjectapi = async (projectName, description, memberEmail) => {
     const invitedEmails = memberEmailList.length > 0 ? memberEmailList : [];
@@ -25,7 +27,7 @@ const CreateProjectModal = ({
       });
       console.log("프로젝트 생성 성공~!\n", res);
       alert("프로젝트가 생성되었습니다.");
-
+      navigate(-1);
       return res;
     } catch (error) {
       console.log("프로젝트 생성 실패~!\n", error);

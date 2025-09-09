@@ -4,6 +4,7 @@ import Button from "../../components/Button/Button";
 import Input from "../../components/Input/Input";
 import CloseOn from "../../assets/icons/Close/CloseOn";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 const PasswordReset = () => {
   const [name, setName] = useState("");
@@ -16,6 +17,7 @@ const PasswordReset = () => {
   const [emailSuccess, setEmaiSuccess] = useState(null);
   const [passwordCheckSuccess, setpasswordCheckSuccess] = useState(null);
   const [userAuthCodeSuccess, setUserAuthCodeSuccess] = useState(null);
+  const navigate = useNavigate();
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -117,7 +119,10 @@ const PasswordReset = () => {
     <Layout>
       <div className="w-full max-w-[1280px] flex flex-col justify-center items-center gap-12 pt-16 px-4 z-10">
         <div className="flex w-[700.92px] h-fit relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 py-[105px] px-24">
-          <div className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer">
+          <div
+            className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
             <CloseOn />
           </div>
           <div className="w-full h-full flex flex-col justify-start items-center gap-7">

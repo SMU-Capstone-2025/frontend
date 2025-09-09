@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 import PersonOn from "../../assets/icons/Person/PersonOn";
+import { useNavigate } from "react-router-dom";
 
 const UserIdCard = () => {
   const [userInfo, setUserInfo] = useState(null);
+  const navigate = useNavigate();
 
   const getUserIdInfo = async () => {
     try {
@@ -66,7 +68,7 @@ const UserIdCard = () => {
       <div
         className="text-center justify-center text-gray-400 text-xs font-bold font-['Palanquin'] leading-none cursor-pointer"
         onClick={() => {
-          window.location.href = "/mypage";
+          navigate("/mypage");
         }}
       >
         프로필 이동
