@@ -5,6 +5,7 @@ import Input from "../../components/Input/Input";
 import Button from "../../components/Button/Button";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 import Layout from "../../components/NavbarLayout/Layout";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -18,6 +19,7 @@ const Signup = () => {
   const [passwordSuccess, setpasswordSuccess] = useState(null);
   const [passwordCheckSuccess, setpasswordCheckSuccess] = useState(null);
   const [userAuthCodeSuccess, setUserAuthCodeSuccess] = useState(null);
+  const navigate = useNavigate();
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -93,12 +95,12 @@ const Signup = () => {
       });
       console.log("회원가입 성공~!", res.data.result);
       alert("회원가입이 완료되었습니다");
-      window.location.href = "/login";
+      navigate("/login");
       return res;
     } catch (e) {
       console.log("회원가입요청 실패~ㅠ", e);
       alert("회원가입에 실패했습니다");
-      window.location.href = "/signup";
+      navigate("/signup");
     }
   };
 
@@ -118,7 +120,7 @@ const Signup = () => {
         <div className="flex w-[700.92px] h-fit relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 py-[105px] px-24">
           <div
             className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer"
-            onClick={() => (window.location.href = "/login")}
+            onClick={() => navigate("/login")}
           >
             <CloseOn />
           </div>

@@ -4,8 +4,10 @@ import Button from "../../components/Button/Button";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 import Layout from "../../components/NavbarLayout/Layout";
 import Input from "../../components/Input/Input";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -17,12 +19,12 @@ const Login = () => {
       });
       console.log("로그인 성공~!\n", res);
       alert("로그인 되었습니다");
-      window.location.href = "/";
+      navigate("/");
       return res.headers;
     } catch (error) {
       console.log("로그인 실패~!\n", error);
       alert("로그인에 실패했습니다");
-      window.location.href = "/login";
+      navigate("/login");
       return error;
     }
   };
@@ -50,7 +52,7 @@ const Login = () => {
         <div className="flex w-[700.92px] h-[760px] relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 overflow-hidden py-[105px] px-24">
           <div
             className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer"
-            onClick={() => (window.location.href = "/")}
+            onClick={() => navigate("/")}
           >
             <CloseOn />
           </div>
