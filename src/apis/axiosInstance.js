@@ -1,6 +1,4 @@
 import axios from "axios";
-import { use } from "react";
-import { useNavigate } from "react-router-dom";
 
 // const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -29,7 +27,6 @@ axiosInstanceNoHeader.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const navigate = useNavigate();
 
     if (
       error.response &&
@@ -42,7 +39,7 @@ axiosInstanceNoHeader.interceptors.response.use(
       if (originalRequest.url.includes("/token/refresh")) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        navigate("/login"); // 로그인 페이지로 리다이렉트
+        window.location.href = "/login"; // 로그인 페이지로 리다이렉트
         return Promise.reject(error);
       }
 
@@ -55,7 +52,7 @@ axiosInstanceNoHeader.interceptors.response.use(
           console.log("refreshToken이 없습니다.");
           console.warn("refreshToken이 유효하지 않음:", refreshToken);
           localStorage.clear();
-          navigate("/login");
+          window.location.href = "/login";
           return Promise.reject("No refreshToken");
         }
         // refresh 요청 실행
@@ -78,7 +75,7 @@ axiosInstanceNoHeader.interceptors.response.use(
             // refresh 실패 시 토큰 제거
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
-            navigate("/login"); // 로그인 페이지로 리다이렉트
+            window.location.href = "/login"; // 로그인 페이지로 리다이렉트
             throw err;
           })
           .finally(() => {
