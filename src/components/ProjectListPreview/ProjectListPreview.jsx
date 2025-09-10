@@ -1,49 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import ProjectCard from "./ProjectCard";
-import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 
-const ProjectListPreview = ({ onFirstProjectId }) => {
-  const [projects, setProjects] = useState([]);
-  const navigate = useNavigate();
-
-  const handleCardClick = (projectId) => {
-    navigate(`/project/workboard/${projectId}`);
-  };
-
-  const projectPreview = async () => {
-    try {
-      const res = await axiosInstanceNoHeader.get("/project/list");
-      console.log("프로젝트 리스트 배열:", res.data.result);
-      setProjects(res.data.result);
-
-      if (onFirstProjectId && res.data.result?.length > 0) {
-        const first = res.data.result.find((p) => p.projectId);
-        if (first) {
-          onFirstProjectId(first.projectId);
-        }
-      }
-    } catch (error) {
-      console.log("프로젝트 불러오기 실패~!\n", error);
-    }
-  };
-
-  // idx 배열을 컴포넌트 함수 내에서 선언
-  const idx = Array.from({ length: projects.length }, (_, i) => i);
-
-  useEffect(() => {
-    projectPreview();
-  }, []);
-  // console.log("프로젝트 리스트:", idx);
-
+const ProjectListPreview = ({ projects, onCardClick }) => {
   return (
-    <div className="grid grid-cols-2 gap-6 self-stretch ">
+    <div className="grid grid-cols-2 gap-6 self-stretch">
       {projects.map((project, idx) => (
         <ProjectCard
           key={project.projectId || idx}
           keyNum={idx}
           project={project}
-          onClick={() => handleCardClick(project.projectId)}
+          onClick={() => onCardClick(project.projectId)}
         />
       ))}
     </div>
@@ -51,3 +17,7 @@ const ProjectListPreview = ({ onFirstProjectId }) => {
 };
 
 export default ProjectListPreview;
+
+// 기존 프로젝트 리스트를 불러오는 코드는 상위 컴포넌트에서
+// 프로젝트를 상태로관리하고 props로 넘겨줌
+// ProjectListPreview 컴포넌트는 UI 렌더링의 책임만 짐.

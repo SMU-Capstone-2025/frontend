@@ -3,13 +3,13 @@ import Navbar from "../Navbar/Navbar";
 import Sidebar from "../Sidebar/Sidebar";
 import CreateProjectModal from "../CreateProjectModal/CreateProjectModal";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, onProjectCreated }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [newProjectCreateModalOpen, setNewProjectCreateModalOpen] =
     useState(false);
+
   const handleSidebarOpen = () => {
     setSidebarOpen(!sidebarOpen);
-    console.log("Sidebar toggled:", sidebarOpen);
   };
 
   return (
@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
       {newProjectCreateModalOpen && (
         <div>
           <div
-            className="fixed cursor-pointer inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-[90] "
+            className="fixed cursor-pointer inset-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-[90]"
             onClick={() =>
               setNewProjectCreateModalOpen(!newProjectCreateModalOpen)
             }
@@ -26,6 +26,8 @@ const Layout = ({ children }) => {
             <CreateProjectModal
               newProjectCreateModalOpen={newProjectCreateModalOpen}
               setNewProjectCreateModalOpen={setNewProjectCreateModalOpen}
+              setSidebarOpen={setSidebarOpen}
+              onProjectCreated={onProjectCreated} // 생성 콜백 전달
             />
           </div>
         </div>
