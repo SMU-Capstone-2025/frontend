@@ -3,11 +3,12 @@ import CloseOn from "../../assets/icons/Close/CloseOn";
 import Input from "../Input/Input";
 import Button from "../Button/Button";
 import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
-import { useNavigate } from "react-router-dom";
 
 const CreateProjectModal = ({
   setNewProjectCreateModalOpen,
   newProjectCreateModalOpen,
+  setSidebarOpen,
+  onProjectCreated,
 }) => {
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
@@ -15,108 +16,96 @@ const CreateProjectModal = ({
   const [memberEmailList, setMemberEmailList] = useState([]);
   const [onSuccess, setOnSuccess] = useState(null);
   const [errMessage, setErrMessage] = useState("");
-  const navigate = useNavigate();
 
-  const createProjectapi = async (projectName, description, memberEmail) => {
+  // 이메일 형식 검증
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // 이메일 유효성 검사
+  const handleIsUserEmail = async (email) => {
+    if (!validateEmail(email)) {
+      setOnSuccess(false);
+      setErrMessage("유효하지 않은 이메일 형식입니다.");
+      return;
+    }
+    try {
+      const res = await axiosInstanceNoHeader.get("/project/invite", {
+        params: { email },
+      });
+      setOnSuccess(true);
+      return res;
+    } catch (e) {
+      setOnSuccess(false);
+      setErrMessage(e.response?.data?.message || "이메일 확인 실패");
+      return e;
+    }
+  };
+
+  // 프로젝트 생성 API
+  const createProjectapi = async (projectName, description) => {
     const invitedEmails = memberEmailList.length > 0 ? memberEmailList : [];
     try {
       const res = await axiosInstanceNoHeader.post("/project/register", {
-        projectName: projectName,
-        description: description,
-        invitedEmails: invitedEmails,
+        projectName,
+        description,
+        invitedEmails,
       });
-      console.log("프로젝트 생성 성공~!\n", res);
       alert("프로젝트가 생성되었습니다.");
-      navigate(-1);
+      setNewProjectCreateModalOpen(false);
+      setSidebarOpen(false);
+
+      if (onProjectCreated) onProjectCreated(); // 리스트 최신화
+
       return res;
     } catch (error) {
-      console.log("프로젝트 생성 실패~!\n", error);
+      console.log("프로젝트 생성 실패:", error);
       return error;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const res = await createProjectapi(
-        projectName,
-        description,
-        memberEmailList
-      );
-      console.log("modal보낸 바디:", projectName, description, memberEmail);
-      console.log("modal받은 응답", res);
-
-      // 프로젝트 생성 후 모달 닫기
-      // setNewProjectCreateModalOpen(false);
-    } catch (error) {
-      console.log("에러 발생", error);
-    }
-  };
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const handleIsUserEmail = async (memberEmail) => {
-    const isValidEmail = validateEmail(memberEmail);
-    // 이메일 형식 검증 로직 추가 가능
-    if (!isValidEmail) {
-      console.log("유효하지 않은 이메일 형식입니다.");
-      setOnSuccess(false);
-      setErrMessage("유효하지 않은 이메일 형식입니다.");
-      return;
-    } else {
-      try {
-        const res = await axiosInstanceNoHeader.get("/project/invite", {
-          params: {
-            email: memberEmail,
-          },
-        });
-        console.log("이메일 확인 성공:", res);
-        setOnSuccess(true);
-        return res;
-      } catch (e) {
-        console.log("이메일 확인 실패:", e);
-        console.log("request email:", memberEmail);
-        setOnSuccess(false);
-        setErrMessage(e.response?.data?.message);
-        return e;
-      }
-    }
+    await createProjectapi(projectName, description);
   };
 
   return (
     <div className="w-[550px] h-[550px] flex flex-col justify-center items-center relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-200 overflow-hidden">
+      {/* 닫기 버튼 */}
       <div
         className="w-8 h-8 absolute right-[20px] top-[20px] cursor-pointer"
         onClick={() => setNewProjectCreateModalOpen(!newProjectCreateModalOpen)}
       >
         <CloseOn />
       </div>
+      {/* 프로젝트 생성 폼 */}
       <form
         className="w-[450px] h-[400px] flex flex-col justify-between items-center gap-7"
         onSubmit={handleSubmit}
       >
         <div className="w-full flex flex-col justify-center items-start gap-3">
+          {/* 프로젝트 이름 */}
           <Input
-            type={"text"}
-            title={"프로젝트 이름"}
-            placeholder={"프로젝트 이름을 입력해주세요."}
+            type="text"
+            title="프로젝트 이름"
+            placeholder="프로젝트 이름을 입력해주세요."
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
           />
+          {/* 프로젝트 설명 */}
           <Input
-            type={"text"}
-            title={"프로젝트 설명"}
-            placeholder={"프로젝트에 대한 설명을 입력해주세요."}
+            type="text"
+            title="프로젝트 설명"
+            placeholder="프로젝트에 대한 설명을 입력해주세요."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
+          {/* 멤버 이메일 */}
           <Input
             type="text"
-            title={"멤버"}
-            placeholder={"프로젝트에 참여할 멤버의 이메일을 입력해주세요."}
+            title="멤버"
+            placeholder="프로젝트 멤버의 이메일을 입력해주세요."
             value={memberEmail}
             onChange={(e) => setMemberEmail(e.target.value)}
-            onBlur={() => {
-              handleIsUserEmail(memberEmail);
-            }}
+            onBlur={() => handleIsUserEmail(memberEmail)}
             required={false}
             useButton={true}
             onSuccess={onSuccess}
@@ -129,21 +118,19 @@ const CreateProjectModal = ({
                 }
                 setErrMessage("");
                 setMemberEmailList([...memberEmailList, memberEmail]);
-                setOnSuccess(null); // 성공 상태 초기화
-                setMemberEmail(""); // 입력 필드 초기화
-                console.log("초대할 이메일 list:", [...memberEmailList]);
+                setOnSuccess(null); // 상태 초기화
+                setMemberEmail(""); // 입력창 초기화
               }
-              setMemberEmail(memberEmail, ...[memberEmail]);
-              console.log("초대할 이메일:", memberEmail);
             }}
             errmsg={errMessage}
           />
+          {/* 멤버 이메일 리스트 */}
           {memberEmailList.length > 0 && (
-            <div className="w-full flex flex-col justify-start items-start gap-2">
+            <div className="w-full flex flex-col justify-start items-start gap-2 font-[Palanquin]">
               <div className="text-gray-800 text-base font-semibold">
                 초대할 멤버 목록
               </div>
-              <ul className="w-full max-h-24 list-disc pl-5 overflow-y-auto">
+              <ul className="w-full max-h-24 list-disc pl-1 overflow-y-auto">
                 {memberEmailList.map((email, index) => (
                   <li
                     key={index}
@@ -152,11 +139,11 @@ const CreateProjectModal = ({
                     {email}
                     <span
                       className="cursor-pointer"
-                      onClick={() => {
+                      onClick={() =>
                         setMemberEmailList(
                           memberEmailList.filter((e) => e !== email)
-                        );
-                      }}
+                        )
+                      }
                     >
                       <CloseOn />
                     </span>
@@ -165,14 +152,15 @@ const CreateProjectModal = ({
               </ul>
             </div>
           )}
-          {/* <div className="text-red-600">경고메세지</div> */}
         </div>
+
+        {/* 제출 버튼 */}
         <div className="w-full h-14">
           <Button
-            type={"submit"}
-            text={"프로젝트 만들기"}
-            width={"100%"}
-            height={"100%"}
+            type="submit"
+            text="프로젝트 만들기"
+            width="100%"
+            height="100%"
           />
         </div>
       </form>

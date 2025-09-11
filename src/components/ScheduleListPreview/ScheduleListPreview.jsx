@@ -74,19 +74,19 @@ const ScheduleListPreview = ({ projectId }) => {
               />
             ) : (
               <>
-                <div className="pb-1 flex justify-start items-start mt-8">
+                <div className="pb-1 flex justify-start items-start mt-5">
                   {calcDday(schedule.deadline) < 0 ? ( // D-day가 음수인 경우
-                    <span className="pl-1 font-semibold font-['Livvic'] text-base leading-tight text-[#e40505]">
+                    <span className="pl-1 font-semibold font-['Livvic'] text-base leading-tight text-[#e40505] mb-2">
                       D+{Math.abs(calcDday(schedule.deadline))}
                     </span>
                   ) : // D-day가 0인 경우 빨간색으로 표시
                   calcDday(schedule.deadline) === 0 ? ( // D-day가 0인 경우 빨간색으로 표시
-                    <span className="pl-1 font-semibold font-['Livvic'] text-sm leading-tight text-[#e40505]">
+                    <span className="pl-1 font-semibold font-['Livvic'] text-sm leading-tight text-[#e40505] mb-2">
                       D-day
                     </span>
                   ) : // D-day가 양수인 경우, 중첩삼항
                   calcDday(schedule.deadline) < 10 ? ( // D-day가 10일 이하인 경우
-                    <span className="pl-1 font-semibold font-['Livvic'] text-sm leading-tight text-[Orange]">
+                    <span className="pl-1 font-semibold font-['Livvic'] text-sm leading-tight text-[Orange] mb-2">
                       D-{calcDday(schedule.deadline)}
                     </span>
                   ) : (
