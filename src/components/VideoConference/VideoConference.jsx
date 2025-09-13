@@ -69,128 +69,9 @@ const VideoConference = () => {
   const videoSendersRef = useRef({});
   const isScreenSharingRef = useRef(false);
   const pendingCandidatesRef = useRef({});
-
-  // --- 모든 핸들러 함수를 useCallback으로 감싸고, useEffect보다 먼저 정의하여 초기화 오류를 방지합니다. ---
   
-  const sendMessageOverWs = useCallback((message) => {
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify(message));
-    }
-  }, []);
-
-  const handleScreenShareStatus = useCallback((data) => {
-    setScreenSharingUsers((prev) => {
-      const newSet = new Set(prev);
-      data.isSharing ? newSet.add(data.userId) : newSet.delete(data.userId);
-      return newSet;
-    });
-  }, []);
-
-  const createPeerConnection = useCallback((peerId) => {
-    if (peersRef.current[peerId]) return peersRef.current[peerId];
-    
-    pendingCandidatesRef.current[peerId] = [];
-    const pc = new RTCPeerConnection(configuration);
-
-    pc.onicecandidate = (event) => {
-      if (event.candidate) sendMessageOverWs({ type: "ice-candidate", to: peerId, candidate: event.candidate, roomId });
-    };
-
-    pc.ontrack = (event) => setRemoteStreams((prev) => ({ ...prev, [peerId]: event.streams[0] }));
-
-    pc.onconnectionstatechange = () => {
-      console.log(`Connection state with ${peerId}: ${pc.connectionState}`);
-      if (pc.connectionState === 'failed') pc.restartIce();
-      setPeers(prev => ({...prev, [peerId]: pc}));
-    };
-
-    if (localStream) {
-      localStream.getTracks().forEach((track) => {
-        const sender = pc.addTrack(track, localStream);
-        if (track.kind === 'video') videoSendersRef.current[peerId] = sender;
-      });
-    }
-
-    peersRef.current[peerId] = pc;
-    setPeers(prev => ({...prev, [peerId]: pc}));
-    return pc;
-  }, [localStream, roomId, sendMessageOverWs]);
-
-  const handleUserJoined = useCallback((data) => {
-    const pc = createPeerConnection(data.userId);
-    pc.createOffer()
-      .then(offer => pc.setLocalDescription(offer))
-      .then(() => sendMessageOverWs({ type: "offer", to: data.userId, offer: pc.localDescription, roomId }))
-      .catch(e => console.error("Create offer error", e));
-  }, [createPeerConnection, roomId, sendMessageOverWs]);
-
-  const handleOffer = useCallback(async (data) => {
-    const pc = createPeerConnection(data.from);
-    await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-    sendMessageOverWs({ type: "answer", to: data.from, answer: pc.localDescription, roomId });
-  }, [createPeerConnection, roomId, sendMessageOverWs]);
-  
-  const handleAnswer = useCallback(async (data) => {
-    const pc = peersRef.current[data.from];
-    if (pc) {
-      await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-      for (const candidate of pendingCandidatesRef.current[data.from] || []) {
-        await pc.addIceCandidate(candidate).catch(e => console.warn("ICE candidate add error", e));
-      }
-      pendingCandidatesRef.current[data.from] = [];
-    }
-  }, []);
-  
-  const handleIceCandidate = useCallback(async (data) => {
-    const pc = peersRef.current[data.from];
-    const candidate = new RTCIceCandidate(data.candidate);
-    if (pc && pc.remoteDescription) {
-      await pc.addIceCandidate(candidate);
-    } else if (pc) {
-      pendingCandidatesRef.current[data.from].push(candidate);
-    }
-  }, []);
-
-  const handleUserLeft = useCallback((data) => {
-    if (peersRef.current[data.userId]) {
-      peersRef.current[data.userId].close();
-      delete peersRef.current[data.userId];
-    }
-    setRemoteStreams(prev => {
-      const newState = { ...prev };
-      delete newState[data.userId];
-      return newState;
-    });
-    setPeers(prev => {
-      const newState = { ...prev };
-      delete newState[data.userId];
-      return newState;
-    });
-    if (focusedStream === data.userId) setFocusedStream(null);
-  }, [focusedStream]);
-
-  const handleChatMessage = useCallback((data) => {
-    setMessages(prev => [...prev, { id: Date.now(), user: data.userName, text: data.message, timestamp: new Date().toLocaleTimeString() }]);
-  }, []);
-
-  const handleRenegotiate = useCallback(async (data) => {
-    const pc = peersRef.current[data.from];
-    if (pc) {
-      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      sendMessageOverWs({ type: "renegotiate-answer", to: data.from, answer: pc.localDescription, roomId });
-    }
-  }, [roomId, sendMessageOverWs]);
-
-  const handleRenegotiateAnswer = useCallback(async (data) => {
-    const pc = peersRef.current[data.from];
-    if (pc) {
-      await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-    }
-  }, []);
+  // [수정] 메시지 핸들러를 저장할 ref 생성 (재연결 문제 해결의 핵심)
+  const messageHandlersRef = useRef({});
 
   // 미디어 스트림 초기화
   useEffect(() => {
@@ -220,34 +101,149 @@ const VideoConference = () => {
     if (userName) initStream();
   }, [userName]);
 
-  // WebSocket 연결 (localStream이 준비된 후)
+  // [수정] WebRTC 및 메시지 핸들러 로직을 업데이트하는 useEffect
   useEffect(() => {
-    if (!userName || !localStream) return;
+    // localStream이 준비되지 않았다면 아무것도 하지 않음
+    if (!localStream) return;
+
+    const sendMessageOverWs = (message) => {
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.send(JSON.stringify(message));
+        }
+    };
+
+    const createPeerConnection = (peerId) => {
+        if (peersRef.current[peerId]) return peersRef.current[peerId];
+        
+        pendingCandidatesRef.current[peerId] = [];
+        const pc = new RTCPeerConnection(configuration);
+    
+        pc.onicecandidate = (event) => {
+          if (event.candidate) sendMessageOverWs({ type: "ice-candidate", to: peerId, candidate: event.candidate, roomId });
+        };
+    
+        pc.ontrack = (event) => setRemoteStreams((prev) => ({ ...prev, [peerId]: event.streams[0] }));
+    
+        pc.onconnectionstatechange = () => {
+          console.log(`Connection state with ${peerId}: ${pc.connectionState}`);
+          if (pc.connectionState === 'failed') pc.restartIce();
+          setPeers(prev => ({...prev, [peerId]: pc}));
+        };
+    
+        localStream.getTracks().forEach((track) => {
+            const sender = pc.addTrack(track, localStream);
+            if (track.kind === 'video') videoSendersRef.current[peerId] = sender;
+        });
+    
+        peersRef.current[peerId] = pc;
+        setPeers(prev => ({...prev, [peerId]: pc}));
+        return pc;
+    };
+
+    // messageHandlersRef에 최신 핸들러 함수들을 저장 (상태 변화에 따라 항상 최신 로직을 참조하도록)
+    messageHandlersRef.current = {
+        handleUserJoined: (data) => {
+            const pc = createPeerConnection(data.userId);
+            pc.createOffer()
+              .then(offer => pc.setLocalDescription(offer))
+              .then(() => sendMessageOverWs({ type: "offer", to: data.userId, offer: pc.localDescription, roomId }))
+              .catch(e => console.error("Create offer error", e));
+        },
+        handleOffer: async (data) => {
+            const pc = createPeerConnection(data.from);
+            await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            sendMessageOverWs({ type: "answer", to: data.from, answer: pc.localDescription, roomId });
+        },
+        handleAnswer: async (data) => {
+            const pc = peersRef.current[data.from];
+            if (pc) {
+              await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+              for (const candidate of pendingCandidatesRef.current[data.from] || []) {
+                await pc.addIceCandidate(candidate).catch(e => console.warn("ICE candidate add error", e));
+              }
+              pendingCandidatesRef.current[data.from] = [];
+            }
+        },
+        handleIceCandidate: async (data) => {
+            const pc = peersRef.current[data.from];
+            const candidate = new RTCIceCandidate(data.candidate);
+            if (pc && pc.remoteDescription) {
+              await pc.addIceCandidate(candidate);
+            } else if (pc) {
+              pendingCandidatesRef.current[data.from].push(candidate);
+            }
+        },
+        handleUserLeft: (data) => {
+            if (peersRef.current[data.userId]) {
+              peersRef.current[data.userId].close();
+              delete peersRef.current[data.userId];
+            }
+            setRemoteStreams(prev => {
+              const newState = { ...prev };
+              delete newState[data.userId];
+              return newState;
+            });
+            setPeers(prev => {
+              const newState = { ...prev };
+              delete newState[data.userId];
+              return newState;
+            });
+            if (focusedStream === data.userId) setFocusedStream(null);
+        },
+        handleChatMessage: (data) => {
+            setMessages(prev => [...prev, { id: Date.now(), user: data.userName, text: data.message, timestamp: new Date().toLocaleTimeString() }]);
+        },
+        handleScreenShareStatus: (data) => {
+            setScreenSharingUsers((prev) => {
+              const newSet = new Set(prev);
+              data.isSharing ? newSet.add(data.userId) : newSet.delete(data.userId);
+              return newSet;
+            });
+        },
+        handleRenegotiate: async(data) => {
+            const pc = peersRef.current[data.from];
+            if (pc) {
+              await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+              const answer = await pc.createAnswer();
+              await pc.setLocalDescription(answer);
+              sendMessageOverWs({ type: "renegotiate-answer", to: data.from, answer: pc.localDescription, roomId });
+            }
+        },
+        handleRenegotiateAnswer: async(data) => {
+            const pc = peersRef.current[data.from];
+            if (pc) {
+              await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+            }
+        }
+    };
+  }, [localStream, roomId, focusedStream]); 
+
+  // [수정] WebSocket 연결을 위한 useEffect (단 한 번만 실행되도록)
+  useEffect(() => {
+    if (!userName || !roomId) return;
     
     const ws = new WebSocket(SIGNALING_SERVER);
     wsRef.current = ws;
 
     ws.onopen = () => {
       setConnectionStatus("connected");
-      sendMessageOverWs({ type: "join", roomId, userId, userName });
+      ws.send(JSON.stringify({ type: "join", roomId, userId, userName }));
     };
 
     ws.onmessage = async (event) => {
       const data = JSON.parse(event.data);
-      if (data.roomId && data.roomId !== roomId) return;
+      const handlerName = `handle${data.type.charAt(0).toUpperCase() + data.type.slice(1).replace(/-/g, '')}`;
+      const handler = messageHandlersRef.current[handlerName];
       
-      switch (data.type) {
-        case "user-joined": handleUserJoined(data); break;
-        case "offer": await handleOffer(data); break;
-        case "answer": await handleAnswer(data); break;
-        case "ice-candidate": await handleIceCandidate(data); break;
-        case "user-left": handleUserLeft(data); break;
-        case "chat-message": handleChatMessage(data); break;
-        case "participants-update": setParticipants(data.participants); break;
-        case "screen-share-status": handleScreenShareStatus(data); break;
-        case "renegotiate": await handleRenegotiate(data); break;
-        case "renegotiate-answer": await handleRenegotiateAnswer(data); break;
-        case "error": console.error("Server error:", data.message); break;
+      if (handler) {
+        handler(data);
+      } else {
+         switch(data.type) {
+            case "participants-update": setParticipants(data.participants); break;
+            case "error": console.error("Server error:", data.message); break;
+         }
       }
     };
 
@@ -255,12 +251,12 @@ const VideoConference = () => {
     ws.onerror = (error) => console.error("WebSocket error:", error);
 
     return () => {
-        if(wsRef.current) wsRef.current.close();
-        Object.values(peersRef.current).forEach(pc => pc.close());
+      if (wsRef.current) wsRef.current.close();
+      Object.values(peersRef.current).forEach(pc => pc.close());
     };
-  }, [userName, roomId, userId, localStream, sendMessageOverWs, handleUserJoined, handleOffer, handleAnswer, handleIceCandidate, handleUserLeft, handleChatMessage, handleScreenShareStatus, handleRenegotiate, handleRenegotiateAnswer]);
+  }, [userName, roomId, userId]);
 
-  // --- [복원] 원본 코드의 모든 UI 관련 함수들을 그대로 복원합니다 ---
+  // --- 원본 코드의 모든 UI 관련 함수들을 그대로 복원합니다 ---
   const stopScreenShare = useCallback(() => {
     if (!screenStreamRef.current) return;
     screenStreamRef.current.getTracks().forEach(track => track.stop());
@@ -274,9 +270,11 @@ const VideoConference = () => {
     setIsScreenSharing(false);
     isScreenSharingRef.current = false;
     screenStreamRef.current = null;
-    sendMessageOverWs({ type: "screen-share-status", isSharing: false, roomId, userId });
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({ type: "screen-share-status", isSharing: false, roomId, userId }));
+    }
     setIsVideoEnabled(!!originalVideoTrack);
-  }, [roomId, userId, sendMessageOverWs]);
+  }, [roomId, userId]);
 
   const toggleScreenShare = useCallback(async () => {
     if (isScreenSharing) {
@@ -296,11 +294,13 @@ const VideoConference = () => {
         screenStreamRef.current = screenStream;
         setIsScreenSharing(true);
         isScreenSharingRef.current = true;
-        sendMessageOverWs({ type: "screen-share-status", isSharing: true, roomId, userId });
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({ type: "screen-share-status", isSharing: true, roomId, userId }));
+        }
     } catch (err) {
         console.error("Error sharing screen:", err);
     }
-  }, [isScreenSharing, stopScreenShare, roomId, userId, sendMessageOverWs]);
+  }, [isScreenSharing, stopScreenShare, roomId, userId]);
 
   const toggleAudio = () => {
     if (localStream) {
@@ -321,13 +321,13 @@ const VideoConference = () => {
   };
 
   const sendMessage = () => {
-    if (newMessage.trim()) {
-      sendMessageOverWs({
+    if (newMessage.trim() && wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({
         type: "chat-message",
         message: newMessage,
         userName,
         roomId,
-      });
+      }));
       setMessages((prev) => [...prev, { id: Date.now(), user: "나", text: newMessage, timestamp: new Date().toLocaleTimeString() }]);
       setNewMessage("");
     }
@@ -337,7 +337,7 @@ const VideoConference = () => {
     if (localStream) localStream.getTracks().forEach((track) => track.stop());
     Object.values(peersRef.current).forEach((pc) => pc.close());
     if (wsRef.current) {
-        sendMessageOverWs({ type: "leave", roomId, userId });
+        wsRef.current.send(JSON.stringify({ type: "leave", roomId, userId }));
         wsRef.current.close();
     }
     window.location.href = "/";
@@ -356,7 +356,6 @@ const VideoConference = () => {
   const remoteStreamCount = Object.keys(remoteStreams).length;
   const gridLayout = getGridLayout(remoteStreamCount || 1);
 
-  // --- 원본 코드의 JSX를 그대로 반환합니다 (return 문) ---
   return (
     <div className="h-screen w-full bg-gray-900 flex flex-col overflow-hidden font-[Palanquin]">
       {/* 연결 상태 및 방 정보 표시 */}
