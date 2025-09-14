@@ -21,9 +21,9 @@ jobs:
       # 🔑 .env.production 생성
       - name: Create .env.production
         run: |
-          echo "REACT_APP_TURN_URL=${{ secrets.REACT_APP_TURN_URL }}" >> .env.production
-          echo "REACT_APP_TURN_USERNAME=${{ secrets.REACT_APP_TURN_USERNAME }}" >> .env.production
-          echo "REACT_APP_TURN_PASSWORD=${{ secrets.REACT_APP_TURN_PASSWORD }}" >> .env.production
+          echo "REACT_APP_TURN_URL=${{ secrets.REACT_APP_TURN_URL }}" >> frontend/.env.production
+          echo "REACT_APP_TURN_USERNAME=${{ secrets.REACT_APP_TURN_USERNAME }}" >> frontend/.env.production
+          echo "REACT_APP_TURN_PASSWORD=${{ secrets.REACT_APP_TURN_PASSWORD }}" >> frontend/.env.production
           cat .env.production  # ✅ 확인용 (로그에는 ***로 마스킹됨)
 
       - name: Build
