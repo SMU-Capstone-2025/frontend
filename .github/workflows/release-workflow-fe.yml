@@ -18,6 +18,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Debug env
+        run: |
+          echo "TURN_URL=$REACT_APP_TURN_URL"
+          echo "TURN_USERNAME=$REACT_APP_TURN_USERNAME"
+          echo "TURN_PASSWORD=$REACT_APP_TURN_PASSWORD"
+        env:
+          REACT_APP_TURN_URL: ${{ secrets.REACT_APP_TURN_URL }}
+          REACT_APP_TURN_USERNAME: ${{ secrets.REACT_APP_TURN_USERNAME }}
+          REACT_APP_TURN_PASSWORD: ${{ secrets.REACT_APP_TURN_PASSWORD }}
+
       - name: Build
         run: npm run build
         env:
