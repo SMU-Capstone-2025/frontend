@@ -20,7 +20,7 @@ const configuration = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
-    // [추가] 환경 변수를 사용하여 안전하게 TURN 서버 정보를 불러오기.
+    // TURN 서버 정보 불러오기.
     {
       urls: process.env.REACT_APP_TURN_URL,
       username: process.env.REACT_APP_TURN_USERNAME,
