@@ -36,9 +36,6 @@ jobs:
           REACT_APP_TURN_USERNAME: ${{ secrets.REACT_APP_TURN_USERNAME }}
           REACT_APP_TURN_PASSWORD: ${{ secrets.REACT_APP_TURN_PASSWORD }}
 
-      - name: Check frontend-build contents
-        run: ls -al frontend-build
-
       - name: Prepare frontend build folder (flatten dist/)
         run: |
           rm -rf frontend-build
