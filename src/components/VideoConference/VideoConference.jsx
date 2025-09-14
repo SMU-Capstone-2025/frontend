@@ -19,15 +19,17 @@ import {
 const configuration = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
-    { urls: "stun:stun1.l.google.com:19302" },
-    // TURN 서버 정보 불러오기.
     {
-      urls: process.env.REACT_APP_TURN_URL,
-      username: process.env.REACT_APP_TURN_USERNAME,
-      credential: process.env.REACT_APP_TURN_PASSWORD,
-    },
-  ],
+      urls: [
+        "turn:3.25.174.208:3478?transport=udp",
+        "turn:3.25.174.208:3478?transport=tcp"
+      ],
+      username: "turnuser",      // turnserver.conf 의 user 설정
+      credential: "turnpassword" // turnserver.conf 의 password 설정
+    }
+  ]
 };
+
 
 
 // 시그널링 서버 URL (로컬 테스트용)
