@@ -12,9 +12,6 @@ jobs:
     env:
       IMAGE_NAME: doctalk-backend          # ECR 리포지토리 이름 (원하는 이름으로)
       IMAGE_TAG: ${{ github.sha }}
-      REACT_APP_TURN_URL: ${{ secrets.REACT_APP_TURN_URL }}
-      REACT_APP_TURN_USERNAME: ${{ secrets.REACT_APP_TURN_USERNAME }}
-      REACT_APP_TURN_PASSWORD: ${{ secrets.REACT_APP_TURN_PASSWORD }}
 
     defaults:
       run:
@@ -98,8 +95,5 @@ jobs:
               --name $IMAGE_NAME \
               --network app-network \
               -p 8081:8081 \
-              -e REACT_APP_TURN_URL=$REACT_APP_TURN_URL \
-              -e REACT_APP_TURN_USERNAME=$REACT_APP_TURN_USERNAME \
-              -e REACT_APP_TURN_PASSWORD=$REACT_APP_TURN_PASSWORD \
               --env-file ~/.env.production \
               $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME:$IMAGE_TAG
