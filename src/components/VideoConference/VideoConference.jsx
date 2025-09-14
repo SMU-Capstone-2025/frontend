@@ -20,8 +20,15 @@ const configuration = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
     { urls: "stun:stun1.l.google.com:19302" },
+    // [추가] 환경 변수를 사용하여 안전하게 TURN 서버 정보를 불러오기.
+    {
+      urls: process.env.REACT_APP_TURN_URL,
+      username: process.env.REACT_APP_TURN_USERNAME,
+      credential: process.env.REACT_APP_TURN_PASSWORD,
+    },
   ],
 };
+
 
 // 시그널링 서버 URL (로컬 테스트용)
 // const SIGNALING_SERVER = 'ws://localhost:8081';
