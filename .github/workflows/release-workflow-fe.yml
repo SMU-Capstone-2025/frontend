@@ -21,6 +21,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
+          CI: false
           REACT_APP_TURN_URL: ${{ secrets.REACT_APP_TURN_URL }}
           REACT_APP_TURN_USERNAME: ${{ secrets.REACT_APP_TURN_USERNAME }}
           REACT_APP_TURN_PASSWORD: ${{ secrets.REACT_APP_TURN_PASSWORD }}
