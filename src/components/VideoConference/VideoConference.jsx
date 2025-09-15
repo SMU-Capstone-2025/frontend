@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import ProfileBlue from "../../assets/icons/Profile/ProfileBlue";
+import ProfileYellow from "../../assets/icons/Profile/ProfileYellow";
 import {
   Phone,
   PhoneOff,
@@ -71,6 +73,7 @@ const VideoConference = () => {
   const pipRef = useRef(null);
   const isDraggingRef = useRef(false);
   const dragStartRef = useRef({ x: 0, y: 0 });
+  const chatEndRef = useRef(null);
 
   const [userName, setUserName] = useState("");
   useEffect(() => {
@@ -106,6 +109,12 @@ const VideoConference = () => {
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const [connectionStatus, setConnectionStatus] = useState("connecting");
   const [showShareLink, setShowShareLink] = useState(false);
@@ -1587,13 +1596,17 @@ const VideoConference = () => {
           <div className="flex-1 overflow-y-auto p-4 space-y-2">
             {messages.map((msg) => (
               <div key={msg.id} className="flex flex-col">
-                <div className="flex items-baseline space-x-2">
+                <div className="flex items-center space-x-2">
+                  {/*사용자 구분: 나=파랑, 다른사람=노랑 */}
+                  {msg.user === "나" ? <ProfileBlue /> : <ProfileYellow />}
                   <span className="font-semibold text-sm">{msg.user}</span>
                   <span className="text-xs text-gray-500">{msg.timestamp}</span>
                 </div>
                 <p className="text-gray-700 break-words">{msg.text}</p>
               </div>
             ))}
+            {/* 자동스크롤 */}
+            <div ref={chatEndRef} />
           </div>
 
           <div className="p-4 border-t">
