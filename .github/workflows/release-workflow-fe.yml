@@ -25,7 +25,6 @@ jobs:
           echo "REACT_APP_TURN_USERNAME=${{ secrets.REACT_APP_TURN_USERNAME }}" >> .env.production
           echo "REACT_APP_TURN_PASSWORD=${{ secrets.REACT_APP_TURN_PASSWORD }}" >> .env.production
           cat .env.production  # ✅ 확인용 (로그에는 ***로 마스킹됨)
-
       - name: Build
         run: npm run build
         env:
@@ -36,7 +35,6 @@ jobs:
           rm -rf frontend-build
           mkdir frontend-build
           cp -r build/. frontend-build/    # dist/ 의 내용 모두 복사
-
       - name: Deploy via SCP to EC2
         uses: appleboy/scp-action@v1
         with:
