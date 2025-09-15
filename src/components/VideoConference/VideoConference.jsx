@@ -22,23 +22,22 @@ const configuration = {
     {
       urls: [
         "turn:3.25.174.208:3478?transport=udp",
-        "turn:3.25.174.208:3478?transport=tcp"
+        "turn:3.25.174.208:3478?transport=tcp",
       ],
-      username: "turnuser",      // turnserver.conf 의 user 설정
-      credential: "turnpassword" // turnserver.conf 의 password 설정
-    }
-  ]
+      username: "turnuser", // turnserver.conf 의 user 설정
+      credential: "turnpassword", // turnserver.conf 의 password 설정
+    },
+  ],
 };
-
 
 // 시그널링 서버 URL (로컬 테스트용)
 // const SIGNALING_SERVER = 'ws://localhost:8081';
 
 // 시그널링 서버 URL
 const SIGNALING_SERVER =
-  (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
-  + window.location.host
-  + '/ws';
+  (window.location.protocol === "https:" ? "wss://" : "ws://") +
+  window.location.host +
+  "/ws";
 
 const VideoConference = () => {
   // URL에서 방 ID 가져오기 - call 파라미터도 확인
@@ -48,10 +47,10 @@ const VideoConference = () => {
     const callParam = urlParams.get("call");
     const roomParam = urlParams.get("room");
     const finalRoomId = callParam || roomParam || "test-room";
-    
+
     console.log("🏠 Room ID initialized:", finalRoomId);
     console.log("URL params:", { call: callParam, room: roomParam });
-    
+
     return finalRoomId;
   });
 
@@ -68,13 +67,46 @@ const VideoConference = () => {
   const [newMessage, setNewMessage] = useState("");
   const [participants, setParticipants] = useState([]);
   const [userId] = useState(() => Math.random().toString(36).substr(2, 9));
-  
+  const [pipPosition, setPipPosition] = useState({ x: 20, y: 20 }); // 초기 위치
+  const pipRef = useRef(null);
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
+
   const [userName, setUserName] = useState("");
   useEffect(() => {
-    const name = prompt("이름을 입력해주세요", `User_${Math.floor(Math.random() * 1000)}`);
+    const name = prompt(
+      "이름을 입력해주세요",
+      `User_${Math.floor(Math.random() * 1000)}`
+    );
     setUserName(name || `User_${Math.floor(Math.random() * 1000)}`);
   }, []);
-  
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isDraggingRef.current) {
+        setPipPosition({
+          x:
+            window.innerWidth -
+            e.clientX -
+            (pipRef.current?.offsetWidth / 2 || 0),
+          y: e.clientY - (pipRef.current?.offsetHeight / 2 || 0),
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      isDraggingRef.current = false;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, []);
+
   const [connectionStatus, setConnectionStatus] = useState("connecting");
   const [showShareLink, setShowShareLink] = useState(false);
   const [focusedStream, setFocusedStream] = useState(null);
@@ -94,18 +126,18 @@ const VideoConference = () => {
   // WebSocket 연결
   useEffect(() => {
     if (!userName || !localStream) {
-    console.log('Waiting for userName before opening WebSocket');
-    return;
-  }
+      console.log("Waiting for userName before opening WebSocket");
+      return;
+    }
     console.log("🔌 Connecting to WebSocket with roomId:", roomId);
-    
+
     try {
       wsRef.current = new WebSocket(SIGNALING_SERVER);
 
       wsRef.current.onopen = () => {
         console.log("✅ Connected to signaling server");
         setConnectionStatus("connected");
-        
+
         // 방 참가 메시지 전송
         const joinMessage = {
           type: "join",
@@ -113,7 +145,7 @@ const VideoConference = () => {
           userId,
           userName,
         };
-        
+
         console.log("📤 Sending join message:", joinMessage);
         wsRef.current.send(JSON.stringify(joinMessage));
       };
@@ -165,13 +197,19 @@ const VideoConference = () => {
       };
 
       wsRef.current.onclose = (event) => {
-        console.log("🔌 Disconnected from signaling server", event.code, event.reason);
+        console.log(
+          "🔌 Disconnected from signaling server",
+          event.code,
+          event.reason
+        );
         setConnectionStatus("disconnected");
       };
 
       wsRef.current.onerror = (error) => {
         console.error("❌ WebSocket connection error:", error);
-        console.log("시그널링 서버에 연결할 수 없습니다. 로컬에서 서버를 실행하거나 AWS에 배포해주세요.");
+        console.log(
+          "시그널링 서버에 연결할 수 없습니다. 로컬에서 서버를 실행하거나 AWS에 배포해주세요."
+        );
         setConnectionStatus("disconnected");
       };
     } catch (error) {
@@ -185,36 +223,44 @@ const VideoConference = () => {
         return () => {
           // Close all peer connections
           try {
-            Object.values(peersRef.current).forEach(pc => {
-              try { pc.close(); } catch(e) {}
+            Object.values(peersRef.current).forEach((pc) => {
+              try {
+                pc.close();
+              } catch (e) {}
             });
             peersRef.current = {};
             setPeers({});
           } catch (e) {
-            console.warn('Error closing peers on cleanup', e);
+            console.warn("Error closing peers on cleanup", e);
           }
 
           // Stop local tracks
           try {
             if (localStream) {
-              localStream.getTracks().forEach(t => {
-                try { t.stop(); } catch(e) {}
+              localStream.getTracks().forEach((t) => {
+                try {
+                  t.stop();
+                } catch (e) {}
               });
             }
             if (originalStreamRef.current) {
-              originalStreamRef.current.getTracks().forEach(t => {
-                try { t.stop(); } catch(e){}
+              originalStreamRef.current.getTracks().forEach((t) => {
+                try {
+                  t.stop();
+                } catch (e) {}
               });
             }
           } catch (e) {
-            console.warn('Error stopping local tracks on cleanup', e);
+            console.warn("Error stopping local tracks on cleanup", e);
           }
 
           if (wsRef.current) {
-            try { wsRef.current.close(); } catch(e) {}
+            try {
+              wsRef.current.close();
+            } catch (e) {}
           }
           //모든 Peer Connection을 확실하게 종료.
-          Object.values(peersRef.current).forEach(pc => pc.close());
+          Object.values(peersRef.current).forEach((pc) => pc.close());
         };
       }
     };
@@ -554,19 +600,22 @@ const VideoConference = () => {
 
         // autoplay 정책 때문에 직접 play 시도
         const tryPlay = () => {
-          videoEl.play().then(() => {
-            console.log(`Playback started for ${peerId}`);
-          }).catch((err) => {
-            // play 실패하면 mute/재시도 고려 (그러나 remote는 mute하면 안됨)
-            console.warn(`Video play failed for ${peerId}:`, err);
-          });
+          videoEl
+            .play()
+            .then(() => {
+              console.log(`Playback started for ${peerId}`);
+            })
+            .catch((err) => {
+              // play 실패하면 mute/재시도 고려 (그러나 remote는 mute하면 안됨)
+              console.warn(`Video play failed for ${peerId}:`, err);
+            });
         };
 
         // 트랙이 unmute 될 때 재생 시도 (일부 브라우저에서 필요)
         const tracks = stream.getVideoTracks();
         if (tracks && tracks.length > 0) {
           tracks.forEach((t) => {
-            if (t.readyState === 'live' && !t.muted) {
+            if (t.readyState === "live" && !t.muted) {
               tryPlay();
             }
             t.onunmute = () => {
@@ -580,7 +629,6 @@ const VideoConference = () => {
 
       setupVideo();
     };
-
 
     pc.onconnectionstatechange = () => {
       console.log(`Connection state with ${peerId}: ${pc.connectionState}`);
@@ -641,11 +689,15 @@ const VideoConference = () => {
 
   // 새 사용자 참가 처리
   const handleUserJoined = async (data) => {
-    console.log(`User ${data.userName} joined room ${data.roomId || 'unknown'}, creating peer connection`);
+    console.log(
+      `User ${data.userName} joined room ${data.roomId || "unknown"}, creating peer connection`
+    );
 
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring user from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring user from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -685,11 +737,15 @@ const VideoConference = () => {
 
   // Offer 처리
   const handleOffer = async (data) => {
-    console.log(`Received offer from ${data.from} in room ${data.roomId || 'unknown'}`);
+    console.log(
+      `Received offer from ${data.from} in room ${data.roomId || "unknown"}`
+    );
 
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring offer from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring offer from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -741,11 +797,15 @@ const VideoConference = () => {
 
   // Answer 처리
   const handleAnswer = async (data) => {
-    console.log(`Received answer from ${data.from} in room ${data.roomId || 'unknown'}`);
-    
+    console.log(
+      `Received answer from ${data.from} in room ${data.roomId || "unknown"}`
+    );
+
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring answer from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring answer from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -772,11 +832,15 @@ const VideoConference = () => {
 
   // ICE Candidate 처리
   const handleIceCandidate = async (data) => {
-    console.log(`Received ICE candidate from ${data.from} in room ${data.roomId || 'unknown'}`);
-    
+    console.log(
+      `Received ICE candidate from ${data.from} in room ${data.roomId || "unknown"}`
+    );
+
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring ICE candidate from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring ICE candidate from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -805,11 +869,13 @@ const VideoConference = () => {
 
   // 사용자 퇴장 처리
   const handleUserLeft = (data) => {
-    console.log(`User ${data.userId} left room ${data.roomId || 'unknown'}`);
-    
+    console.log(`User ${data.userId} left room ${data.roomId || "unknown"}`);
+
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring user leave from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring user leave from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -846,7 +912,9 @@ const VideoConference = () => {
   const handleChatMessage = (data) => {
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring chat message from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring chat message from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -873,7 +941,9 @@ const VideoConference = () => {
 
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring screen share status from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring screen share status from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -891,11 +961,15 @@ const VideoConference = () => {
 
   // Renegotiation 처리 (화면공유용)
   const handleRenegotiate = async (data) => {
-    console.log(`Received renegotiation offer from ${data.from} in room ${data.roomId || 'unknown'}`);
-    
+    console.log(
+      `Received renegotiation offer from ${data.from} in room ${data.roomId || "unknown"}`
+    );
+
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring renegotiation from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring renegotiation from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -940,11 +1014,15 @@ const VideoConference = () => {
 
   // Renegotiation answer 처리
   const handleRenegotiateAnswer = async (data) => {
-    console.log(`Received renegotiation answer from ${data.from} in room ${data.roomId || 'unknown'}`);
-    
+    console.log(
+      `Received renegotiation answer from ${data.from} in room ${data.roomId || "unknown"}`
+    );
+
     // 방 ID가 다르면 무시
     if (data.roomId && data.roomId !== roomId) {
-      console.log(`Ignoring renegotiation answer from different room: ${data.roomId} vs ${roomId}`);
+      console.log(
+        `Ignoring renegotiation answer from different room: ${data.roomId} vs ${roomId}`
+      );
       return;
     }
 
@@ -1366,13 +1444,23 @@ const VideoConference = () => {
                 })}
               </div>
 
-              {/* 로컬 비디오 (PIP 스타일) - 항상 원본 스트림 표시 */}
-              <div className="absolute bottom-4 right-4 w-32 h-24 sm:w-48 sm:h-36 md:w-64 md:h-48 bg-gray-800 rounded-lg overflow-hidden shadow-lg border-2 border-gray-700 hover:border-gray-600 transition-all">
+              {/* 로컬 비디오 (드래그 가능 PIP) */}
+              <div
+                ref={pipRef}
+                className="absolute w-32 h-24 sm:w-48 sm:h-36 md:w-64 md:h-48 bg-gray-800 rounded-lg overflow-hidden shadow-lg border-2 border-gray-700 hover:border-gray-600 transition-all cursor-move"
+                style={{ top: pipPosition.y, right: pipPosition.x }}
+                onMouseDown={(e) => {
+                  isDraggingRef.current = true;
+                  dragStartRef.current = {
+                    x: e.clientX - pipPosition.x,
+                    y: e.clientY - pipPosition.y,
+                  };
+                }}
+              >
                 <video
                   ref={(el) => {
                     if (el) {
                       localVideoRef.current = el;
-                      // 항상 원본 스트림을 표시 (화면공유 중에도)
                       if (
                         originalStreamRef.current &&
                         el.srcObject !== originalStreamRef.current
