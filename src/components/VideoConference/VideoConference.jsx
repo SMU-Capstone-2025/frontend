@@ -88,9 +88,12 @@ const VideoConference = () => {
   const videoSendersRef = useRef({});
   const isScreenSharingRef = useRef(false);
 
+  //안정적인 ICE Candidate 처리를 위한 ref
+  const pendingCandidatesRef = useRef({});
+
   // WebSocket 연결
   useEffect(() => {
-    if (!userName) {
+    if (!userName || !localStream) {
     console.log('Waiting for userName before opening WebSocket');
     return;
   }
@@ -210,10 +213,12 @@ const VideoConference = () => {
           if (wsRef.current) {
             try { wsRef.current.close(); } catch(e) {}
           }
+          //모든 Peer Connection을 확실하게 종료.
+          Object.values(peersRef.current).forEach(pc => pc.close());
         };
       }
     };
-  }, [roomId, userId, userName]);
+  }, [roomId, userId, userName, localStream]);
 
   // 미디어 스트림 초기화
   useEffect(() => {
@@ -751,14 +756,11 @@ const VideoConference = () => {
         await pc.setRemoteDescription(data.answer);
 
         // 버퍼링된 ICE candidates 처리
-        if (pc.pendingCandidates && pc.pendingCandidates.length > 0) {
-          console.log(
-            `Processing ${pc.pendingCandidates.length} buffered ICE candidates for ${data.from}`
-          );
-          for (const candidate of pc.pendingCandidates) {
+        if (pendingCandidatesRef.current[data.from]) {
+          for (const candidate of pendingCandidatesRef.current[data.from]) {
             await pc.addIceCandidate(candidate);
           }
-          pc.pendingCandidates = [];
+          pendingCandidatesRef.current[data.from] = []; // 처리 후 비우기
         }
 
         console.log(`Answer processed successfully for ${data.from}`);
@@ -779,20 +781,20 @@ const VideoConference = () => {
     }
 
     const pc = peersRef.current[data.from];
+    const candidate = new RTCIceCandidate(data.candidate);
+
     if (pc) {
       try {
         console.log(`Adding ICE candidate from ${data.from}`);
 
         // 연결이 안정적일 때까지 대기
         if (pc.remoteDescription) {
-          await pc.addIceCandidate(data.candidate);
-          console.log(`ICE candidate added successfully for ${data.from}`);
+          await pc.addIceCandidate(candidate);
         } else {
-          // remote description이 설정될 때까지 버퍼링
-          if (!pc.pendingCandidates) {
-            pc.pendingCandidates = [];
+          if (!pendingCandidatesRef.current[data.from]) {
+            pendingCandidatesRef.current[data.from] = [];
           }
-          pc.pendingCandidates.push(data.candidate);
+          pendingCandidatesRef.current[data.from].push(candidate);
           console.log(`Buffering ICE candidate for ${data.from}`);
         }
       } catch (error) {
