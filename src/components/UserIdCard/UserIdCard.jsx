@@ -14,7 +14,6 @@ const UserIdCard = () => {
           Authorization: localStorage.getItem("accesToken"), // Assuming userId is stored in localStorage
         },
       });
-      console.log("유저 정보 가져오기 성공~!", res.data.result);
       setUserInfo(res.data.result);
       localStorage.setItem("userName", userInfo);
       return res;

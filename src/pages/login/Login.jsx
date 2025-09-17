@@ -17,7 +17,6 @@ const Login = () => {
         email: email,
         password: password,
       });
-      console.log("로그인 성공~!\n", res);
       alert("로그인 되었습니다");
       navigate("/");
       return res.headers;
@@ -33,14 +32,10 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await getLoginToken(email, password);
-      console.log("보낸 바디:", email, password);
-      console.log("받은 응답", res);
 
       localStorage.setItem("accessToken", res.access);
       // 토큰을 로컬 스토리지에 저장
       localStorage.setItem("refreshToken", res.refresh);
-
-      console.log("axiosInstanceNoHeader", axiosInstanceNoHeader);
     } catch (error) {
       console.log("에러 발생", error);
     }

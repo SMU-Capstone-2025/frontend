@@ -4,7 +4,6 @@ import AddHover from "../../../assets/icons/Add/AddHover";
 const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
-    console.log(sidebarOpen);
   };
 
   return (
@@ -81,7 +80,9 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
           </svg>
         </S.IconButton>
       </S.IconWrapper>
-      <S.HeaderText>logologo <AddHover/></S.HeaderText>
+      <S.HeaderText>
+        logologo <AddHover />
+      </S.HeaderText>
       <S.IconWrapper>
         <S.IconButton>
           <svg

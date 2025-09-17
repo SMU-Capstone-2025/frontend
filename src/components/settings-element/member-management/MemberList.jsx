@@ -18,7 +18,6 @@ const MemberList = ({ projectId, members, setMembers }) => {
 
     try {
       await removeProjectUser(projectId, email);
-      console.log("유저 강퇴 성공");
 
       // 최신 멤버 목록 갱신
       const res = await fetchProject(projectId);
@@ -46,7 +45,6 @@ const MemberList = ({ projectId, members, setMembers }) => {
     try {
       // 권한 변경 요청(단일 객체로 해야 함)
       await updateProjectAuthorities(projectId, target.email, newRole);
-      console.log("권한 변경 성공");
 
       // 최신 프로젝트 정보로 멤버 목록 다시 불러오기
       const res = await fetchProject(projectId);

@@ -27,7 +27,6 @@ const Signup = () => {
     const isValidEmail = validateEmail(email);
 
     if (!isValidEmail) {
-      console.log("이메일 유효성 검사 실패", isValidEmail);
       setEmaiSuccess(false);
     } else {
       try {
@@ -36,7 +35,6 @@ const Signup = () => {
             email: email,
           },
         });
-        console.log("이메일 중복 체크 성공~!사용가능한 이메일입니다\n", res);
         setEmaiSuccess(true);
         return res;
       } catch (error) {
@@ -54,7 +52,6 @@ const Signup = () => {
           email: email,
         },
       });
-      console.log("인증번호 받기 성공~!", res);
       return res;
     } catch (e) {
       console.log("인증번호받기 실패~!", e);
@@ -65,8 +62,6 @@ const Signup = () => {
     e.preventDefault();
     try {
       const authCode = await getAuthCode(email);
-      console.log("보낸 메일:", email);
-      console.log("받은 코드", authCode.data.result);
       setServerAuthCode(authCode.data.result);
     } catch (e) {
       console.log(e);
@@ -76,12 +71,9 @@ const Signup = () => {
   const checkAuthCode = (userAuthCode) => {
     // 인증번호 체크
     if (userAuthCode === serverAuthCode) {
-      console.log("유저,서버 인증코드 일치 성공~!");
       setUserAuthCodeSuccess(true);
       setDisplaySignupBtn(true);
     } else if (userAuthCode !== serverAuthCode) {
-      console.log("유저,서버 인증코드 불일치. 유저코드: ", userAuthCode);
-      console.log("서버코드: ", serverAuthCode);
       setUserAuthCodeSuccess(false);
     }
   };
@@ -93,7 +85,6 @@ const Signup = () => {
         email: email,
         password: password,
       });
-      console.log("회원가입 성공~!", res.data.result);
       alert("회원가입이 완료되었습니다");
       navigate("/login");
       return res;
@@ -108,7 +99,6 @@ const Signup = () => {
     e.preventDefault();
     try {
       const temp = await signupapi(name, email, password);
-      console.log("temp: ", temp);
     } catch (e) {
       console.log("handleSubmit에러", e);
     }

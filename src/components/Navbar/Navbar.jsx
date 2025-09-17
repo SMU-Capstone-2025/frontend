@@ -19,13 +19,13 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
 
   const userEmail = localStorage.getItem("email");
 
-    const handleStartMeeting = () => {
-  // 랜덤 방 ID 생성 (7자리)
-  const roomId = Math.random().toString(36).substring(2, 9);
-  
-  // 회의 페이지로 이동 (roomId를 쿼리 파라미터로 전달)
-  navigate(`/video-call?call=${roomId}`);
-};
+  const handleStartMeeting = () => {
+    // 랜덤 방 ID 생성 (7자리)
+    const roomId = Math.random().toString(36).substring(2, 9);
+
+    // 회의 페이지로 이동 (roomId를 쿼리 파라미터로 전달)
+    navigate(`/video-call?call=${roomId}`);
+  };
 
   // 알림 소켓 구독
   useNotificationSocket({
@@ -51,7 +51,6 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   const logout = async () => {
     try {
       await axiosInstanceNoHeader.post("/logout");
-      console.log("로그아웃 성공");
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("userName");
