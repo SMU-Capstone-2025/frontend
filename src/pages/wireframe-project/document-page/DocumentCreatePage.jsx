@@ -128,9 +128,6 @@ const DocumentCreatePage = () => {
     token,
     documentId,
     onMessage: (data) => {
-      console.log("서버 수신 data:", data);
-      console.log("cursor:", data.cursor);
-
       const myEmail = localStorage.getItem("email");
 
       if (!editor || !data?.content) return;
@@ -151,11 +148,9 @@ const DocumentCreatePage = () => {
             ...prev.filter((c) => c.user.userEmail !== data.user.userEmail),
             { user: data.user, cursor: data.cursor },
           ];
-          console.log("setCursors:", newState);
           return newState;
         });
       } else {
-        console.log("본인 커서 무시");
       }
     },
   });

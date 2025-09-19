@@ -171,7 +171,7 @@ const InProgressColumn = ({
               if (!isDeleting && (!originalTask || isChanged)) {
                 await autoSaveTask(newTask);
               } else {
-                console.log("🛑 저장X");
+                console.log("저장X");
               }
 
               setIsModalOpen(false);

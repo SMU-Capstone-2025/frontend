@@ -28,7 +28,6 @@ const PasswordReset = () => {
         password: password,
         passwordCheck: passwordCheck,
       });
-      console.log("비밀번호 재설정 성공~!", res);
       alert("비밀번호가 재설정되었습니다.");
       return res;
     } catch (err) {
@@ -41,8 +40,6 @@ const PasswordReset = () => {
     e.preventDefault();
     try {
       const temp = await handlePasswordResetApi(password, passwordCheck);
-      console.log("보낸 바디:", password, passwordCheck);
-      console.log("받은 응답", temp);
     } catch (error) {
       console.log("에러 발생", error);
     }
@@ -62,10 +59,6 @@ const PasswordReset = () => {
             email: email,
           },
         });
-        console.log(
-          "이메일 존재여부 확인 성공, db에 존재하는 계정입니다\n",
-          res
-        );
         setEmaiSuccess(true);
         return res;
       } catch (error) {
@@ -83,7 +76,6 @@ const PasswordReset = () => {
       const res = await axiosInstanceNoHeader.post("/mypage/email/check", {
         email: email,
       });
-      console.log("인증번호 받기 성공~!", res);
       return res;
     } catch (e) {
       console.log("인증번호받기 실패~!", e);
@@ -94,8 +86,6 @@ const PasswordReset = () => {
     e.preventDefault();
     try {
       const authCode = await getAuthCode(email);
-      console.log("보낸 메일:", email);
-      console.log("받은 코드", authCode);
       setServerAuthCode(authCode.data.result);
     } catch (e) {
       console.log(e);
@@ -105,12 +95,9 @@ const PasswordReset = () => {
   const checkAuthCode = (userAuthCode) => {
     // 인증번호 체크
     if (userAuthCode === serverAuthCode) {
-      console.log("유저,서버 인증코드 일치 성공~!");
       setUserAuthCodeSuccess(true);
       setDisplayPasswordResetBtn(true);
     } else if (userAuthCode !== serverAuthCode) {
-      console.log("유저,서버 인증코드 불일치. 유저코드: ", userAuthCode);
-      console.log("서버코드: ", serverAuthCode);
       setUserAuthCodeSuccess(false);
     }
   };

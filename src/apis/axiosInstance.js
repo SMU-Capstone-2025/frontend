@@ -46,11 +46,8 @@ axiosInstanceNoHeader.interceptors.response.use(
       // 이미 refresh 진행 중이면 해당 Promise 기다림
       if (!refreshPromise) {
         const refreshToken = localStorage.getItem("refreshToken");
-        console.log("refreshTokenasdfasdf", refreshToken);
 
         if (!refreshToken || refreshToken === "undefined") {
-          console.log("refreshToken이 없습니다.");
-          console.warn("refreshToken이 유효하지 않음:", refreshToken);
           localStorage.clear();
           window.location.href = "/login";
           return Promise.reject("No refreshToken");
@@ -63,8 +60,6 @@ axiosInstanceNoHeader.interceptors.response.use(
             },
           })
           .then((res) => {
-            console.log("refreshToken 성공", res);
-
             const { access, refresh } = res.headers;
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
@@ -85,7 +80,6 @@ axiosInstanceNoHeader.interceptors.response.use(
 
       try {
         const newAccessToken = await refreshPromise;
-        console.log("newAccessToken", newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return axiosInstanceNoHeader(originalRequest); // 재요청
       } catch (err) {

@@ -46,7 +46,6 @@ const ScheduleListPreview = ({ projectId }) => {
     try {
       const res = await axiosInstanceNoHeader.get("/task/list/deadline");
       setSchedules(res.data.result || []);
-      console.log("✅ 스케줄 리스트:", res.data.result);
     } catch (e) {
       console.log("일정 불러오기 실패~!\n", e);
     }

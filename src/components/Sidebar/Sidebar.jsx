@@ -12,7 +12,6 @@ const Sidebar = ({
 }) => {
   const handleNewProjectCreateModalOpen = () => {
     setNewProjectCreateModalOpen(!newProjectCreateModalOpen);
-    console.log("프로젝트생성모달", newProjectCreateModalOpen);
   };
   const [userProjectListInfo, setUserProjectListInfo] = useState([]);
   const navigate = useNavigate();
@@ -25,7 +24,6 @@ const Sidebar = ({
   const getUserProjectListInfo = async () => {
     try {
       const res = await axiosInstanceNoHeader.get("/project/list");
-      console.log("프로젝트 리스트 가져오기 성공~!", res);
       setUserProjectListInfo(res.data.result);
       return res;
     } catch (error) {
@@ -36,7 +34,6 @@ const Sidebar = ({
   useEffect(() => {
     getUserProjectListInfo();
   }, []);
-  console.log("프로젝트 리스트:", userProjectListInfo);
 
   return (
     <div className="flex flex-col w-[240px] h-[calc(100vh-64px)] p-5 gap-y-[22px] gap-x-[12px] flex-nowrap bg-white z-[50]">

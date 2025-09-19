@@ -66,8 +66,6 @@ const TodoColumn = ({
       status: taskInfo.status || "PENDING",
       attachmentList: taskInfo.attachmentList || [],
     };
-
-    console.log(taskInfo.coworkers);
     setOriginalTask(mergedTask);
     setNewTask(mergedTask); // TaskForm으로 내려감
     setIsModalOpen(true);
@@ -177,7 +175,7 @@ const TodoColumn = ({
               if (!isDeleting && (!originalTask || isChanged)) {
                 await autoSaveTask(newTask);
               } else {
-                console.log("🛑 저장X");
+                console.log("저장X");
               }
 
               setIsModalOpen(false);
