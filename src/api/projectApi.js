@@ -3,11 +3,9 @@ import { axiosInstanceNoHeader } from "../apis/axiosInstance";
 // ✅ 프로젝트 세부 내용 조회
 export const fetchProject = async (projectId) => {
   try {
-    console.log("-> 요청 projectId:", projectId);
     const res = await axiosInstanceNoHeader.get("/project/load", {
       params: { projectId },
     });
-    console.log("프로젝트 조회", res.data.result);
     return res.data;
   } catch (error) {
     console.error("프로젝트 조회 실패:", error.response?.data || error.message);
@@ -18,7 +16,6 @@ export const fetchProject = async (projectId) => {
 // ✅ 프로젝트에 신규 인원 추가
 export const inviteMembersToProject = async ({ projectId, email }) => {
   try {
-    console.log("요청 보내는 이메일->", email);
     const res = await axiosInstanceNoHeader.put(
       `project/invite/${projectId}`,
       {
@@ -120,7 +117,6 @@ export const fetchDocumentsByDateAsc = async (projectId) => {
         params: { projectId },
       }
     );
-    console.log("오름차순 정렬", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error(
@@ -137,7 +133,6 @@ export const removeProjectUser = async (projectId, email) => {
     const res = await axiosInstanceNoHeader.delete(
       `/project/${projectId}/user/${email}`
     );
-    console.log("유저 강퇴 성공:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error("유저 강퇴 실패:", error.response?.data || error.message);
