@@ -34,8 +34,6 @@ const ProjectCoverUploader = ({ coverImage, setCoverImage }) => {
     try {
       // 파일 업로드
       const uploadedFile = await uploadFile(file);
-      console.log("업로드된 파일 응답:", uploadedFile);
-
       const fileId = uploadedFile.fileId || uploadedFile.id;
       if (!fileId) {
         throw new Error("파일 업로드 결과에 fileId 없음");
@@ -45,7 +43,7 @@ const ProjectCoverUploader = ({ coverImage, setCoverImage }) => {
       const preview = URL.createObjectURL(file);
       setPreviewUrl(preview);
     } catch (err) {
-      console.error("❌ 커버 업로드 실패", err);
+      console.error("커버 업로드 실패", err);
       alert("커버 업로드에 실패했습니다.");
     }
   };
