@@ -6,7 +6,6 @@ export const fetchDocumentById = async (documentId) => {
     const res = await axiosInstanceNoHeader.get("/document/load", {
       params: { documentId },
     });
-    console.log("해당 문서 내용:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error("문서 불러오기 실패:", error.response?.data || error.message);
@@ -20,7 +19,6 @@ export const fetchDocumentList = async (projectId) => {
     const response = await axiosInstanceNoHeader.get("/document/load/list", {
       params: { projectId },
     });
-    console.log("문서 리스트:", response.data.result);
     return response.data.result;
   } catch (error) {
     console.error(
@@ -35,7 +33,6 @@ export const fetchDocumentList = async (projectId) => {
 export const createDocument = async (newDoc) => {
   try {
     const response = await axiosInstanceNoHeader.post("/document/post", newDoc);
-    console.log("문서생성:", response.data.result);
     return response.data.result;
   } catch (error) {
     console.error("문서 생성 실패:", error.response?.data || error.message);
@@ -61,7 +58,6 @@ export const summarizeText = async ({ request }) => {
     const res = await axiosInstanceNoHeader.post("/ai/text/summarize", {
       request,
     });
-    console.log("문서 요약:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error("❌ 문서 요약 실패:", error.response?.data || error.message);
@@ -75,7 +71,6 @@ export const correctText = async ({ request }) => {
     const res = await axiosInstanceNoHeader.post("/ai/text/correct", {
       request,
     });
-    console.log("문법 수정:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error("❌ 문서 요약 실패:", error.response?.data || error.message);
@@ -90,7 +85,6 @@ export const reviseSummary = async ({ request, reviseRequest }) => {
       request,
       reviseRequest,
     });
-    console.log("재수정 결과:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error("요약 재수정 실패:", error.response?.data || error.message);
@@ -107,7 +101,6 @@ export const fetchDocumentLogs = async (documentId, page = 1, size = 5) => {
         params: { page, size },
       }
     );
-    console.log("문서 히스토리:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error(
@@ -124,7 +117,6 @@ export const updateDocumentStatus = async (documentId, status) => {
     const res = await axiosInstanceNoHeader.put("/document/status", null, {
       params: { documentId, status },
     });
-    console.log("문서 상태 변경:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error(
