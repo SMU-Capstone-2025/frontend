@@ -41,7 +41,6 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
               try {
                 const parsed = JSON.parse(msg.body); // 한번만 파싱
                 onMessage?.(parsed.message || parsed);
-                console.log("서버 수신:", parsed.message || parsed);
               } catch (err) {
                 console.error("메시지 파싱 오류", err, msg.body);
               }
@@ -110,8 +109,6 @@ const useDocumentSocket = ({ documentId, onMessage }) => {
         headers: { Authorization: `Bearer ${token}` },
         body: JSON.stringify(payload),
       });
-
-      console.log("📤 전송 메시지:", payload.message);
     } catch (err) {
       console.error("메시지 전송 중 오류 발생", err);
     }

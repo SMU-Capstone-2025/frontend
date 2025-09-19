@@ -26,7 +26,6 @@ const useNotificationSocket = ({ userEmail, onMessage }) => {
             SUB_PATH(userEmail),
             (msg) => {
               try {
-                console.log("알림 메시지:", msg.body);
                 // 1차 파싱
                 const data = JSON.parse(msg.body);
 
@@ -70,7 +69,7 @@ const useNotificationSocket = ({ userEmail, onMessage }) => {
 
     return () => {
       if (clientRef.current?.active) {
-        console.log("알림 소켓 해제");
+        console.log("✅ 알림 소켓 해제");
         clientRef.current.deactivate();
       }
       clientRef.current = null;

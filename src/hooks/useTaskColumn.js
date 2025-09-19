@@ -7,7 +7,6 @@ import {
   getTaskDetails,
   fetchVersionList,
   changeTaskStatus,
-  //fetchLogList,
   uploadFile,
 } from "../api/taskApi";
 
@@ -101,20 +100,10 @@ const useTaskColumn = (projectId) => {
     try {
       await deleteTask(taskId);
       await loadTaskList(projectId);
-      console.log("작업 삭제 O:", taskId);
     } catch (err) {
       console.error("작업 삭제 X:", err.message);
     }
   };
-
-  // // ✅작업 로그 불러오기
-  // const handleTaskLog = async (taskId) => {
-  //   try {
-  //     await fetchLogList(taskId, token);
-  //   } catch (err) {
-  //     console.error("로그 관리X", err.message);
-  //   }
-  // };
 
   // ✅작업 개별 조회
   const loadTaskDetails = async (taskId) => {
