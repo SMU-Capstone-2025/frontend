@@ -6,7 +6,6 @@ export const fetchTaskList = async (projectId) => {
     const res = await axiosInstanceNoHeader.get("/task/list/get", {
       params: { projectId },
     });
-    console.log("작업 목록:", res.data.result);
     return res.data;
   } catch (error) {
     console.error("❌ 작업 목록 실패:", error.response?.data || error.message);
@@ -127,7 +126,6 @@ export const uploadFile = async (file) => {
         "Content-Type": "multipart/form-data", // FormData는 이거 따로 설정 필요
       },
     });
-    console.log("파일 업로드 성공:", res.data.result);
     return res.data.result;
   } catch (error) {
     console.error(
