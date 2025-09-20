@@ -150,21 +150,14 @@ const useTaskColumn = (projectId) => {
         inProgressList.find((t) => t.taskId === data.taskId) ||
         completedList.find((t) => t.taskId === data.taskId);
 
-      const editors =
-        data.editors?.length > 0 ? data.editors : task?.editors || [];
-      const coworkers =
-        data.coworkers?.length > 0
-          ? data.coworkers
-          : task?.coworkers || editors;
-
       const versionData = {
         taskId: data.taskId,
         title: data.title,
         version: nextVersion,
         modifiedBy: data.modifiedBy || userEmail,
         content: data.content,
-        editors,
-        coworkers,
+        editors: data.editors ?? [],
+        coworkers: data.coworkers ?? [],
         deadline: data.deadline || null,
         projectId,
         status: data.status || "PENDING",
