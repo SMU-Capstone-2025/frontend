@@ -156,8 +156,10 @@ const useTaskColumn = (projectId) => {
         version: nextVersion,
         modifiedBy: data.modifiedBy || userEmail,
         content: data.content,
-        editors: data.editors ?? [],
-        coworkers: data.coworkers ?? [],
+        editors:
+          data.editors !== undefined ? data.editors : task?.editors || [],
+        coworkers:
+          data.coworkers !== undefined ? data.coworkers : task?.coworkers || [],
         deadline: data.deadline || null,
         projectId,
         status: data.status || "PENDING",
