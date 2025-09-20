@@ -1,7 +1,7 @@
 import React from "react";
 import ProfileBlue from "../../assets/icons/Profile/ProfileBlue";
 import ProfileYellow from "../../assets/icons/Profile/ProfileYellow";
-import ProfilePlus from "../../assets/icons/Profile/ProfilePlus";
+import { FileIcon } from "lucide-react";
 
 const TaskCard = ({
   title,
@@ -10,6 +10,7 @@ const TaskCard = ({
   coworkers = [],
   onClick,
   onDelete,
+  attachments = [],
 }) => {
   const visibleCount = 2; // 앞에 보여줄 아이콘 개수
   const extraCount = Math.max(0, coworkers.length - visibleCount);
@@ -21,12 +22,17 @@ const TaskCard = ({
     >
       <div className="flex flex-col items-start gap-[10px] w-full">
         {/* 제목 */}
-        <p
-          title={title}
-          className="text-[var(--gray-800,#1F2937)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-[Livvic] break-words overflow-hidden text-ellipsis whitespace-nowrap max-w-full"
-        >
-          {title}
-        </p>
+        <div className="flex items-center justify-between w-full">
+          <p
+            title={title}
+            className="text-[var(--gray-800,#1F2937)] text-base font-semibold leading-[140%] tracking-[-0.32px] font-[Livvic] break-words overflow-hidden text-ellipsis whitespace-nowrap max-w-full"
+          >
+            {title}
+          </p>
+          {attachments.length > 0 && (
+            <FileIcon className="w-5 h-5  text-[#919295]" />
+          )}
+        </div>
 
         {/* 설명 */}
         <p

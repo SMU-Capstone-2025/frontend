@@ -142,6 +142,7 @@ const InProgressColumn = ({
                         date={task.deadline || "기한 없음"}
                         coworkers={task.coworkers || []}
                         attachmentCount={attachments.length}
+                        attachments={attachments}
                         onClick={() => handleCardClick(task.taskId)}
                       />
                     </div>
