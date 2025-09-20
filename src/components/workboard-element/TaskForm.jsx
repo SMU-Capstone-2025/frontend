@@ -183,6 +183,8 @@ const TaskForm = ({
             <input
               type="date"
               value={newTask.deadline || ""}
+              onFocus={(e) => (e.target.type = "date")}
+              onBlur={(e) => (e.target.type = "text")}
               onChange={handleInputChange("deadline")}
               className="appearance-none bg-transparent text-[16px] font-semibold w-full max-w-[115px]"
             />
