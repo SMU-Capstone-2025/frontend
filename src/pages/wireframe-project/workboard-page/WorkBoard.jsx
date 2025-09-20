@@ -61,7 +61,7 @@ const WorkBoard = () => {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex flex-wrap justify-start items-start gap-6 w-full">
+      <div className="flex flex-wrap items-start justify-start w-full gap-6">
         <TodoColumn
           taskList={todoList}
           createNewTask={createNewTask}
@@ -72,6 +72,7 @@ const WorkBoard = () => {
           token={token}
           projectId={projectId}
           coworkers={coworkers}
+          changeStatus={changeStatus}
         />
         <InProgressColumn
           taskList={inProgressList}
@@ -83,6 +84,7 @@ const WorkBoard = () => {
           token={token}
           projectId={projectId}
           coworkers={coworkers}
+          changeStatus={changeStatus}
         />
         <CompletedColumn
           taskList={completedList}
@@ -94,6 +96,7 @@ const WorkBoard = () => {
           token={token}
           projectId={projectId}
           coworkers={coworkers}
+          changeStatus={changeStatus}
         />
       </div>
     </DragDropContext>
