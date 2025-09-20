@@ -3,7 +3,7 @@ import ProjectCard from "./ProjectCard";
 
 const ProjectListPreview = ({ projects, onCardClick }) => {
   return (
-    <div className="grid grid-cols-2 gap-6 self-stretch">
+    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 font-[Livvic]">
       {projects.map((project, idx) => (
         <ProjectCard
           key={project.projectId || idx}
