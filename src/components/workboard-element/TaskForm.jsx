@@ -199,7 +199,9 @@ const TaskForm = ({
               </p>
               <div className="flex items-center gap-2">
                 {selected.slice(0, 10).map((c) => (
-                  <ProfileBlue key={c.email} />
+                  <div key={c.email} title={`${c.name} (${c.email})`}>
+                    <ProfileBlue />
+                  </div>
                 ))}
               </div>
             </div>
