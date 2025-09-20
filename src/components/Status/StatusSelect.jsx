@@ -29,7 +29,7 @@ const StatusSelect = ({ value, onChange }) => {
       </button>
 
       {isOpen && (
-        <ul className="absolute z-10 w-full mt-[2px] bg-white border rounded shadow">
+        <ul className="absolute z-10 w-full min-w-[60px] mt-[2px] bg-white border rounded shadow">
           {Object.entries(statusOption).map(([key, { label }]) => (
             <li
               key={key}
