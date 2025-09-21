@@ -53,15 +53,11 @@ const TaskCard = ({
 
           {/* 에디터 표시 */}
           <div className="flex items-center -space-x-[10px]">
-            {coworkers
-              .slice(0, visibleCount)
-              .map((_, idx) =>
-                idx === 0 ? (
-                  <ProfileBlue key={idx} />
-                ) : (
-                  <ProfileYellow key={idx} />
-                )
-              )}
+            {coworkers.slice(0, visibleCount).map((c, idx) => (
+              <div key={c.email || idx} title={c.name || "참여자"}>
+                {idx % 2 === 0 ? <ProfileBlue /> : <ProfileYellow />}
+              </div>
+            ))}
             {extraCount > 0 && (
               <div
                 className="font-[Palanquin] w-6 h-6 rounded-full font-[500] bg-black/50 text-white text-[11px] flex items-center justify-center leading-[140%]"
