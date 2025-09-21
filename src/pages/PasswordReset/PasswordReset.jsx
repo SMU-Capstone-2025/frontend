@@ -23,16 +23,22 @@ const PasswordReset = () => {
 
   const handlePasswordResetApi = async (email, password, passwordCheck) => {
     try {
-      const res = await axiosInstanceNoHeader.put("/mypage/password/new", {
-        email: email,
-        password: password,
-        passwordCheck: passwordCheck,
-      });
+      const payload = {
+        email,
+        newPassword: password,
+        confirmPassword: passwordCheck,
+      };
+
+      const res = await axiosInstanceNoHeader.put(
+        "/mypage/password/new",
+        payload
+      );
       alert("비밀번호가 재설정되었습니다.");
+      navigate("/login");
       return res;
     } catch (err) {
-      console.log("비밀번호 재설정 실패~!", err);
-      return err;
+      console.error("비밀번호 재설정 실패:", err.response?.data || err.message);
+      throw err;
     }
   };
 
