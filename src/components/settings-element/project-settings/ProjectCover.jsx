@@ -51,7 +51,7 @@ const ProjectCoverUploader = ({ coverImage, setCoverImage }) => {
       <img
         src={previewUrl || defaultCover}
         alt="프로젝트 커버"
-        className="w-full h-full max-h-[400px] object-cover object-center p-1 cursor-pointer"
+        className="w-full h-full max-h-[400px] object-cover object-center p-1 cursor-pointer rounded-xl bg-transparent"
         onClick={() => setIsPreviewOpen(true)}
       />
 
