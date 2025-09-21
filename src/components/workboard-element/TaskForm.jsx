@@ -23,11 +23,29 @@ const TaskForm = ({
     autoSaveTask,
   } = useTaskColumn(projectId);
 
-  const [pickerOpen, setPickerOpen] = useState(false);
-  const formRef = useRef(null); // 전체 스크롤 컨테이너 ref
-  const textareaRef = useRef(null); // textarea ref
+  const [openDropdown, setOpenDropdown] = useState(null); // "status" | "coworker" | null
+  const formRef = useRef(null);
+  const textareaRef = useRef(null);
+  const coworkerRef = useRef(null);
+  const statusRef = useRef(null);
 
-  // 파일 첨부 변경 시 -> 맨 아래
+  // 외부 클릭 시 드롭다운 닫기
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        coworkerRef.current &&
+        !coworkerRef.current.contains(e.target) &&
+        statusRef.current &&
+        !statusRef.current.contains(e.target)
+      ) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // 파일 첨부 변경 시 → 맨 아래
   useEffect(() => {
     if (!formRef.current) return;
     formRef.current.scrollTop = formRef.current.scrollHeight;
@@ -168,10 +186,12 @@ const TaskForm = ({
 
         <section className="flex flex-col w-full gap-[15px] font-[Palanquin]">
           {/* 상태 선택 */}
-          <div className="flex items-center gap-4">
+          <div ref={statusRef} className="flex items-center gap-4">
             <StatusSelect
               value={newTask.status}
               onChange={handleStatusChange}
+              isOpen={openDropdown === "status"}
+              onToggle={(next) => setOpenDropdown(next ? "status" : null)}
             />
           </div>
 
@@ -191,10 +211,12 @@ const TaskForm = ({
           </div>
 
           {/* 담당자 */}
-          <div className="relative">
+          <div ref={coworkerRef} className="relative">
             <div
               className="flex items-center gap-[17px] font-[Livvic] cursor-pointer"
-              onClick={() => setPickerOpen((prev) => !prev)}
+              onClick={() =>
+                setOpenDropdown(openDropdown === "coworker" ? null : "coworker")
+              }
             >
               <p className="text-[#4B5563] text-[16px] font-semibold opacity-50">
                 담당자
@@ -208,7 +230,7 @@ const TaskForm = ({
               </div>
             </div>
 
-            {pickerOpen && (
+            {openDropdown === "coworker" && (
               <div className="absolute z-50 w-40 mt-1 bg-white border rounded shadow-lg left-14">
                 {coworkers.map((c) => {
                   const isSelected = newTask.coworkers?.includes(c.email);
