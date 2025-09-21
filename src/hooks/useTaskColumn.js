@@ -38,13 +38,38 @@ const useTaskColumn = (projectId) => {
         editors: task.editors?.length ? task.editors : task.coworkers || [],
         coworkers: task.coworkers || task.editors || [],
       }));
-      // get요청과 put요청의 필드값 통일을 위해 editors로 보정해줌
 
-      setTodoList(uniqueTasks.filter((t) => t.status === "PENDING"));
-      setInProgressList(uniqueTasks.filter((t) => t.status === "PROGRESS"));
-      setCompletedList(uniqueTasks.filter((t) => t.status === "COMPLETED"));
+      // ✅ 각 task의 최신 버전에서 attachmentList 가져오기
+      const tasksWithAttachments = await Promise.all(
+        uniqueTasks.map(async (task) => {
+          try {
+            const history = await fetchVersionList(task.taskId);
+            const latest = history?.at(-1);
+            return {
+              ...task,
+              versionHistory: history,
+              attachmentList: latest?.attachmentList || [],
+              currentVersion: latest?.version,
+            };
+          } catch (err) {
+            console.error(
+              `버전 목록 불러오기 실패 (taskId: ${task.taskId})`,
+              err
+            );
+            return { ...task, attachmentList: [] };
+          }
+        })
+      );
 
-      return uniqueTasks;
+      setTodoList(tasksWithAttachments.filter((t) => t.status === "PENDING"));
+      setInProgressList(
+        tasksWithAttachments.filter((t) => t.status === "PROGRESS")
+      );
+      setCompletedList(
+        tasksWithAttachments.filter((t) => t.status === "COMPLETED")
+      );
+
+      return tasksWithAttachments;
     } catch (err) {
       console.error("작업 목록 불러오기 실패:", err);
     }
@@ -150,21 +175,16 @@ const useTaskColumn = (projectId) => {
         inProgressList.find((t) => t.taskId === data.taskId) ||
         completedList.find((t) => t.taskId === data.taskId);
 
-      const editors =
-        data.editors?.length > 0 ? data.editors : task?.editors || [];
-      const coworkers =
-        data.coworkers?.length > 0
-          ? data.coworkers
-          : task?.coworkers || editors;
-
       const versionData = {
         taskId: data.taskId,
         title: data.title,
         version: nextVersion,
         modifiedBy: data.modifiedBy || userEmail,
         content: data.content,
-        editors,
-        coworkers,
+        editors:
+          data.editors !== undefined ? data.editors : task?.editors || [],
+        coworkers:
+          data.coworkers !== undefined ? data.coworkers : task?.coworkers || [],
         deadline: data.deadline || null,
         projectId,
         status: data.status || "PENDING",

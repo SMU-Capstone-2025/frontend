@@ -48,26 +48,28 @@ const DoctalkMain = () => {
   return (
     <Layout onProjectCreated={fetchProjects}>
       <div className="w-full max-w-[1280px] flex flex-col justify-center items-center gap-12 pt-16 px-4 z-10">
-        <p className="text-gray-800 text-center font-['Palanquin'] text-2xl font-bold leading-[42px] tracking-[-1.2px]">
+        <p className="text-gray-800 text-center font-['Palanquin'] text-xl sm:text-2xl font-bold leading-[32px] sm:leading-[42px] tracking-[-0.8px] sm:tracking-[-1.2px]">
           {localStorage.getItem("userName")}님, 오늘도 힘차게 시작해볼까요!
         </p>
-        <div className="flex justify-center items-start w-full gap-2">
+
+        {/* 2컬럼 → 모바일에서는 1컬럼 */}
+        <div className="flex flex-col items-start justify-center w-full gap-4 lg:flex-row">
           {/* 예정된 이벤트 */}
-          <div className="flex flex-col items-start gap-3 w-[628px]">
+          <div className="flex flex-col items-start gap-3 w-full lg:w-[628px]">
             <p className="text-gray-400 font-['Livvic'] text-sm font-semibold leading-[19.6px] tracking-[-0.14px]">
               예정된 이벤트
             </p>
-            <div className="flex flex-col justify-center items-start gap-14 w-full px-5 pb-8 rounded-lg border border-gray-200 bg-white">
+            <div className="flex flex-col items-start justify-center w-full gap-8 px-4 pb-6 bg-white border border-gray-200 rounded-lg sm:px-5 sm:pb-8">
               <ScheduleListPreview projectId={selectedProjectId} />
             </div>
           </div>
 
           {/* 나의 프로젝트 */}
-          <div className="flex flex-col items-start gap-3 w-[628px]">
+          <div className="flex flex-col items-start gap-3 w-full lg:w-[628px]">
             <p className="text-gray-400 font-['Livvic'] text-sm font-semibold leading-[19.6px] tracking-[-0.14px]">
               나의 프로젝트
             </p>
-            <div className="flex flex-wrap items-start gap-6 w-full">
+            <div className="flex flex-wrap items-start w-full gap-4 sm:gap-6">
               <ProjectListPreview
                 projects={projects}
                 onCardClick={(projectId) => {
