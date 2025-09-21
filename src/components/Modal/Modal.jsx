@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import EllypsisOn from "../../assets/icons/Ellypsis/EllypsisOn";
 import CloseOn from "../../assets/icons/Close/CloseOn";
-import Bell from "../../assets/icons/Bell/BellOn";
 import Caesarzkn from "../../assets/icons/Caesarzkn/Caesarzkn";
 
 const Modal = ({ isOpen, onClose, onDelete, showDelete, children }) => {
