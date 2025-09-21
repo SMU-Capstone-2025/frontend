@@ -53,7 +53,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
   const handleLogout = () => logout();
 
   return (
-    <div className="fixed top-0 left-0 w-full h-14 sm:h-16 flex justify-between items-center border-b border-gray-200 bg-[#f9fafb] px-3 sm:px-5 z-50">
+    <div className="fixed top-0 left-0 w-full h-16 sm:h-16 flex justify-between items-center border-b border-gray-200 bg-[#f9fafb] px-3 sm:px-5 z-50">
       {/* 왼쪽 */}
       <div className="flex items-center gap-3 sm:gap-5">
         {/* 로그인된 사용자만 사이드바 버튼 표시 */}
@@ -125,14 +125,14 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
                 </span>
               )}
 
-            {/* 알림 드롭다운 */}
+              {/* 알림 드롭다운 */}
               {showDropdown && (
                 <div className="absolute right-0 mt-2 w-[320px] sm:w-[400px] bg-white shadow-md rounded-xl border border-gray-100 z-50">
-                {/* 헤더 */}
+                  {/* 헤더 */}
                   <div className="px-4 py-2 font-semibold text-gray-800 border-b">
                     알림
                   </div>
-                {/* 알림 리스트 */}
+                  {/* 알림 리스트 */}
                   <ul className="flex flex-col gap-3 p-3 overflow-y-auto max-h-80">
                     {notifications.length > 0 ? (
                       notifications.map((n, i) => (
