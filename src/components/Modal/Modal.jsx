@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EllypsisOn from "../../assets/icons/Ellypsis/EllypsisOn";
 import CloseOn from "../../assets/icons/Close/CloseOn";
 import Bell from "../../assets/icons/Bell/BellOn";
@@ -6,6 +6,27 @@ import Caesarzkn from "../../assets/icons/Caesarzkn/Caesarzkn";
 
 const Modal = ({ isOpen, onClose, onDelete, showDelete, children }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // 드롭다운 초기화
+  useEffect(() => {
+    if (isOpen) setIsDropdownOpen(false);
+  }, [isOpen]);
+
+  // 외부 클릭 감지 -> 드롭다운 false
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   if (!isOpen) return null;
 
@@ -36,6 +57,7 @@ const Modal = ({ isOpen, onClose, onDelete, showDelete, children }) => {
               </button>
               {isDropdownOpen && (
                 <div
+                  ref={dropdownRef}
                   className="absolute top-full right-0 flex flex-col items-start gap-2 p-2 rounded-lg border border-[#D2D5DA] bg-white z-20 w-[140px]"
                   onClick={(e) => e.stopPropagation()}
                 >
