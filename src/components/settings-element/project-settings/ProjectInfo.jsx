@@ -16,7 +16,7 @@ const ProjectInfo = ({
     <div
       className="
         flex flex-col items-start
-        w-[628px] rounded-xl border border-gray-200 bg-white
+        w-full max-w-[628px] rounded-xl border border-gray-200 bg-white
       "
     >
       <ProjectCoverUploader
