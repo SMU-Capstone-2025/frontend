@@ -39,7 +39,7 @@ const PasswordReset = () => {
   const handlePasswordResetSubmit = async (e) => {
     e.preventDefault();
     try {
-      const temp = await handlePasswordResetApi(password, passwordCheck);
+      await handlePasswordResetApi(email, password, passwordCheck);
     } catch (error) {
       console.log("에러 발생", error);
     }
@@ -49,7 +49,6 @@ const PasswordReset = () => {
     const isValidEmail = validateEmail(email);
 
     if (!isValidEmail) {
-      console.log("이메일 유효성 검사 실패", isValidEmail);
       setEmaiSuccess(false);
     } else {
       try {
@@ -62,15 +61,13 @@ const PasswordReset = () => {
         setEmaiSuccess(true);
         return res;
       } catch (error) {
-        console.log(
-          "이메일 존재여부 확인 실패, db에 존재하지 않는 계정입니다~!\n",
-          error
-        );
+        console.log("이메일 존재여부 확인 실패", error);
         setEmaiSuccess(false);
         return error;
       }
     }
   };
+
   const getAuthCode = async (email) => {
     try {
       const res = await axiosInstanceNoHeader.post("/mypage/email/check", {
@@ -82,6 +79,7 @@ const PasswordReset = () => {
       return e;
     }
   };
+
   const handleSubmitAuthCode = async (e) => {
     e.preventDefault();
     try {
@@ -97,7 +95,7 @@ const PasswordReset = () => {
     if (userAuthCode === serverAuthCode) {
       setUserAuthCodeSuccess(true);
       setDisplayPasswordResetBtn(true);
-    } else if (userAuthCode !== serverAuthCode) {
+    } else {
       setUserAuthCodeSuccess(false);
     }
   };
@@ -105,77 +103,87 @@ const PasswordReset = () => {
   return (
     <Layout>
       <div className="w-full max-w-[1280px] flex flex-col justify-center items-center gap-12 pt-16 px-4 z-10">
-        <div className="flex w-[700.92px] h-fit relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 py-[105px] px-24">
+        <div className="flex w-full max-w-[700px] h-fit relative bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-gray-300 py-10 sm:py-[105px] px-6 sm:px-12 md:px-24">
+          {/* 닫기 버튼 */}
           <div
-            className="w-10 h-10 absolute rounded-2xl left-[610px] top-[51px] cursor-pointer"
+            className="w-8 h-8 sm:w-10 sm:h-10 absolute right-6 top-6 sm:right-[40px] sm:top-[40px] cursor-pointer"
             onClick={() => navigate("/login")}
           >
             <CloseOn />
           </div>
+
           <div className="w-full h-full flex flex-col justify-start items-center gap-7">
-            <div className="w-full h-full flex flex-col justify-start items-center gap-14">
-              {/* loginContentContainer */}
-              <div className="flex justify-start text-gray-900 text-3xl font-bold font-['Palanquin'] leading-loose">
+            <div className="w-full h-full flex flex-col justify-start items-center gap-10 sm:gap-14">
+              {/* 타이틀 */}
+              <div className="flex justify-center sm:justify-center w-full text-gray-900 text-2xl sm:text-3xl font-bold font-['Palanquin'] leading-loose">
                 비밀번호 재설정
               </div>
-              <form onSubmit={handlePasswordResetSubmit}>
-                <div className="w-[520px] h-full flex flex-col justify-start items-start gap-9">
+
+              {/* 폼 */}
+              <form onSubmit={handlePasswordResetSubmit} className="w-full">
+                <div className="w-full flex flex-col justify-start items-start gap-6 sm:gap-9">
                   <Input
-                    type={"text"}
-                    placeholder={"성함을 입력해주세요."}
-                    title={"이름"}
+                    type="text"
+                    placeholder="성함을 입력해주세요."
+                    title="이름"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
                   <Input
-                    type={"email"}
-                    placeholder={"이메일을 입력해주세요."}
-                    title={"아이디"}
+                    type="email"
+                    placeholder="이메일을 입력해주세요."
+                    title="아이디"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={() => getEmailAvailCheck(name, email)}
                     onSuccess={emailSuccess}
                   />
+
+                  {/* 인증번호 전송 버튼 */}
                   {!displayPasswordResetBtn && (
                     <div
                       id="btnSubmitAuth"
                       onClick={emailSuccess ? handleSubmitAuthCode : undefined}
-                      className="w-full h-full cursor-pointer"
+                      className="w-full cursor-pointer"
                     >
                       <Button
-                        type={"button"}
-                        width={"100%"}
-                        height={"100%"}
-                        text={"인증번호 전송"}
+                        type="button"
+                        width="100%"
+                        height="48px"
+                        text="인증번호 전송"
                         disabled={!emailSuccess}
                         color={emailSuccess ? null : "#d2d5da"}
                       />
                     </div>
                   )}
+
+                  {/* 인증번호 입력 */}
                   {serverAuthCode && (
                     <Input
-                      type={"text"}
-                      placeholder={"인증번호를 입력해주세요."}
-                      title={"인증번호"}
+                      type="text"
+                      placeholder="인증번호를 입력해주세요."
+                      title="인증번호"
                       value={userAuthCode}
                       onChange={(e) => setUserAuthCode(e.target.value)}
                       onBlur={() => checkAuthCode(userAuthCode)}
                       onSuccess={userAuthCodeSuccess}
                     />
                   )}
+
+                  {/* 비밀번호 입력 섹션 */}
                   {displayPasswordResetBtn && (
-                    <div className="w-[520px] h-full flex flex-col justify-start items-start gap-9">
+                    <div className="w-full flex flex-col justify-start items-start gap-6 sm:gap-9">
                       <Input
-                        type={"password"}
-                        placeholder={"비밀번호를 입력해주세요."}
-                        title={"비밀번호"}
+                        type="password"
+                        placeholder="비밀번호를 입력해주세요."
+                        title="비밀번호"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
                       <Input
-                        type={"password"}
-                        placeholder={"비밀번호를 한번 더 입력해주세요."}
-                        title={"비밀번호 확인"}
+                        type="password"
+                        placeholder="비밀번호를 한번 더 입력해주세요."
+                        title="비밀번호 확인"
                         value={passwordCheck}
                         onChange={(e) => setPasswordCheck(e.target.value)}
                         onBlur={() => {
@@ -187,22 +195,21 @@ const PasswordReset = () => {
                         }}
                         onSuccess={passwordCheckSuccess}
                       />
-                      <div
-                        id="btnSubmitJoin"
-                        className="w-full h-full cursor-pointer"
-                      >
+                      <div id="btnSubmitJoin" className="w-full cursor-pointer">
                         <Button
-                          type={"submit"}
-                          width={"100%"}
-                          height={"100%"}
-                          text={"비밀번호 재설정하기"}
+                          type="submit"
+                          width="100%"
+                          height="48px"
+                          text="비밀번호 재설정하기"
                         />
                       </div>
                     </div>
                   )}
                 </div>
               </form>
-              <div className="self-stretch text-center justify-start">
+
+              {/* 하단 링크 */}
+              <div className="self-stretch text-center">
                 <span className="text-gray-800 text-sm font-normal font-['Pretendard'] leading-tight">
                   아직 가입한 계정이 없으신가요?{" "}
                 </span>
