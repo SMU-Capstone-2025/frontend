@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import MemberList from "./MemberList";
 import AddMemberForm from "./AddMemberForm";
-import * as S from "./MemberManager.styled";
 import { inviteMembersToProject } from "../../../api/projectApi";
 
 const MemberManager = ({ projectId, members, setMembers }) => {
@@ -14,14 +13,12 @@ const MemberManager = ({ projectId, members, setMembers }) => {
     if (!newMember.email.trim()) return;
 
     try {
-      // 실제 서버 초대 요청 보내기
       await inviteMembersToProject({
         projectId,
         email: newMember.email,
       });
 
       alert("초대 이메일이 전송됐습니다!");
-
       setNewMember({ email: "", role: "ROLE_MEMBER" });
     } catch (err) {
       alert("멤버 초대에 실패했습니다.");
@@ -34,14 +31,16 @@ const MemberManager = ({ projectId, members, setMembers }) => {
   };
 
   const handleCopyInviteLink = () => {
-    const inviteLink = "www.링크예시.com";
+    const inviteLink = `${window.location.origin}/project/workboard/${projectId}`;
     navigator.clipboard.writeText(inviteLink);
     alert("초대 링크가 복사되었습니다!");
   };
 
   return (
-    <S.MembersSection>
-      <S.Label>멤버 관리</S.Label>
+    <div className="flex flex-col items-start w-full max-w-[628px] px-6 py-8 gap-6 rounded-xl border border-gray-200 bg-white">
+      <span className="self-stretch text-gray-800 text-base font-bold leading-snug">
+        멤버 관리
+      </span>
       <AddMemberForm
         email={newMember.email}
         onChange={handleInputChange}
@@ -53,7 +52,7 @@ const MemberManager = ({ projectId, members, setMembers }) => {
         members={members}
         setMembers={setMembers}
       />
-    </S.MembersSection>
+    </div>
   );
 };
 

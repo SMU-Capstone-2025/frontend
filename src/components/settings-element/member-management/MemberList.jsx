@@ -1,5 +1,4 @@
 import React from "react";
-import * as S from "./MemberList.styled";
 import CloseOn from "../../../assets/icons/Close/CloseOn";
 import PersonOn from "../../../assets/icons/Person/PersonOn";
 import {
@@ -58,16 +57,16 @@ const MemberList = ({ projectId, members, setMembers }) => {
           role: user.role,
         }))
       );
+      alert("유저의 권한이 변경됐습니다!");
     } catch (err) {
-      alert("❌ 권한 변경 실패");
+      alert("권한 변경 실패");
       console.error(err);
     }
   };
 
   return (
-    <S.ListSection>
+    <div className="flex flex-col items-start gap-3 w-full">
       {members.map((member) => {
-        // 우선 기본 값으로 생성
         const {
           id,
           name = "user00",
@@ -76,34 +75,48 @@ const MemberList = ({ projectId, members, setMembers }) => {
         } = member;
 
         return (
-          <S.MemberWrapper key={id}>
-            <S.MemberSection>
-              <S.Avatar className={id % 2 === 0 ? "yellow" : "blue"}>
+          <div key={id} className="flex justify-between items-center w-full">
+            {/* 왼쪽 - 아바타 + 정보 */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`flex w-8 h-8 items-center justify-center rounded-full border border-white ${
+                  id % 2 === 0 ? "bg-yellow-100" : "bg-blue-100"
+                }`}
+              >
                 <PersonOn color={id % 2 === 0 ? "#FACC15" : "#5BA7F7"} />
-              </S.Avatar>
-              <S.MemberInfo>
-                <S.MemberName>{name}</S.MemberName>
-                <S.MemberEmail>{email}</S.MemberEmail>
-              </S.MemberInfo>
-            </S.MemberSection>
+              </div>
 
-            <S.MemberEditBlock>
-              <S.SelectRole
+              <div className="flex flex-col items-start justify-center gap-0.5">
+                <p className="text-gray-800 text-xs font-bold leading-snug">
+                  {name}
+                </p>
+                <p className="text-gray-800 text-xs opacity-50 leading-snug">
+                  {email}
+                </p>
+              </div>
+            </div>
+
+            {/* 오른쪽 - 권한 선택 + 강퇴 */}
+            <div className="flex items-center gap-5">
+              <select
                 value={role}
                 onChange={(e) => handleRoleChange(id, e.target.value)}
+                className="border-none text-sm cursor-pointer focus:outline-none"
               >
                 <option value="ROLE_MANAGER">Owner</option>
                 <option value="ROLE_MEMBER">Member</option>
-              </S.SelectRole>
-              {/* 강퇴 버튼 */}
-              <S.RemoveButton onClick={() => handleRemove(email)}>
+              </select>
+              <button
+                onClick={() => handleRemove(email)}
+                className="w-4 h-4 bg-transparent border-none cursor-pointer"
+              >
                 <CloseOn />
-              </S.RemoveButton>
-            </S.MemberEditBlock>
-          </S.MemberWrapper>
+              </button>
+            </div>
+          </div>
         );
       })}
-    </S.ListSection>
+    </div>
   );
 };
 
