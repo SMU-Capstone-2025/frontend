@@ -42,7 +42,7 @@ const Modal = ({ isOpen, onClose, onDelete, showDelete, children }) => {
       onClick={onClose}
     >
       <div
-        className="bg-white w-[95vw] h-[70vh] sm:w-[80vw] sm:h-[85vh] lg:w-[60vw] lg:h-[80vh] max-w-[1042px] max-h-[768px] p-[20px] sm:p-[30px] flex flex-col items-end gap-5 rounded-xl border border-[#E5E7EB] relative animate-fadeIn overflow-auto"
+        className="bg-white w-[95vw] sm:w-[80vw] max-w-[1042px] max-h-[75vh] sm:max-h-[85vh] p-[20px] sm:p-[30px] flex flex-col items-end gap-5 rounded-xl border border-[#E5E7EB] relative animate-fadeIn "
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-5">
