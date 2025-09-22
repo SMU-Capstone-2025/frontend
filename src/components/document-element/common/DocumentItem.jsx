@@ -44,17 +44,18 @@ const DocumentItem = ({
 
   return (
     <div className="flex w-full flex-col gap-3 relative font-[Livvic]">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center w-full border-b pb-3 border-gray-200 gap-4 hover:bg-gray-50">
+      <div className="flex flex-col items-start justify-between w-full gap-4 pb-3 border-b border-gray-200 lg:flex-row lg:items-center hover:bg-gray-50">
+        {/* 제목 & 최근 수정 */}
         <div
           className="flex flex-col justify-center items-start gap-[6px] w-full max-w-3xl cursor-pointer"
           onClick={() => {
-            setOpenMenuId(null); // 메뉴 닫기
+            setOpenMenuId(null);
             navigate(`/document/${document.id}`, {
               state: { projectId },
             });
           }}
         >
-          <span className="text-gray-800 text-lg font-semibold tracking-tight line-clamp-1">
+          <span className="text-lg font-semibold tracking-tight text-gray-800 line-clamp-1">
             {document.title}
           </span>
           <span className="text-gray-400 font-[Palanquin] font-normal text-[12px] leading-[140%]">
@@ -62,7 +63,8 @@ const DocumentItem = ({
           </span>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-end items-start sm:items-center gap-[15px] sm:gap-11">
+        {/* 모바일은 한 줄, sm 이상에서는 오른쪽 정렬 */}
+        <div className="flex flex-row flex-wrap items-center justify-between w-full gap-3 sm:flex-row sm:justify-end sm:items-center sm:gap-11">
           {/* editors */}
           <div className="flex items-center -space-x-2">
             {document.editors && document.editors.length > 0 ? (
@@ -72,10 +74,9 @@ const DocumentItem = ({
                     {idx % 2 === 0 ? <ProfileBlue /> : <ProfileYellow />}
                   </div>
                 ))}
-
                 {document.editors.length > 2 && (
                   <div
-                    className="flex w-6 h-6 items-center justify-center rounded-full border-none bg-black/50 text-white text-[11px] font-[500]"
+                    className="flex w-6 h-6 items-center justify-center rounded-full bg-black/50 text-white text-[11px] font-[500]"
                     title={document.editors.slice(2).join(", ")}
                   >
                     +{document.editors.length - 2}
@@ -87,13 +88,15 @@ const DocumentItem = ({
             )}
           </div>
 
-          <div className="w-[80px] flex justify-end">
+          {/* 상태 */}
+          <div className="w-[70px] flex justify-center sm:justify-end">
             <Status name={document.status} />
           </div>
 
+          {/* 생성일 */}
           <span
             title="문서 생성 시간"
-            className="text-gray-600 text-lg font-normal tracking-tight"
+            className="text-sm font-normal tracking-tight text-gray-600 sm:text-lg"
           >
             {formatDate(document.createdAt)}
           </span>
@@ -101,15 +104,13 @@ const DocumentItem = ({
           {/* 메뉴 버튼 */}
           <div className="relative">
             <div
-              className="flex w-6 h-6 justify-center items-center shrink-0 cursor-pointer hover:bg-gray-100"
+              className="flex items-center justify-center w-6 h-6 cursor-pointer shrink-0 hover:bg-gray-100"
               onClick={handleToggleMenu}
             >
               <DrawerIcon />
             </div>
-
-            {/* 드롭다운 메뉴 */}
             {isMenuOpen && (
-              <div className="absolute right-0 mt-1 w-20 bg-white border rounded shadow z-10">
+              <div className="absolute right-0 z-10 w-20 mt-1 bg-white border rounded shadow">
                 <button
                   className="w-full px-2 py-[6px] text-sm font-[500] text-red-500 hover:bg-gray-100"
                   onClick={(e) => {

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import * as S from "./Settings.styled";
 import ProjectInfo from "../../../components/settings-element/project-settings/ProjectInfo";
 import MemberManager from "../../../components/settings-element/member-management/MemberManager";
 import { fetchProject, updateProject } from "../../../api/projectApi";
@@ -66,8 +65,12 @@ const Settings = () => {
       console.error(err);
     }
   };
+
   return (
-    <S.Container>
+    <div
+      className="flex flex-row items-start justify-start gap-8 w-[1280px] font-[Palanquin] mx-auto max-[1024px]:flex-col max-[1024px]:w-full max-[1024px]:gap-5
+      "
+    >
       <ProjectInfo
         projectId={projectId}
         projectName={projectName}
@@ -84,7 +87,7 @@ const Settings = () => {
         members={members}
         setMembers={setMembers}
       />
-    </S.Container>
+    </div>
   );
 };
 

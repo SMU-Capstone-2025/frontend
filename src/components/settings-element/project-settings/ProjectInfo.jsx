@@ -1,5 +1,4 @@
 import React from "react";
-import * as S from "./ProjectInfo.styled";
 import ProjectCoverUploader from "./ProjectCover";
 import ProjectMetaForm from "./ProjectMetaForm";
 
@@ -14,7 +13,12 @@ const ProjectInfo = ({
   projectId,
 }) => {
   return (
-    <S.InfoSection>
+    <div
+      className="
+        flex flex-col items-start
+        w-full max-w-[628px] rounded-xl border border-gray-200 bg-white
+      "
+    >
       <ProjectCoverUploader
         coverImage={coverImage}
         setCoverImage={setCoverImage}
@@ -27,7 +31,7 @@ const ProjectInfo = ({
         setProjectDescription={setProjectDescription}
         onSave={onSave}
       />
-    </S.InfoSection>
+    </div>
   );
 };
 

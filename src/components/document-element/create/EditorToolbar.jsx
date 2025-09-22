@@ -11,8 +11,11 @@ import DocMinus from "../../../assets/icons/DocIcons/DocMinus.svg";
 import DocPlus from "../../../assets/icons/DocIcons/DocPlus.svg";
 import ColorPickerDropdown from "./ColorPickerDropdown";
 
-const Divider = () => (
-  <div className="w-px h-[30px] bg-[#d9d9d9]" aria-hidden="true" />
+const Divider = ({ className = "" }) => (
+  <div
+    className={`w-px h-[30px] bg-[#d9d9d9] ${className}`}
+    aria-hidden="true"
+  />
 );
 
 const EditorToolbar = ({ editor }) => {
@@ -23,16 +26,15 @@ const EditorToolbar = ({ editor }) => {
     const n = Number(String(v).replace(/px|rem/i, ""));
     return Number.isFinite(n) ? n : 16;
   }, [editor.state]);
+
   const setPx = (n) => editor.chain().focus().setFontSize(`${n}px`).run();
   const dec = () => setPx(Math.max(8, currentSize - 1));
   const inc = () => setPx(Math.min(72, currentSize + 1));
 
   const btn = (active) =>
     [
-      "rounded-[10px] transition-colors",
-      active
-        ? "bg-gray-200 rounded-[10px]"
-        : "bg-gray-100 text-gray-700 hover:bg-gray-200",
+      "rounded-[10px] transition-colors shrink-0",
+      active ? "bg-gray-200" : "bg-gray-100 text-gray-700 hover:bg-gray-200",
     ].join(" ");
 
   const canUndo = editor.can().undo();
@@ -84,16 +86,16 @@ const EditorToolbar = ({ editor }) => {
   ];
 
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center w-full max-w-full gap-3 px-2 overflow-x-auto  sm:gap-6 no-scrollbar sm:px-0">
       {/* Undo / Redo */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
         <button
           type="button"
           onClick={() => editor.chain().focus().undo().run()}
           className="flex items-center justify-center w-6 h-6 disabled:opacity-40"
           disabled={!canUndo}
           aria-label="되돌리기"
-          title="되돌리기 (CtrlZ)"
+          title="되돌리기 (Ctrl+Z)"
         >
           <PreviousAltOn />
         </button>
@@ -103,7 +105,7 @@ const EditorToolbar = ({ editor }) => {
           className="flex items-center justify-center w-6 h-6 disabled:opacity-40"
           disabled={!canRedo}
           aria-label="다시 실행"
-          title="다시 실행 (CtrlShiftZ)"
+          title="다시 실행 (Ctrl+Shift+Z)"
         >
           <NextAltOn />
         </button>
@@ -112,7 +114,7 @@ const EditorToolbar = ({ editor }) => {
       <Divider />
 
       {/* 폰트 크기 */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
         <button
           type="button"
           onClick={dec}
@@ -137,19 +139,14 @@ const EditorToolbar = ({ editor }) => {
       <Divider />
 
       {/* Inline styles */}
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-2 sm:gap-4 shrink-0">
         <button
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={btn(editor.isActive("bold"))}
           aria-label="굵게"
           title="굵게 (Ctrl+B)"
-          style={{
-            display: "flex",
-            padding: "1px 7px 1px 6px",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+          style={{ padding: "1px 7px" }}
         >
           B
         </button>
@@ -159,12 +156,6 @@ const EditorToolbar = ({ editor }) => {
           className={btn(editor.isActive("italic"))}
           aria-label="기울임"
           title="기울임 (Ctrl+I)"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: "2.1px",
-          }}
         >
           <img src={Italic} alt="Italic" />
         </button>
@@ -174,14 +165,8 @@ const EditorToolbar = ({ editor }) => {
           className={btn(editor.isActive("underline"))}
           aria-label="밑줄"
           title="밑줄 (Ctrl+U)"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            paddingTop: "2.3px",
-          }}
         >
-          <img src={UnderLine} alt="underline" />
+          <img src={UnderLine} alt="Underline" />
         </button>
         <button
           type="button"
@@ -189,13 +174,7 @@ const EditorToolbar = ({ editor }) => {
           className={btn(editor.isActive("strike"))}
           aria-label="취소선"
           title="취소선"
-          style={{
-            display: "flex",
-            padding: "1px 7px 1px 6px",
-            justifyContent: "center",
-            alignItems: "center",
-            textDecoration: "line-through",
-          }}
+          style={{ textDecoration: "line-through" }}
         >
           S
         </button>
@@ -211,8 +190,9 @@ const EditorToolbar = ({ editor }) => {
       </div>
 
       <Divider />
+
       {/* 정렬 */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
         <button
           className={btn(editor.isActive({ textAlign: "left" }))}
           onClick={() => editor.chain().focus().setTextAlign("left").run()}
@@ -242,8 +222,6 @@ const EditorToolbar = ({ editor }) => {
           <img src={Justify} alt="Justify" />
         </button>
       </div>
-
-      <Divider />
     </div>
   );
 };

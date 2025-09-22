@@ -21,13 +21,13 @@ const Status = ({ name }) => {
 
   return (
     <div
-      className="flex h-6 px-3 py-2 justify-center items-center gap-[10px] rounded-[6px]"
+      className="inline-flex px-3 py-1 justify-center items-center gap-[10px] rounded-[6px] whitespace-nowrap"
       style={{
         backgroundColor: backgroundColor,
         color: color,
       }}
     >
-      <span className="text-xs font-bold leading-[140%] font-pretendard">
+      <span className="text-xs font-bold leading-[140%] font-pretendard ">
         {translatedStatus}
       </span>
     </div>
