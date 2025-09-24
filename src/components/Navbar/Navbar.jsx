@@ -46,6 +46,7 @@ const Navbar = ({ sidebarOpen, setSidebarOpen }) => {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("userName");
+      window.location.href("/login");
     } catch (error) {
       console.error("로그아웃 실패:", error);
     }
