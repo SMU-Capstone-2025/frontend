@@ -5,6 +5,7 @@ import { axiosInstanceNoHeader } from "../../apis/axiosInstance";
 import Layout from "../../components/NavbarLayout/Layout";
 import Input from "../../components/Input/Input";
 import { useNavigate } from "react-router-dom";
+import Google from "../../assets/icons/Google/Google.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -104,6 +105,16 @@ const Login = () => {
                   </div>
                   <div className="w-full flex flex-col justify-start items-start gap-11">
                     {/* 소셜로그인 버튼과 로그인버튼 감싸는 박스*/}
+                    <div className="self-stretch text-center justify-start text-gray-500 text-base font-normal font-['Palanquin'] leading-snug">
+                      혹은
+                    </div>
+                    <div className="flex justify-start items-start gap-8">
+                      <div className="w-8 h-8 relative overflow-hidden">
+                        <Google />
+                      </div>
+                      <div className="w-8 h-8 relative overflow-hidden">K</div>
+                      <div className="w-8 h-8 relative overflow-hidden">N</div>
+                    </div>
                     {/* 구글 카톡 깃허브 */}
                     <div className="w-full h-12 cursor-pointer">
                       <Button
