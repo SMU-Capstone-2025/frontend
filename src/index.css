@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ProseMirror:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
